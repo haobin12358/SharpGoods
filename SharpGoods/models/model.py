@@ -1,0 +1,128 @@
+# *- coding:utf-8 *-
+
+import sys
+import os
+sys.path.append(os.path.dirname(os.getcwd()))
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, create_engine, Integer, String, Text, Float
+from config import dbconfig as cfg
+
+
+DB_PARAMS = "{0}://{1}:{2}@{3}/{4}?charset={5}".format(
+    cfg.sqlenginename, cfg.username, cfg.password, cfg.host, cfg.database, cfg.charset)
+mysql_engine = create_engine(DB_PARAMS, echo=True)
+Base = declarative_base()
+
+class Users(Base):
+    __tablename__ = "Users"
+    USid = Column(String(64), primary_key=True)
+    UStelphone = Column(String(14), nullable=False) # 用户联系方式
+    USpassword = Column(String(32), nullable=False) # 用户密码
+    USname = Column(String(64))  # 用户昵称
+    USsex = Column(Integer)  # 用户性别 {101男， 102女}
+    UScoin = Column(Float)  # 用户积分，根据用户购买商品生成
+    USinvate = Column(String(64))   # 用户邀请码，算法生成待设计
+
+class Locations(Base):
+    __tablename__ = "Locations"
+    LOid = Column(String(64), primary_key=True)
+    LOtelphone = Column(String(14), nullable=False)  # 收件人联系方式
+    LOname = Column(String(128), nullable=False)   # 收件人姓名
+    LOno = Column(String(8), nullable=False)     # 邮编
+    LOdetail = Column(Text, nullable=False)    # 收件人详细地址
+    LOisedit = Column(Integer, nullable=False)   # 是否可编辑 {301可编辑， 302不可编辑}
+
+class Products(Base):
+    __tablename__ = "Products"
+    PRid = Column(String(64), primary_key=True)  # 商品id
+    PRname = Column(String(64), nullable=False)  # 商品名称
+    PRprice = Column(Float, nullable=False)  # 商品价格
+    PRunit = Column(Integer, nullable=False) # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
+    PRvideo = Column(Text, nullable=False)  # 宣传视频
+    PRstatus = Column(Integer, default=1)  # 商品状态 {201:在售状态 202:下架状态}
+    PRimage = Column(String(64), nullable=False)  # 商品图片存放地址
+    PRinfo = Column(Text)  # 商品介绍
+    PRsalesvolume = Column(Integer, nullable=False)  # 商品销量
+    PRscore = Column(Float, nullable=True)  # 商品评分
+    PRno = Column(String(8), nullable=False)  # 版本号
+    PRcolor = Column(Text) # 颜色，一对多
+    PRtype = Column(Integer, nullable=False) # 营销类型 {501自营， 502非自营}
+    PRbrand = Column(Integer, nullable=False) # 类目 {601美妆类， 602 3C类}
+
+class Review(Base):
+    __tablename__ = "Review"
+    REid = Column(String(64), primary_key=True)  # 评论id
+    PRid = Column(String(64), nullable=False)  # 对应的评论对象，根据REtype判断
+    USid = Column(String(64), nullable=False)  # 用户id
+    REtime = Column(String(14), nullable=False) # 评论时间
+    USRid = Column(String(64)) # 被评论人
+    REcontent = Column(Text, nullable=True)  # 评价内容
+    REtype = Column(Integer, default=1)  # 对应的评论对象类型 {701:商品评价 702:帖子评价}
+
+
+class Shops(Base):
+    __tablename__ = "Shops"
+    SHid = Column(String(64), primary_key=True)
+    SHname = Column(String(64), nullable=False)  # 供应商名称
+    SHtype = Column(Integer, nullable=True)  # 供应商类型
+    SHdetail = Column(Text, nullable=True)   # 供应商详细信息
+    Stel = Column(String(14))  # 供应商联系方式
+
+class OrderMain(Base):
+    __tablename__ = "OrderMain"
+    OMid = Column(String(64), primary_key=True)        # 主订单id
+    OMtime = Column(String(14), nullable=False)         # 下单时间
+    OMstatus = Column(Integer, nullable=False)          # 订单状态 具体状态如下：
+    # {0 : 已取消, 7 : 未支付, 14 : 已支付, 21 : 已接单, 28 : 配送中, 35 : 已装箱, 42 : 已完成,  49 : 已评价}
+    OMprice = Column(Float)                             # 订单总额
+    USid = Column(String(64))                           # 用户id
+    LOid = Column(String(64))                           # 配送地址id
+    OMabo = Column(Text)                                # 订单备注
+    OMcointype = Column(Integer, nullable=False) # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
+    COid = Column(String(64))  # 优惠券id
+
+class Orderpart(Base):
+    __tablename__ = "OrderPart"
+    OPid = Column(String(64), primary_key=True)  # 分订单id
+    OMid = Column(String(64), nullable=False)    # 主订单id
+    PRid = Column(String(64), nullable=False)     # 商品id
+    PRnumber = Column(Integer, nullable=False)       # 商品数量
+
+class Cart(Base):
+    __tablename__ = "Cart"
+    CAid = Column(String(64), primary_key=True)  # 购物车id
+    USid = Column(String(64), nullable=False)  # 用户id
+    PRid = Column(String(64), nullable=False)  # 产品id
+    CAnumber = Column(Integer)  # 商品在购物车中的数量
+    CAstatus = Column(Integer, default=1)  # 商品在购物车状态，1 在购物车， 2 已从购物车移除 目前直接从数据库中移除
+
+class Coupons(Base):
+    __tablename__ = "Coupon"
+    COid = Column(String(64), primary_key=True)
+    COfilter = Column(Float)      # 优惠券优惠条件，到达金额
+    COdiscount = Column(Float)    # 折扣，值为0-1，其中0为免单
+    COamount = Column(Float)      # 优惠金额，减免金额，限制最大数目
+    COstart = Column(String(14))  # 优惠券的开始时间
+    Couend = Column(String(14))   # 优惠券的结束时间
+
+class Cardpackage(Base):
+    __tablename__ = "Cardpackage"
+    CAid = Column(String(64), primary_key=True)
+    USid = Column(String(64), nullable=False)
+    CAstatus = Column(Integer, default=1)  # 卡包中优惠券的状态 {1:可使用，2: 不可使用}
+    CAstart = Column(String(14))  # 卡包中优惠券的开始时间
+    CAend = Column(String(14))   # 卡包中的优惠券结束时间
+    COid = Column(String(64), nullable=False)
+
+class IdentifyingCode(Base):
+    __tablename__ = "IdentifyingCode"
+    ICid = Column(String(64), primary_key=True)
+    ICtelphone = Column(String(14), nullable=False)  # 获取验证码的手机号
+    ICcode = Column(String(8), nullable=False)    # 获取到的验证码
+    ICtime = Column(String(14), nullable=False)    # 获取的时间，格式为20180503100322
+
+class BlackUsers(Base):
+    __tablename__ = "BlackUsers"
+    BUid = Column(String(64), primary_key=True)
+    BUtelphone = Column(String(14), nullable=False)   # 黑名单电话
+    BUreason = Column(Text)   # 加入黑名单的原因
