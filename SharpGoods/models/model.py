@@ -6,6 +6,7 @@ sys.path.append(os.path.dirname(os.getcwd()))
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, create_engine, Integer, String, Text, Float
 from config import dbconfig as cfg
+import pymysql
 
 
 DB_PARAMS = "{0}://{1}:{2}@{3}/{4}?charset={5}".format(
@@ -36,18 +37,37 @@ class Products(Base):
     __tablename__ = "Products"
     PRid = Column(String(64), primary_key=True)  # 商品id
     PRname = Column(String(64), nullable=False)  # 商品名称
-    PRprice = Column(Float, nullable=False)  # 商品价格
-    PRunit = Column(Integer, nullable=False) # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
+    # PRprice = Column(Float, nullable=False)  # 商品价格
+    # PRunit = Column(Integer, nullable=False) # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
     PRvideo = Column(Text, nullable=False)  # 宣传视频
-    PRstatus = Column(Integer, default=1)  # 商品状态 {201:在售状态 202:下架状态}
-    PRimage = Column(String(64), nullable=False)  # 商品图片存放地址
+    # PRstatus = Column(Integer, default=1)  # 商品状态 {201:在售状态 202:下架状态}
+    # PRimage = Column(Text, nullable=False)  # 商品图片存放地址
     PRinfo = Column(Text)  # 商品介绍
-    PRsalesvolume = Column(Integer, nullable=False)  # 商品销量
-    PRscore = Column(Float, nullable=True)  # 商品评分
-    PRno = Column(String(8), nullable=False)  # 版本号
-    PRcolor = Column(Text) # 颜色，一对多
+    # PRsalesvolume = Column(Integer, nullable=False)  # 商品销量
+    # PRscore = Column(Float, nullable=True)  # 商品评分
+    # PRno = Column(String(8), nullable=False)  # 版本号
+    # PRcolor = Column(Text) # 颜色，一对多
     PRtype = Column(Integer, nullable=False) # 营销类型 {501自营， 502非自营}
     PRbrand = Column(Integer, nullable=False) # 类目 {601美妆类， 602 3C类}
+    # PRquality = Column(String(64)) # 商品属性，包含类目、颜色等等，以json进行保存
+
+class ProductsBrands(Base):
+    __tablename__ = "ProductsBrands"
+    PBid = Column(String(64), primary_key=True)
+    PRid = Column(String(64), nullable=False)  # 商品id
+    BRid = Column(String(64), nullable=False)  # 叶子类目id
+    PBprice = Column(Float, nullable=Float) # 商品价格
+    PBunit = Column(Integer, nullable=False) # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
+    PBstatus = Column(Integer, default=201) # 商品状态 {201:在售状态 202:下架状态}
+    PBsalesvolume = Column(Integer, nullable=False)  # 商品销量
+    PBscore = Column(Float, nullable=True)  # 商品评分
+
+class Brands(Base):
+    __tablename__ = "Brands"
+    BRid = Column(String(64), primary_key=True)
+    BRfromid = Column(String(64), nullable=False) # 父节点id，如果没有父节点则为0
+    BRvalue = Column(String(128), nullable=False) # 属性值
+    BRkey = Column(String(128), nullable=False) # 属性类型
 
 class Review(Base):
     __tablename__ = "Review"
@@ -85,14 +105,14 @@ class Orderpart(Base):
     __tablename__ = "OrderPart"
     OPid = Column(String(64), primary_key=True)  # 分订单id
     OMid = Column(String(64), nullable=False)    # 主订单id
-    PRid = Column(String(64), nullable=False)     # 商品id
+    PBid = Column(String(64), nullable=False)     # 商品id
     PRnumber = Column(Integer, nullable=False)       # 商品数量
 
 class Cart(Base):
     __tablename__ = "Cart"
     CAid = Column(String(64), primary_key=True)  # 购物车id
     USid = Column(String(64), nullable=False)  # 用户id
-    PRid = Column(String(64), nullable=False)  # 产品id
+    PBid = Column(String(64), nullable=False)  # 产品id
     CAnumber = Column(Integer)  # 商品在购物车中的数量
     CAstatus = Column(Integer, default=1)  # 商品在购物车状态，1 在购物车， 2 已从购物车移除 目前直接从数据库中移除
 
@@ -126,3 +146,9 @@ class BlackUsers(Base):
     BUid = Column(String(64), primary_key=True)
     BUtelphone = Column(String(14), nullable=False)   # 黑名单电话
     BUreason = Column(Text)   # 加入黑名单的原因
+
+if __name__ == "__main__":
+    '''
+    运行该文件就可以在对应的数据库里生成本文件声明的所有table
+    '''
+    Base.metadata.create_all(mysql_engine)
