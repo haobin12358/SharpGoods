@@ -64,6 +64,7 @@ class ProductsBrands(Base):
     PBstatus = Column(Integer, default=201) # 商品状态 {201:在售状态 202:下架状态}
     PBsalesvolume = Column(Integer, nullable=False)  # 商品销量
     PBscore = Column(Float, nullable=True)  # 商品评分
+    PBimage = Column(Text, nullable=False)  # 商品图片存放地址
 
 class Brands(Base):
     __tablename__ = "Brands"

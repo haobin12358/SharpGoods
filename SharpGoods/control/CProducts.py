@@ -7,6 +7,9 @@ import json
 from config.response import SYSTEM_ERROR, PARAMS_MISS
 
 class CProducts():
+    def __init__(self):
+        from service.SProduct import SProduct
+        self.sproduct = SProduct()
     def get_info_by_id(self):
         args = request.args.to_dict()
         if "PRid" not in args:
@@ -83,3 +86,9 @@ class CProducts():
                 }
             ]
         }
+
+    def get_control_brand_by_prid(self):
+        pass
+
+    def get_pbid_by_all_brand(self):
+        pass
