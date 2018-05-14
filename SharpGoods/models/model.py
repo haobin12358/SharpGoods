@@ -31,6 +31,9 @@ class Locations(Base):
     LOname = Column(String(128), nullable=False)   # 收件人姓名
     LOno = Column(String(8), nullable=False)     # 邮编
     LOdetail = Column(Text, nullable=False)    # 收件人详细地址
+    LOprovince = Column(String(64), nullable=False)  # 收件人省份
+    LOcity = Column(String(64), nullable=False)  # 收件人城市
+    LOarea = Column(String(64), nullable=False)  # 收件人城区
     LOisedit = Column(Integer, nullable=False)   # 是否可编辑 {301可编辑， 302不可编辑}
 
 class Products(Base):
