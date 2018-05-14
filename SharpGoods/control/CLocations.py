@@ -2,56 +2,88 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
+
 from flask import request
 import json
 from config.response import SYSTEM_ERROR, PARAMS_MISS
+from common.import_status import import_status
+from service.SLocations import SLocations
+from common.get_model_return_list import get_model_return_list
+
 
 class CLocations():
+    def __init__(self):
+        self.slocation = SLocations()
+        self.params_list = ["LOno", "LOname", "LOtelphone", "LOdetail", "LOprovince", "LOcity", "LOarea"]
+        self.title = '============{0}============'
+
     def get_all_location(self):
         args = request.args.to_dict()
-        if "token" not in args:
+        print(self.title.format("args dict"))
+        print(args)
+        print(self.title.format("args dict"))
+        if "token" not in args or not args.get("token"):
             return PARAMS_MISS
-        return {
-            "status": 200,
-            "messages": "获取信息成功",
-            "data":[
-                {
-                    "LOid":"123456",
-                    "LOno":"310000",
-                    "LOname":"收件人的名字",
-                    "LOtelphone":"+8617706441101",
-                    "LOdetail": "详细的收货地址",
-                    "LOisedit": 301
-                },
-                {
-                    "LOid": "123457",
-                    "LOno": "310000",
-                    "LOname": "收件人的名字",
-                    "LOtelphone": "+8617706441101",
-                    "LOdetail": "详细的收货地址",
-                    "LOisedit": 302
-                }
-            ]
-        }
+        data = import_status("SUCCESS_MESSAGE_GET_LOCATIONS", "OK")
+        print(self.title.format("Location list"))
+        print(get_model_return_list(self.slocation.get_all(args.get("token"))))
+        data["data"] = get_model_return_list(self.slocation.get_all(args.get("token")))
+        print(self.title.format("Location list"))
+        return data
 
     def new_location(self):
         args = request.args.to_dict()
+        print(self.title.format("args dict"))
+        print(args)
+        print(self.title.format("args dict"))
+        print(self.title.format("data dict"))
         data = request.data
         data = json.loads(data)
-        if "token" not in args or "LOno" not in data or "LOname" not in data or "LOtelphone" not in data or "LOdetail" not in data:
+        print(data)
+        print(self.title.format("data dict"))
+        if "token" not in args:
             return PARAMS_MISS
-        return {
-            "status": 200,
-            "messages": "创建收货地址成功"
-        }
+
+        for key in self.params_list:
+            if key not in data:
+                return PARAMS_MISS
+
+        try:
+            data["LOisedit"] = 301
+            result = self.slocation.add_model("Locations", **data)
+            print(self.title.format("result boolean"))
+            print(result)
+            print(self.title.format("result boolean"))
+            if result:
+                return import_status("SUCCESS_MESSAGE_ADD_LOCATION", "OK")
+            return SYSTEM_ERROR
+        except Exception as e:
+            print(self.title.format("add location error"))
+            print(e.message)
+            print(self.title.format("add location error"))
+            return SYSTEM_ERROR
 
     def update_location(self):
         args = request.args.to_dict()
+        print(self.title.format("args dict"))
+        print(args)
+        print(self.title.format("args dict"))
+        print(self.title.format("data dict"))
         data = request.data
         data = json.loads(data)
+        print(data)
+        print(self.title.format("data dict"))
+
         if "token" not in args or "LOid" not in data:
             return PARAMS_MISS
-        return {
-            "status": 200,
-            "messages": "更新收货地址成功"
-        }
+
+        if not set(self.params_list).issuperset(data.keys()):
+            print("the params is contains key out of {0}".format(self.params_list))
+            return import_status("ERROR_MESSAGE_UPDATE_LOCATION_URL", "SHARPGOODS_ERROR", "ERROR_PARAMS")
+
+        try:
+            self.slocation.update_locations_by_loid(data.get("Loid"), data)
+            return import_status("SUCCESS_MESSAGE_UPDSTE_LOCATION", "OK")
+        except Exception as e:
+            print(e.message)
+            return SYSTEM_ERROR
