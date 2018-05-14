@@ -85,5 +85,24 @@ class CLocations():
             self.slocation.update_locations_by_loid(data.get("Loid"), data)
             return import_status("SUCCESS_MESSAGE_UPDSTE_LOCATION", "OK")
         except Exception as e:
+            print(self.title.format("update location error"))
             print(e.message)
+            print(self.title.format("update location error"))
+            return SYSTEM_ERROR
+
+    def del_location(self):
+        args = request.args.to_dict()
+        print(self.title.format("args dict"))
+        print(args)
+        print(self.title.format("args dict"))
+
+        if "token" not in args or "LOid" not in args:
+            return PARAMS_MISS
+        try:
+            self.slocation.update_locations_by_loid(args.get("LOid"), {"LOisedit": 302})
+            return import_status("SUCCESS_MESSAGE_DELETE_LOCATION", "OK")
+        except Exception as e:
+            print(self.title.format("del location error"))
+            print(e.message)
+            print(self.title.format("del location error"))
             return SYSTEM_ERROR
