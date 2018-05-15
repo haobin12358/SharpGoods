@@ -15,7 +15,8 @@ class AProducts(Resource):
         print("=======================api===================")
 
         apis = {
-
+            "get_control_brand":"self.control_product.get_control_brand_by_prid()",
+            "get_pbid_by_all_brand":"self.control_product.get_pbid_by_all_brand()"
         }
 
         if product not in apis:
