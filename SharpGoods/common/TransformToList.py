@@ -47,7 +47,7 @@ def add_model(model_name, **kwargs):
     for key in model_bean.__table__.columns.keys():
         if key in kwargs:
             setattr(model_bean, key, kwargs.get(key))
-    from services.DBSession import get_session
+    from service.DBSession import get_session
     session, status = get_session()
     if status:
         session.add(model_bean)

@@ -40,7 +40,7 @@ class SUsers():
             new_user.USname = None
             new_user.USsex = None
             new_user.UScoin = 0
-            new_user.USinvatecode = str(uuid.uuid4())  # 待设计
+            new_user.USinvate = str(uuid.uuid4())  # 待设计
             self.session.add(new_user)
             self.session.commit()
             self.session.close()
@@ -87,7 +87,7 @@ class SUsers():
         users_info = None
         try:
             users_info = self.session.query(model.Users.USname, model.Users.UStelphone, model.Users.USsex, model.Users.UScoin,
-                                            model.Users.USinvatecode)\
+                                            model.Users.USinvate)\
                 .filter_by(USid=usid).first()
         except Exception as e:
             print(e.message)

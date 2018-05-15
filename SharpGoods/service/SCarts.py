@@ -14,9 +14,16 @@ class SCarts(SBase):
     def __init__(self):
         super(SCarts, self).__init__()
 
-    @close_session
     def get_carts_by_Uid(self, uid):
-        return self.session.query(Cart.CAid, Cart.PBid, Cart.CAnumber, Cart.CAstatus).filter_by(Cart.USid == uid).all()
+        all_cart = None
+        try:
+            all_cart = self.session.query(Cart.CAid, Cart.PBid, Cart.CAnumber, Cart.CAstatus).filter_by(USid=uid).all()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            return False
+        finally:
+            return all_cart
 
     # @close_session
     # def add_carts(self, **kwargs):

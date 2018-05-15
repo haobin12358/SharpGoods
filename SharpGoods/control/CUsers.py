@@ -34,7 +34,7 @@ class CUsers():
         print "=================code_in_db================="
         print code_in_db
         print "=================code_in_db================="
-        if code_in_db.ICcode != data["code"]:
+        if code_in_db.ICcode != data["UScode"]:
             return import_status("ERROR_MESSAGE_WRONG_TELCODE", "SHARPGOODS_ERROR", "ERROR_WRONG_TELCODE")
 
         if "USinvate" in data:
@@ -109,9 +109,9 @@ class CUsers():
             users["USname"] = Uname
         if "USsex" in data:
             Usex = data["USsex"]
-            if Usex == "男":
+            if Usex == "男".decode("UTF-8"):
                 Usex = 101
-            elif Usex == "女":
+            elif Usex == "女".decode("UTF-8"):
                 Usex = 102
             users["USsex"] = Usex
         if users == {}:
@@ -272,7 +272,7 @@ class CUsers():
         else:
             response_user_info["USsex"] = None
         response_user_info["UScoin"] = users_info.UScoin
-        response_user_info["USinvate"] = users_info.USinvatecode
+        response_user_info["USinvate"] = users_info.USinvate
 
         response_of_get_all = import_status("SUCCESS_MESSAGE_GET_USERINFO", "OK")
         response_of_get_all["data"] = response_user_info

@@ -38,7 +38,7 @@ class SProduct():
     def get_all_brand_by_brid_last(self, brid):
         brand_list = {}
         try:
-            while brid == "0":
+            while brid != "0":
                 brand = self.session.query(model.Brands.BRfromid, model.Brands.BRkey,
                                            model.Brands.BRvalue).filter_by(BRid=brid).first()
                 brid, brkey, brvalue = brand.BRfromid, brand.BRkey, brand.BRvalue
@@ -52,6 +52,19 @@ class SProduct():
             self.session.close()
         return brand_list
 
+    def get_brand_by_brid(self, brid):
+        brand = None
+        try:
+            brand = self.session.query(model.Brands.BRfromid, model.Brands.BRkey, model.Brands.BRvalue)\
+                .filter_by(BRid=brid).first()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            return False
+        finally:
+            self.session.close()
+        return brand
+
     def get_product_by_prid(self, prid):
         product = None
         try:
@@ -64,3 +77,70 @@ class SProduct():
         finally:
             self.session.close()
         return product
+
+    @trans_params
+    def get_pbimg_by_prid(self, prid):
+        pbimg = None
+        try:
+            pbimg = self.session.query(model.ProductsBrands.PBimage).filter_by(PRid=prid).all()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            return False
+        finally:
+            self.session.close()
+        return pbimg
+
+    @trans_params
+    def get_brid_by_prid(self, prid):
+        pbid = None
+        try:
+            pbid = self.session.query(model.ProductsBrands.BRid).filter_by(PRid=prid).all()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            return False
+        finally:
+            self.session.close()
+        return pbid
+
+    @trans_params
+    def get_all_prid(self):
+        prid = None
+        try:
+            prid = self.session.query(model.Products.PRid).all()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            return False
+        finally:
+            self.session.close()
+        return prid
+
+    @trans_params
+    def get_brid_by_key_value(self, key, value):
+        brid = None
+        try:
+            brid = self.session.query(model.Brands.BRid).filter_by(BRkey=key).filter_by(BRvalue=value).all()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            return False
+        finally:
+            self.session.close()
+        return brid
+
+    def get_pball_by_brid(self, brid):
+        pball = None
+        try:
+            pball = self.session.query(model.ProductsBrands.PBimage, model.ProductsBrands.PBunit,
+                                       model.ProductsBrands.PBprice, model.ProductsBrands.PBscore,
+                                       model.ProductsBrands.PBsalesvolume, model.ProductsBrands.PBid)\
+                .filter_by(BRid=brid).first()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            return False
+        finally:
+            self.session.close()
+        return pball

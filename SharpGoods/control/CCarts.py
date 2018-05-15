@@ -123,7 +123,7 @@ class CCarts():
                 return SYSTEM_ERROR
             cart_info = {}
             cart_info["PRquality"] = self.sproduct.get_all_brand_by_brid_last(BRid)
-            cart_info["PBid"] = cart_service_info.PBid
+            cart_info["PBid"] = cart.PBid
             cart_info["PBimage"] = cart_service_info.PBimage
             cart_info["PBsalesvolume"] = cart_service_info.PBsalesvolume
             cart_info["PBprice"] = cart_service_info.PBprice
