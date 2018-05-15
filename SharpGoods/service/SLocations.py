@@ -5,7 +5,7 @@ from models.model import Locations
 
 class SLocations(SBase):
     def __init__(self):
-        super(SLocations).__init__()
+        super(SLocations, self).__init__()
 
     @close_session
     def get_all(self, usid):
@@ -25,4 +25,4 @@ class SLocations(SBase):
     @close_session
     def update_locations_by_loid(self, loid, location):
         self.session.query(Locations).filter_by(
-            Loid=loid).update(location)
+            LOid=loid).update(location)

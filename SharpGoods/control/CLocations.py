@@ -9,7 +9,7 @@ from config.response import SYSTEM_ERROR, PARAMS_MISS
 from common.import_status import import_status
 from service.SLocations import SLocations
 from common.get_model_return_list import get_model_return_list
-
+from common.get_str import get_str
 
 class CLocations():
     def __init__(self):
@@ -44,13 +44,18 @@ class CLocations():
         if "token" not in args:
             return PARAMS_MISS
 
+        location = {}
         for key in self.params_list:
             if key not in data:
                 return PARAMS_MISS
+            location[key] = get_str(data, key)
 
         try:
-            data["LOisedit"] = 301
-            result = self.slocation.add_model("Locations", **data)
+            location["LOisedit"] = 301
+            import uuid
+            location["LOid"] = str(uuid.uuid4())
+            location["USid"] = get_str(args, "token")
+            result = self.slocation.add_model("Locations", **location)
             print(self.title.format("result boolean"))
             print(result)
             print(self.title.format("result boolean"))
