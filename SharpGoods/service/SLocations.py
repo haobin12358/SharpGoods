@@ -19,10 +19,26 @@ class SLocations(SBase):
             Locations.LOcity,
             Locations.LOarea,
             Locations.LOisedit
-        ).filter_by(USid=usid).all()
+        ).filter(
+            Locations.USid == usid, Locations.LOisedit != 303
+        ).all()
         return all_location
 
     @close_session
     def update_locations_by_loid(self, loid, location):
         self.session.query(Locations).filter_by(
             LOid=loid).update(location)
+
+    @close_session
+    def get_location_by_loid(self, loid):
+        return self.session.query(
+            Locations.LOid,
+            Locations.LOname,
+            Locations.LOtelphone,
+            Locations.LOno,
+            Locations.LOdetail,
+            Locations.LOprovince,
+            Locations.LOcity,
+            Locations.LOarea,
+            Locations.LOisedit
+        ).filter(Locations.LOid == loid).first()
