@@ -126,16 +126,17 @@ class Coupons(Base):
     COfilter = Column(Float)      # 优惠券优惠条件，到达金额
     COdiscount = Column(Float)    # 折扣，值为0-1，其中0为免单
     COamount = Column(Float)      # 优惠金额，减免金额，限制最大数目
+    CObrand = Column(String(64))  # 商品类别，限制部分商品使用
     COstart = Column(String(14))  # 优惠券的开始时间
-    Couend = Column(String(14))   # 优惠券的结束时间
+    COend = Column(String(14))    # 优惠券的结束时间
+    COutype = Column(Integer)     # 优惠券限制的使用人群，用于后期扩展会员
+    COtype = Column(Integer)      # 优惠券类型 {801 满减， 802 满折， 803 商品类目限制， 804 无限制， 805 用户类型限制}
 
 class Cardpackage(Base):
     __tablename__ = "Cardpackage"
     CAid = Column(String(64), primary_key=True)
     USid = Column(String(64), nullable=False)
     CAstatus = Column(Integer, default=1)  # 卡包中优惠券的状态 {1:可使用，2: 不可使用}
-    CAstart = Column(String(14))  # 卡包中优惠券的开始时间
-    CAend = Column(String(14))   # 卡包中的优惠券结束时间
     COid = Column(String(64), nullable=False)
 
 class IdentifyingCode(Base):
