@@ -28,13 +28,15 @@ class Locations(Base):
     __tablename__ = "Locations"
     LOid = Column(String(64), primary_key=True)
     LOtelphone = Column(String(14), nullable=False)  # 收件人联系方式
-    LOname = Column(String(128), nullable=False)   # 收件人姓名
-    LOno = Column(String(8), nullable=False)     # 邮编
-    LOdetail = Column(Text, nullable=False)    # 收件人详细地址
+    LOname = Column(String(128), nullable=False)     # 收件人姓名
+    LOno = Column(String(8), nullable=False)         # 邮编
+    LOdetail = Column(Text, nullable=False)          # 收件人详细地址
     LOprovince = Column(String(64), nullable=False)  # 收件人省份
-    LOcity = Column(String(64), nullable=False)  # 收件人城市
-    LOarea = Column(String(64), nullable=False)  # 收件人城区
-    LOisedit = Column(Integer, nullable=False)   # 是否可编辑 {301可编辑， 302不可编辑}
+    LOcity = Column(String(64), nullable=False)      # 收件人城市
+    LOarea = Column(String(64), nullable=False)      # 收件人城区
+    LOisedit = Column(Integer, nullable=False)       # 是否可编辑 {301:可编辑,302:不可编辑,303:已删除}
+    USid = Column(String(64), nullable=False)        # 用户id
+
 
 class Products(Base):
     __tablename__ = "Products"

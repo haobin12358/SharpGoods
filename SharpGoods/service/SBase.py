@@ -35,10 +35,12 @@ class SBase(object):
         print(model_name)
         if not getattr(models, model_name):
             print("model name = {0} error ".format(model_name))
-            return
+            return False
+
         model_bean = eval(" models.{0}()".format(model_name))
         for key in model_bean.__table__.columns.keys():
             if key in kwargs:
                 setattr(model_bean, key, kwargs.get(key))
 
         self.session.add(model_bean)
+        return True

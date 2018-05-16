@@ -16,7 +16,8 @@ class ALocations(Resource):
         print("=======================api===================")
 
         apis = {
-            "get_all_location":"self.clocations.get_all_location()"
+            "get_all_location":"self.clocations.get_all_location()",
+            "del_location": "self.clocations.del_location()"
         }
 
         if locations not in apis:
@@ -30,7 +31,7 @@ class ALocations(Resource):
         print("=======================api===================")
 
         apis = {
-            "new_location":"self.clocations.new_location()",
+            "new_location": "self.clocations.new_location()",
             "update_location": "self.clocations.update_location()"
         }
 
