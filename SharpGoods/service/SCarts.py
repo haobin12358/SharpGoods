@@ -23,7 +23,8 @@ class SCarts(SBase):
             self.session.rollback()
             return False
         finally:
-            return all_cart
+            self.session.close()
+        return all_cart
 
     # @close_session
     # def add_carts(self, **kwargs):

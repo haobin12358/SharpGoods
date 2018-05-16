@@ -16,8 +16,7 @@ class AReviews(Resource):
         print("=======================api===================")
 
         apis = {
-            "create_review": "self.control_review.create_review()",
-            "delete_user_review": "self.control_review.delete_user_review()"
+            "create_review": "self.control_review.create_review()"
         }
 
         if review not in apis:
@@ -30,9 +29,7 @@ class AReviews(Resource):
         print("接口名称是{0}，接口方法是get".format(review))
         print("=======================api===================")
         apis = {
-            "get_review": "self.control_review.get_review()",
-            "get_user_review": "self.control_review.get_user_review()",
-            "get_product_review": "self.control_review.get_product_review()"
+            "get_review": "self.control_review.get_review()"
         }
         if review not in apis:
             from config.response import APIS_WRONG

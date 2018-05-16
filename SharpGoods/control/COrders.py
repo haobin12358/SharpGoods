@@ -6,7 +6,7 @@ from flask import request
 import json
 from common.import_status import import_status
 from config.response import SYSTEM_ERROR, PARAMS_MISS
-from service.Sorders import Sorders
+from service.SOrders import SOrders
 from service.SProduct import SProduct
 from service.SLocations import SLocations
 from service.
@@ -18,7 +18,7 @@ from common.get_model_return_list import get_model_return_list, get_model_return
 
 class COrders():
     def __init__(self):
-        self.sorder = Sorders()
+        self.sorder = SOrders()
         self.slocation = SLocations()
         self.sproduct = SProduct()
         self.scoupons = S

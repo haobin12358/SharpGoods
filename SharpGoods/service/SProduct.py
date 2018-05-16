@@ -144,3 +144,28 @@ class SProduct():
         finally:
             self.session.close()
         return pball
+
+    def get_volue_score_by_pbid(self, pbid):
+        volue_score = None
+        try:
+            volue_score = self.session.query(model.ProductsBrands.PBsalesvolume, model.ProductsBrands.PBscore)\
+                .filter_by(PBid=pbid).first()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            return False
+        finally:
+            self.session.close()
+        return volue_score
+
+    def update_score_by_pbid(self, pbid, product_brand):
+        try:
+            self.session.query(model.ProductsBrands).filter_by(PBid=pbid).update(product_brand)
+            self.session.commit()
+            self.session.close()
+            return True
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            self.session.close()
+            return False
