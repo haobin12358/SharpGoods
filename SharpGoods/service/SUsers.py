@@ -37,7 +37,7 @@ class SUsers():
             new_user.USid = str(uuid.uuid4())
             new_user.UStelphone = utel
             new_user.USpassword = upwd
-            new_user.USname = None
+            new_user.USname = "用户" + utel
             new_user.USsex = None
             new_user.UScoin = 0
             new_user.USinvate = str(uuid.uuid4())  # 待设计
@@ -167,3 +167,14 @@ class SUsers():
             self.session.rollback()
             self.session.close()
             return False
+
+    def get_usname_by_usid(self, usid):
+        usname = None
+        try:
+            usname = self.session.query(model.Users.USname).filter_by(USid=usid).scalar()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+        finally:
+            self.session.close()
+        return usname

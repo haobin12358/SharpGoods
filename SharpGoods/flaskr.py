@@ -4,7 +4,7 @@ import flask_restful
 from apis.AUsers import AUsers
 from apis.AProducts import AProducts
 from apis.ACarts import ACarts
-#from apis.AReviews import AReviews
+from apis.AReviews import AReviews
 from apis.AOrders import AOrders
 from apis.ALocations import ALocations
 from apis.ACoupons import ACoupons
@@ -15,7 +15,7 @@ api = flask_restful.Api(sg)
 api.add_resource(AUsers, "/sharp/goods/users/<string:users>")
 api.add_resource(AProducts, "/sharp/goods/product/<string:product>")
 api.add_resource(ACarts, "/sharp/goods/cart/<string:cart>")
-#api.add_resource(AReviews, "/love/breakfast/review/<string:review>")
+api.add_resource(AReviews, "/sharp/goods/review/<string:review>")
 api.add_resource(AOrders, "/sharp/goods/orders/<string:orders>")
 api.add_resource(ALocations, "/sharp/goods/locations/<string:locations>")
 api.add_resource(ACoupons, "/sharp/goods/card/<string:card>")
