@@ -131,6 +131,7 @@ class COrders():
         order_main["order_abo"] = order_part_list
         order_main["OMcointype"] = cvs.conversion_PBunit.get(order_main.get("OMcointype"), "其他币种")
         order_main["OMstatus"] = cvs.conversion_OMstatus.get(order_main.get("OMstatus"), 0)
+        order_main["OMtime"] = get_web_time_str(order_main.get("OMtime"))
         location = get_model_return_dict(self.slocation.get_location_by_loid(order_main.get("LOid")))
         if location.get("LOisedit") == 303:
             print(import_status("ERROR_MESSAGE_GET_LOCATION", "WORING_LOCATION"))
