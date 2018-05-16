@@ -4,6 +4,12 @@ conversion_PRtype = {501: "自营", 502: "非自营"}
 conversion_PRbrand = {601: "美妆类", 602: "3C类"}
 conversion_OMstatus = {0: "已取消", 7: "未支付", 14: "已支付", 21: "已接单",
                        28: "配送中", 35: "已装箱", 42: "已完成", 49: "已评价"}
+# value 和 key 转置的dict
+conversion_OMstatus_reverse = {v: k for k, v in conversion_OMstatus.items()}
+conversion_PBunit_reverse = {v: k for k, v in conversion_PBunit.items()}
+conversion_PRtype_reverse = {v: k for k, v in conversion_PRtype.items()}
+conversion_PRbrand_reverse = {v: k for k, v in conversion_PRbrand.items()}
+
 
 MTR = 1 / 6.3753
 RTM = 1 / 0.1569

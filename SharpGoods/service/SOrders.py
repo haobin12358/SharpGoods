@@ -57,4 +57,12 @@ class SOrders(SBase):
             OrderMain.OMid, OrderMain.LOid, OrderMain.COid,
             OrderMain.OMabo, OrderMain.OMcointype, OrderMain.OMstatus,
             OrderMain.OMtime, OrderMain.OMprice
-        ).all()
+        ).filter(OrderMain.USid == usid).all()
+
+    @close_session
+    def get_order_main_by_om_id(self, omid):
+        return self.session.query(
+            OrderMain.OMid, OrderMain.LOid, OrderMain.COid,
+            OrderMain.OMabo, OrderMain.OMcointype, OrderMain.OMstatus,
+            OrderMain.OMtime, OrderMain.OMprice
+        ).filter(OrderMain.OMid == omid).first()
