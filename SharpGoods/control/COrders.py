@@ -92,7 +92,7 @@ class COrders():
         for order_part_info in order_part_list:
             try:
                 order_part = {
-                    "OPid": uuid.uuid4(),
+                    "OPid": str( uuid.uuid4()),
                     "OMid": omid,
                     "PBid": get_str(order_part_info, "PBid"),
                     "PRnumber": int(get_str(order_part_info, "PRnumber"))
@@ -143,7 +143,7 @@ class COrders():
         brinfo = {}
         while True:
             brand = get_model_return_dict(self.sproduct.get_brand_by_brid(brid))
-            if not brand.get("BRkey") or brand.get("BRvalue"):
+            if not (brand.get("BRkey") and brand.get("BRvalue")):
                 error = "the brand does not have BRkey or BRvalue. brand = {0}".format(brand)
                 raise Exception(error)
 
@@ -152,7 +152,7 @@ class COrders():
 
             brinfo[brand.get("BRkey")] = brand.get("BRvalue")
 
-            if not brand.get("BRfromid"):
+            if brand.get("BRfromid") == "0":
                 break
             brid = brand.get("BRfromid")
 
