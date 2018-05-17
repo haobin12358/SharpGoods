@@ -23,6 +23,8 @@ class COrders():
         self.sproduct = SProduct()
         self.scoupons = SCoupons()
         self.title = '============{0}============'
+        self.order_main_params = ["OMstatus", "OMprice", "LOid", "OMabo", "COid", "OMcointype", "order_item"]
+        self.order_part_param = ["PBid", "PRnumber"]
 
     def get_order_list(self):
         try:
@@ -63,27 +65,45 @@ class COrders():
 
     def make_order(self):
         args = request.args.to_dict()
+        print(self.title.format("arge"))
+        print(args)
+        print(self.title.format("arge"))
+
         if "token" not in args:
             return PARAMS_MISS
 
         data = json.loads(request.data)
+        print(self.title.format("data"))
+        print(data)
+        print(self.title.format("data"))
+
         if "LOid" not in data:
             print("LOid is not find")
             return PARAMS_MISS
-        import uuid
-        omid = str(uuid.uuid4())
-        order_main = {
-            "OMid": omid,
-            "LOid": get_str(data, "LOid"),
-            "OMabo": get_str(data, "OMmessage"),
-            "USid": args.get("token"),
-            "OMcointype": cvs.conversion_PBunit_reverse.get(get_str(data, "OMcointype"), 402),
-            "COid": get_str(data, "COid"),
-            "OMprice": float(get_str(data, "OMprice")),
-            "OMtime": get_db_time_str(),
-            "OMstatus": cvs.conversion_OMstatus_reverse.get(get_str(data, "OMstatus"))
-        }
-        self.sorder.add_model("OrderMain", **order_main)
+        loid = get_str(data, "Loid")
+
+        try:
+            self.slocation.update_locations_by_loid(loid, {"LOisedit": 302})
+            print(self.title.format("update location success"))
+            import uuid
+            omid = str(uuid.uuid4())
+            order_main = {
+                "OMid": omid,
+                "LOid": loid,
+                "OMabo": get_str(data, "OMmessage"),
+                "USid": args.get("token"),
+                "OMcointype": cvs.conversion_PBunit_reverse.get(get_str(data, "OMcointype"), 402),
+                "COid": get_str(data, "COid"),
+                "OMprice": float(get_str(data, "OMprice")),
+                "OMtime": get_db_time_str(),
+                "OMstatus": cvs.conversion_OMstatus_reverse.get(get_str(data, "OMstatus"))
+            }
+            self.sorder.add_model("OrderMain", **order_main)
+        except Exception as e:
+            print(self.title.format("system error"))
+            print(e.message)
+            print(self.title.format("system error"))
+            return SYSTEM_ERROR
 
         order_part_list = data.get("order_items")
         if not order_part_list:
@@ -109,6 +129,21 @@ class COrders():
         return data
 
     def update_order_status(self):
+        args = request.args.to_dict()
+        print(self.title.format("arge"))
+        print(args)
+        print(self.title.format("arge"))
+
+        if "token" not in args:
+            return PARAMS_MISS
+
+        data = json.loads(request.data)
+        print(self.title.format("data"))
+        print(data)
+        print(self.title.format("data"))
+        # if set(self.order_main_params).issuperset(data.keys()):
+
+
         return {
             "status":200,
             "messages":"更新订单状态成功"

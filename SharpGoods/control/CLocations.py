@@ -8,13 +8,13 @@ import json
 from config.response import SYSTEM_ERROR, PARAMS_MISS
 from common.import_status import import_status
 from service.SLocations import SLocations
-from common.get_model_return_list import get_model_return_list
+from common.get_model_return_list import get_model_return_list, get_model_return_dict
 from common.get_str import get_str
 
 class CLocations():
     def __init__(self):
         self.slocation = SLocations()
-        self.params_list = ["LOno", "LOname", "LOtelphone", "LOdetail", "LOprovince", "LOcity", "LOarea"]
+        self.params_list = ["LOno", "LOname", "LOtelphone", "LOdetail", "LOprovince", "LOcity", "LOarea", "LOid"]
         self.title = '============{0}============'
 
     def get_all_location(self):
@@ -87,7 +87,14 @@ class CLocations():
             return import_status("ERROR_MESSAGE_UPDATE_LOCATION_URL", "SHARPGOODS_ERROR", "ERROR_PARAMS")
 
         try:
-            self.slocation.update_locations_by_loid(data.get("Loid"), data)
+            location = get_model_return_dict(self.slocation.get_location_by_loid(get_str(data, "LOid")))
+            if location.get("LOisedit") != 301:
+                return import_status("ERROR_MESSAGE_NO_ROLE_UPDATE_LOCATION", "SHARPGOODS_ERROR", "ERROR_ROLE")
+
+            for key in data:
+                location[key] = get_str(data, key)
+
+            self.slocation.update_locations_by_loid(get_str(data, "LOid"), location)
             return import_status("SUCCESS_MESSAGE_UPDSTE_LOCATION", "OK")
         except Exception as e:
             print(self.title.format("update location error"))
@@ -104,6 +111,9 @@ class CLocations():
         if "token" not in args or "LOid" not in args:
             return PARAMS_MISS
         try:
+            location = get_model_return_dict(self.slocation.get_location_by_loid(get_str(args, "LOid")))
+            if location.get("LOisedit") != "301":
+                return import_status("ERROR_MESSAGE_NO_ROLE_UPDATE_LOCATION", "SHARPGOODS_ERROR", "ERROR_ROLE")
             self.slocation.update_locations_by_loid(args.get("LOid"), {"LOisedit": 303})
             return import_status("SUCCESS_MESSAGE_DELETE_LOCATION", "OK")
         except Exception as e:
