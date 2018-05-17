@@ -46,7 +46,8 @@ class Products(Base):
     # PRunit = Column(Integer, nullable=False) # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
     PRvideo = Column(Text, nullable=False)  # 宣传视频
     # PRstatus = Column(Integer, default=1)  # 商品状态 {201:在售状态 202:下架状态}
-    # PRimage = Column(Text, nullable=False)  # 商品图片存放地址
+    PRimage = Column(Text, nullable=False)  # 商品图片存放地址
+    PRaboimage = Column(Text)  # 商品详情图存放地址
     PRinfo = Column(Text)  # 商品介绍
     # PRsalesvolume = Column(Integer, nullable=False)  # 商品销量
     # PRscore = Column(Float, nullable=True)  # 商品评分

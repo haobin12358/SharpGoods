@@ -31,6 +31,8 @@ class CProducts():
         product_info["PRname"] = product.PRname
         product_info["PRvideo"] = product.PRvideo
         product_info["PRinfo"] = product.PRinfo
+        product_info["PRimage"] = product.PRimage
+        product_info["PRaboimage"] = product.PRaboimage
         PRbrand = product.PRbrand
         PRtype = product.PRtype
         if PRbrand == 601:
@@ -49,9 +51,9 @@ class CProducts():
         print "=================PBimage================="
         print PBimage
         print "=================PBimage================="
-        product_info["PRimage"] = []
+        product_info["PBimage"] = []
         for img in PBimage:
-            product_info["PRimage"].append(img)
+            product_info["PBimage"].append(img)
         product_info["PRquality"] = {}
         BRid = self.sproduct.get_brid_by_prid(PRid)
         print "=================BRid================="
@@ -93,6 +95,8 @@ class CProducts():
             product_info["PRname"] = product.PRname
             product_info["PRvideo"] = product.PRvideo
             product_info["PRinfo"] = product.PRinfo
+            product_info["PRimage"] = product.PRimage
+            product_info["PRaboimage"] = product.PRaboimage
             PRbrand = product.PRbrand
             PRtype = product.PRtype
             if PRbrand == 601:
@@ -111,9 +115,9 @@ class CProducts():
             print "=================PBimage================="
             print PBimage
             print "=================PBimage================="
-            product_info["PRimage"] = []
+            product_info["PBimage"] = []
             for img in PBimage:
-                product_info["PRimage"].append(img)
+                product_info["PBimage"].append(img)
             product_info["PRquality"] = {}
             BRid = self.sproduct.get_brid_by_prid(PRid)
             print "=================BRid================="
