@@ -246,8 +246,89 @@ class MakeData():
         except Exception as e:
             print e.message
 
+    def set_coid(self):
+        coid_list = []
+        while len(coid_list) < 4:
+            coid_list.append(str(uuid.uuid4()))
+        return coid_list
+
+    def add_coupons(self, coid):
+        try:
+            add_model("Coupons",
+                      **{
+                          "COid":coid[0],
+                          "COfilter":100.99,
+                          "COamount":10,
+                          "COstart":"20180517000000",
+                          "COend":"20180520000000",
+                          "COtype":801
+                      })
+            add_model("Coupons",
+                      **{
+                          "COid": coid[1],
+                          "COfilter": 100.99,
+                          "COdiscount": 0.5,
+                          "COstart": "20180517000000",
+                          "COend": "20180520000000",
+                          "COtype":802
+                      })
+            add_model("Coupons",
+                      **{
+                          "COid": coid[2],
+                          "CObrand": "美妆类",
+                          "COamount": 10,
+                          "COstart": "20180517000000",
+                          "COend": "20180520000000",
+                          "COtype":803
+                      })
+            add_model("Coupons",
+                      **{
+                          "COid": coid[3],
+                          "COamount": 10,
+                          "COstart": "20180517000000",
+                          "COend": "20180520000000",
+                          "COtype":804
+                      })
+        except Exception as e:
+            print e.message
+
+    def add_cardpackage(self, coid):
+        try:
+            add_model("Cardpackage",
+                      **{
+                          "CAid":str(uuid.uuid4()),
+                          "USid":"de98529f-b1f0-4fd6-8908-8b7d522d22c6",
+                          "CAstatus":1,
+                          "COid":coid[0]
+                      })
+            add_model("Cardpackage",
+                      **{
+                          "CAid": str(uuid.uuid4()),
+                          "USid": "de98529f-b1f0-4fd6-8908-8b7d522d22c6",
+                          "CAstatus": 1,
+                          "COid": coid[1]
+                      })
+            add_model("Cardpackage",
+                      **{
+                          "CAid": str(uuid.uuid4()),
+                          "USid": "de98529f-b1f0-4fd6-8908-8b7d522d22c6",
+                          "CAstatus": 1,
+                          "COid": coid[2]
+                      })
+            add_model("Cardpackage",
+                      **{
+                          "CAid": str(uuid.uuid4()),
+                          "USid": "de98529f-b1f0-4fd6-8908-8b7d522d22c6",
+                          "CAstatus": 1,
+                          "COid": coid[3]
+                      })
+        except Exception as e:
+            print e.message
+
 if __name__ == "__main__":
+
     makedata = MakeData()
+    '''
     uid = makedata.setUid()
     pbid = makedata.set_pbid()
     pid = makedata.set_pid()
@@ -258,3 +339,7 @@ if __name__ == "__main__":
     makedata.add_cart(uid, pbid)
     makedata.add_brand(brid)
     makedata.add_productbrand(pbid,pid,brid)
+    '''
+    coid = makedata.set_coid()
+    makedata.add_coupons(coid)
+    makedata.add_cardpackage(coid)

@@ -47,9 +47,16 @@ class SCoupons(SBase):
         ).filter(Cardpackage.USid == uid, Cardpackage.COid == couid).first()
 
 
-    @close_session
     def get_coupons_by_couid(self, couid):
-        return self.session.query(
-            Coupons.COid, Coupons.COamount, Coupons.COdiscount,
-            Coupons.COstart, Coupons.COend, Coupons.COfilter, Coupons.CObrand, Coupons.COutype, Coupons.COtype
-        ).filter(Coupons.COid == couid).first()
+        coupons = None
+        try:
+            coupons = self.session.query(
+                Coupons.COid, Coupons.COamount, Coupons.COdiscount,
+                Coupons.COstart, Coupons.COend, Coupons.COfilter, Coupons.CObrand, Coupons.COutype, Coupons.COtype
+            ).filter(Coupons.COid == couid).first()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+        finally:
+            self.session.close()
+        return coupons
