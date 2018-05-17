@@ -104,7 +104,7 @@ class CLocations():
         if "token" not in args or "LOid" not in args:
             return PARAMS_MISS
         try:
-            self.slocation.update_locations_by_loid(args.get("LOid"), {"LOisedit": 302})
+            self.slocation.update_locations_by_loid(args.get("LOid"), {"LOisedit": 303})
             return import_status("SUCCESS_MESSAGE_DELETE_LOCATION", "OK")
         except Exception as e:
             print(self.title.format("del location error"))

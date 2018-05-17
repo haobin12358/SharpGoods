@@ -97,7 +97,7 @@ class Shops(Base):
 
 class OrderMain(Base):
     __tablename__ = "OrderMain"
-    OMid = Column(String(64), primary_key=True)        # 主订单id
+    OMid = Column(String(64), primary_key=True)         # 主订单id
     OMtime = Column(String(14), nullable=False)         # 下单时间
     OMstatus = Column(Integer, nullable=False)          # 订单状态 具体状态如下：
     # {0 : 已取消, 7 : 未支付, 14 : 已支付, 21 : 已接单, 28 : 配送中, 35 : 已装箱, 42 : 已完成,  49 : 已评价}
@@ -105,15 +105,15 @@ class OrderMain(Base):
     USid = Column(String(64))                           # 用户id
     LOid = Column(String(64))                           # 配送地址id
     OMabo = Column(Text)                                # 订单备注
-    OMcointype = Column(Integer, nullable=False) # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
+    OMcointype = Column(Integer, nullable=False)  # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
     COid = Column(String(64))  # 优惠券id
 
 class Orderpart(Base):
     __tablename__ = "OrderPart"
     OPid = Column(String(64), primary_key=True)  # 分订单id
     OMid = Column(String(64), nullable=False)    # 主订单id
-    PBid = Column(String(64), nullable=False)     # 商品id
-    PRnumber = Column(Integer, nullable=False)       # 商品数量
+    PBid = Column(String(64), nullable=False)    # 商品id
+    PRnumber = Column(Integer, nullable=False)   # 商品数量
 
 class Cart(Base):
     __tablename__ = "Cart"

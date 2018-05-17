@@ -2,17 +2,15 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
-import uuid
-import DBSession
+from SBase import SBase, close_session
+from models.model import OrderMain, Orderpart
 from models import model
 from common.TransformToList import trans_params
 
-class SOrders():
+
+class SOrders(SBase):
     def __init__(self):
-        try:
-            self.session = DBSession.db_session()
-        except Exception as e:
-            print(e.message)
+        super(SOrders, self).__init__()
 
     def get_uid_by_omid(self, omid):
         uid = None
@@ -47,3 +45,24 @@ class SOrders():
             self.session.close()
             print e.message
             return False
+
+    @close_session
+    def get_order_part_list_by_omid(self, omid):
+        return self.session.query(
+            Orderpart.OPid, Orderpart.PBid, Orderpart.PRnumber).filter(Orderpart.OMid == omid).all()
+
+    @close_session
+    def get_order_main_list_by_usid(self, usid):
+        return self.session.query(
+            OrderMain.OMid, OrderMain.LOid, OrderMain.COid,
+            OrderMain.OMabo, OrderMain.OMcointype, OrderMain.OMstatus,
+            OrderMain.OMtime, OrderMain.OMprice
+        ).filter(OrderMain.USid == usid).all()
+
+    @close_session
+    def get_order_main_by_om_id(self, omid):
+        return self.session.query(
+            OrderMain.OMid, OrderMain.LOid, OrderMain.COid,
+            OrderMain.OMabo, OrderMain.OMcointype, OrderMain.OMstatus,
+            OrderMain.OMtime, OrderMain.OMprice
+        ).filter(OrderMain.OMid == omid).first()
