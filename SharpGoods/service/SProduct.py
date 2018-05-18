@@ -209,3 +209,15 @@ class SProduct():
         finally:
             self.session.close()
         return pbvolume
+
+    def get_prid_by_pbid(self, pbid):
+        prid = None
+        try:
+            prid = self.session.query(model.ProductsBrands.PRid).filter_by(PBid=pbid).scalar()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            return False
+        finally:
+            self.session.close()
+        return prid
