@@ -3,8 +3,8 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
-from flask_restful import Resource
-
+from flask_restful import Resource,request
+from config.response import PARAMS_MISS
 
 class AOther(Resource):
     def __init__(self):
@@ -31,3 +31,25 @@ class AOther(Resource):
               4．适用法律
               
                   本使用条款及隐私权政策受中国的法律管辖。如果本网站条款或隐私权政策的任何部分失效，将不影响其余条款的有效性和可执行性。 """
+        if other == "payconfig":
+            args = request.args.to_dict()
+            if "OMid" not in args:
+                return PARAMS_MISS
+            OMid = args["OMid"]
+            response = {}
+            response["appId"] = "wx284751ea4c889568"
+            import time
+            response["timeStamp"] = int(time.time())
+            import uuid
+            response["nonceStr"] = str(uuid.uuid1()).replace("-", "")
+            response["package"] = "prepay_id=" + OMid.replace("-", "")
+            response["signType"] = "MD5"
+            key_sign = "appId={0}&nonceStr={1}&package={2}&signType={3}&timeStamp={4}&key={5}".format(
+                response["appId"], response["nonceStr"], response["package"], response["signType"], response["timeStamp"], "hangzhouzhenlangjinchukou"
+            )
+            print key_sign
+            import md5
+            s = md5.new()
+            s = s.update(key_sign.encode(encoding="utf-8"))
+            response["paySign"] = s.hexdigest().upper()
+            return response
