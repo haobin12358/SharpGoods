@@ -187,7 +187,7 @@ class CProducts():
                         product_info["PRquality"][BRkey] = []
                         product_info["PRquality"][BRkey].append(BRvalue)
             product_infos.append(product_info)
-        response_of_product = import_status("SUCCESS_MESSAGE_GET_PRODUCT_LIST", "OK")
+        response_of_product = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         response_of_product["data"] = product_infos
         return response_of_product
 
@@ -266,7 +266,7 @@ class CProducts():
                         if BRvalue not in data[key] and BRkey == key:
                             data[key].append(BRvalue)
 
-        response = import_status("SUCCESS_MESSAGE_GET_TRUE_BRAND", "OK")
+        response = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         response["data"] = data
         return response
 
@@ -345,6 +345,6 @@ class CProducts():
         data["PBsalesvolume"] = pball.PBsalesvolume
         data["PBscore"] = pball.PBscore
 
-        response = import_status("SUCCESS_MESSAGE_GET_PRODUCT_BRAND", "OK")
+        response = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         response["data"] = data
         return response

@@ -33,7 +33,7 @@ class COrders():
                 return PARAMS_MISS
             order_list = get_model_return_list(self.sorder.get_order_main_list_by_usid(get_str(args, "token")))
 
-            data = import_status("SUCCESS_MESSAGE_GET_ORDER_LIST", "OK")
+            data = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
 
             for order_main in order_list:
                 self._get_order_abo_by_order_main(order_main)
@@ -54,7 +54,7 @@ class COrders():
 
             order_main = get_model_return_dict(self.sorder.get_order_main_by_om_id(get_str(args, "OMid")))
             self._get_order_abo_by_order_main(order_main)
-            data = import_status("SUCCESS_MESSAGE_GET_ORDER_ABO", "OK")
+            data = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
             data["data"] = order_main
             return data
         except Exception as e:
@@ -157,7 +157,12 @@ class COrders():
             return SYSTEM_ERROR
 
     def _get_product_into_order_abo(self, pbid):
+        print(self.title.format("get PBid"))
+        print(pbid)
+        print(self.title.format("get PBid"))
         product = get_model_return_dict(self.sproduct.get_product_by_pbid(pbid))
+        if not product:
+            raise Exception("SYSTEM ERROR NO FIDN PBID")
         product.update(get_model_return_dict(self.sproduct.get_product_by_prid(product.get("PRid"))))
         product.update(self._get_brinfo(product.get("BRid")))
         product["PBunit"] = cvs.conversion_PBunit.get(product.get("PBunit", "其他币种"))
@@ -214,24 +219,33 @@ class COrders():
         OMcointype = "￥"
         order_list = []
         OMprice = 0
-        for product in products_list:
-            prnumber = product.get("PRnumber")
-            product = self._get_product_into_order_abo(product.get("PBid"))
-            if product.get("PBunit") != OMcointype:
-                #TODO 增加换算过程
-                pass
-            OMprice += (product.get("PBprice") * prnumber)
-            order_list.append(product)
+        try:
+            for product in products_list:
+                prnumber = product.get("PRnumber")
+                product = self._get_product_into_order_abo(product.get("PBid"))
+                if product.get("PBunit") != OMcointype:
+                    #TODO 增加换算过程
+                    pass
+                OMprice += (product.get("PBprice") * prnumber)
+                order_list.append(product)
 
-        if "COid" in data and get_str(data, "COid"):
-            coupon = self.scoupons.get_coupons_by_couid(get_str(data, "Coid"))
-            OMprice = self.compute_om_price_by_coupons(coupon, OMprice)
-            if not isinstance(OMprice, float):
-                return OMprice
+            if "COid" in data and get_str(data, "COid"):
+                coupon = self.scoupons.get_coupons_by_couid(get_str(data, "Coid"))
+                OMprice = self.compute_om_price_by_coupons(coupon, OMprice)
+                if not isinstance(OMprice, float):
+                    return OMprice
 
-        data = import_status("SUCCESS_MESSAGE_GET_ORDER_PRICE", "OK")
-        data["data"] = {"OMprice": OMprice, "OMcointype": OMcointype, "productlist": order_list}
-        return data
+            print(self.title.format("OMprice"))
+            print(OMprice)
+            print(self.title.format("OMprice"))
+
+            data = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
+            data["data"] = {"OMprice": OMprice, "OMcointype": OMcointype, "productlist": order_list}
+            return data
+        except Exception as e:
+            print(self.title.format("get order error"))
+            print(e.message)
+            print(self.title.format("get order error"))
 
     def compute_om_price_by_coupons(self, coupon, omprice):
         time_now = get_db_time_str()
