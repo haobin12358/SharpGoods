@@ -48,8 +48,11 @@ class AOther(Resource):
                 response["appId"], response["nonceStr"], response["package"], response["signType"], response["timeStamp"], "hangzhouzhenlangjinchukou"
             )
             print key_sign
-            import md5
-            s = md5.new()
-            s = s.update(key_sign.encode(encoding="utf-8"))
+            print type(key_sign)
+            import hashlib
+            s = hashlib.md5()
+            print s
+            s.update(key_sign)
+            print s
             response["paySign"] = s.hexdigest().upper()
             return response
