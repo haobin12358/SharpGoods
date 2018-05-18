@@ -33,7 +33,8 @@ class AOrders(Resource):
 
         apis = {
             "make_main_order":"self.corders.make_order()",
-            "update_order_status":"self.corders.update_order_status()"
+            "update_order_status":"self.corders.update_order_status()",
+            "order_price": "self.corders.get_order_price()"
         }
 
         if orders not in apis:
