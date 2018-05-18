@@ -59,19 +59,24 @@ class CReview():
         for review in data:
             if "PBid" not in review or "REcontent" not in review or "REscore" not in review:
                 return PARAMS_MISS
-            add_review = self.service_review.new_review(review["PBid"], uid, data["REcontent"])
+            PRid = self.sproduct.get_prid_by_pbid(review["PBid"])
+            print "=================PRid================="
+            print PRid
+            print "=================PRid================="
+            REcontent = review["REcontent"]
+            add_review = self.service_review.new_review(PRid, uid, REcontent)
             if not add_review:
                 return SYSTEM_ERROR
-            product = self.sproduct.get_volue_score_by_pbid(data["PBid"])
+            product = self.sproduct.get_volue_score_by_pbid(review["PBid"])
             print "=================product================="
             print product
             print "=================product================="
             PBscore,PBvolue = product.PBscore, product.PBsalesvolume
-            score = (data["REscore"] + PBscore * PBvolue)/PBvolue
+            score = (review["REscore"] + PBscore * PBvolue)/PBvolue
             product_brand = {}
-            product_brand["PBid"] = data["PBid"]
+            product_brand["PBid"] = review["PBid"]
             product_brand["PBscore"] = score
-            update_product = self.sproduct.update_score_by_pbid(data["PBid"], product_brand)
+            update_product = self.sproduct.update_score_by_pbid(review["PBid"], product_brand)
             if not update_product:
                 return SYSTEM_ERROR
         order_main = {}
@@ -93,13 +98,11 @@ class CReview():
         PRid = args["PRid"]
         PBid_list = self.sproduct.get_pbid_by_prid(PRid)
         review_list = []
-        for PBid in PBid_list:
-            all_review = self.service_review.get_review_by_pbid(PBid)
-            print "=================all_review================="
-            print all_review
-            print "=================all_review================="
-            if not all_review:
-                return SYSTEM_ERROR
+        all_review = self.service_review.get_review_by_pbid(PRid)
+        print "=================all_review================="
+        print all_review
+        print "=================all_review================="
+        if all_review:
             for review in all_review:
                 reviews = {}
                 REid = review.REid
