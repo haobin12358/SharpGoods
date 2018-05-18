@@ -26,8 +26,31 @@ class CProducts():
         print "=================product================="
         if not product:
             return SYSTEM_ERROR
+        product_price = [9999999,-1]
+        product_volue = 0
+        product_price_list = self.sproduct.get_pbprice_by_prid(PRid)
+        print "=================product_price_list================="
+        print product_price_list
+        print "=================product_price_list================="
+        if not product_price_list:
+            return SYSTEM_ERROR
+        for row in product_price_list:
+            if row < product_price[0]:
+                product_price[0] = row
+            if row > product_price[1]:
+                product_price[1] = row
+        product_volue_list = self.sproduct.get_pbvolume_by_prid(PRid)
+        print "=================product_volue_list================="
+        print product_volue_list
+        print "=================product_volue_list================="
+        if not product_volue_list:
+            return SYSTEM_ERROR
+        for row in product_volue_list:
+            product_volue = product_volue + row
         product_info = {}
         product_info["PRid"] = PRid
+        product_info["PRprice"] = str(product_price[0]) +  "-" + str(product_price[1])
+        product_info["PRsalevolume"] = product_volue
         product_info["PRname"] = product.PRname
         product_info["PRvideo"] = product.PRvideo
         product_info["PRinfo"] = product.PRinfo
@@ -90,8 +113,34 @@ class CProducts():
             print "=================product================="
             if not product:
                 return SYSTEM_ERROR
+            product_price = [9999999, -1]
+            product_volue = 0
+            product_price_list = self.sproduct.get_pbprice_by_prid(PRid)
+            print "=================product_price_list================="
+            print product_price_list
+            print "=================product_price_list================="
+            if not product_price_list:
+                return SYSTEM_ERROR
+            for row in product_price_list:
+                if row < product_price[0]:
+                    product_price[0] = row
+                if row > product_price[1]:
+                    product_price[1] = row
+            product_volue_list = self.sproduct.get_pbvolume_by_prid(PRid)
+            print "=================product_volue_list================="
+            print product_volue_list
+            print "=================product_volue_list================="
+            if not product_volue_list:
+                return SYSTEM_ERROR
+            for row in product_volue_list:
+                product_volue = product_volue + row
             product_info = {}
             product_info["PRid"] = PRid
+            if product_price[0] == product_price[1]:
+                product_info["PRprice"] = product_price[0]
+            else:
+                product_info["PRprice"] = str(product_price[0]) + "-" + str(product_price[1])
+            product_info["PRsalevolume"] = product_volue
             product_info["PRname"] = product.PRname
             product_info["PRvideo"] = product.PRvideo
             product_info["PRinfo"] = product.PRinfo

@@ -88,32 +88,34 @@ class CReview():
         print args
         print "=================args================="
         # 判断url参数是否异常
-        if "PBid" not in args:
+        if "PRid" not in args:
             return PARAMS_MISS
-        PBid = args["PBid"]
-        all_review = self.service_review.get_review_by_pbid(PBid)
-        print "=================all_review================="
-        print all_review
-        print "=================all_review================="
-        if not all_review:
-            return SYSTEM_ERROR
+        PRid = args["PRid"]
+        PBid_list = self.sproduct.get_pbid_by_prid(PRid)
         review_list = []
-        for review in all_review:
-            reviews = {}
-            REid = review.REid
-            REtime = review.REtime
-            REtime = get_web_time_str(REtime)
-            USid = review.USid
-            REcontent = review.REcontent
-            USname = self.suser.get_usname_by_usid(USid)
-            print "=================USname================="
-            print USname
-            print "=================USname================="
-            reviews["REid"] = REid
-            reviews["REtime"] = REtime
-            reviews["USname"] = USname
-            reviews["REcontent"] = REcontent
-            review_list.append(reviews)
+        for PBid in PBid_list:
+            all_review = self.service_review.get_review_by_pbid(PBid)
+            print "=================all_review================="
+            print all_review
+            print "=================all_review================="
+            if not all_review:
+                return SYSTEM_ERROR
+            for review in all_review:
+                reviews = {}
+                REid = review.REid
+                REtime = review.REtime
+                REtime = get_web_time_str(REtime)
+                USid = review.USid
+                REcontent = review.REcontent
+                USname = self.suser.get_usname_by_usid(USid)
+                print "=================USname================="
+                print USname
+                print "=================USname================="
+                reviews["REid"] = REid
+                reviews["REtime"] = REtime
+                reviews["USname"] = USname
+                reviews["REcontent"] = REcontent
+                review_list.append(reviews)
         response = import_status("SUCCESS_MESSAGE_GET_REVIEW", "OK")
         response["data"] = review_list
         return response

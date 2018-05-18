@@ -34,6 +34,8 @@ class CUsers():
         print "=================code_in_db================="
         print code_in_db
         print "=================code_in_db================="
+        if not code_in_db:
+            return import_status("ERROR_MESSAGE_WRONG_TELCODE", "SHARPGOODS_ERROR", "ERROR_WRONG_TELCODE")
         if code_in_db.ICcode != data["UScode"]:
             return import_status("ERROR_MESSAGE_WRONG_TELCODE", "SHARPGOODS_ERROR", "ERROR_WRONG_TELCODE")
 
@@ -234,7 +236,7 @@ class CUsers():
             status = 405
         response_ok = {}
         response_ok["status"] = status
-        response_ok["messages"] = response_send_message["Message"]
+        response_ok["message"] = response_send_message["Message"]
 
         return response_ok
 
