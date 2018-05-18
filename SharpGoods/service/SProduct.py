@@ -170,3 +170,42 @@ class SProduct():
             self.session.rollback()
             self.session.close()
             return False
+
+    @trans_params
+    def get_pbid_by_prid(self, prid):
+        pbid = None
+        try:
+            pbid = self.session.query(model.ProductsBrands.PBid).filter_by(PRid=prid).all()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            return False
+        finally:
+            self.session.close()
+        return pbid
+
+    @trans_params
+    def get_pbprice_by_prid(self, prid):
+        pbprice = None
+        try:
+            pbprice = self.session.query(model.ProductsBrands.PBprice).filter_by(PRid=prid).all()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            return False
+        finally:
+            self.session.close()
+        return pbprice
+
+    @trans_params
+    def get_pbvolume_by_prid(self, prid):
+        pbvolume = None
+        try:
+            pbvolume = self.session.query(model.ProductsBrands.PBsalesvolume).filter_by(PRid=prid).all()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+            return False
+        finally:
+            self.session.close()
+        return pbvolume
