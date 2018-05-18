@@ -79,7 +79,7 @@ class CCoupons():
         except Exception as e:
             print("ERROR: " + e.message)
             return SYSTEM_ERROR
-        response = import_status("SUCCESS_MESSAGE_GET_COUPON_LIST", "OK")
+        response = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         response["data"] = cart_list
         return response
 
@@ -140,7 +140,7 @@ class CCoupons():
             return SYSTEM_ERROR
         for pbid in data:
             pass
-        response = import_status("SUCCESS_MESSAGE_GET_COUPON_LIST", "OK")
+        response = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         response["data"] = cart_list
         return response
 

@@ -276,6 +276,6 @@ class CUsers():
         response_user_info["UScoin"] = users_info.UScoin
         response_user_info["USinvate"] = users_info.USinvate
 
-        response_of_get_all = import_status("SUCCESS_MESSAGE_GET_USERINFO", "OK")
+        response_of_get_all = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         response_of_get_all["data"] = response_user_info
         return response_of_get_all

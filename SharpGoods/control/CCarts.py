@@ -158,6 +158,6 @@ class CCarts():
             else:
                 cart_info["PRtype"] = "未知商品"
             cart_info_list.append(cart_info)
-        res_get_all = import_status("SUCCESS_MESSAGE_GET_CART", "OK")
+        res_get_all = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         res_get_all["data"] = cart_info_list
         return res_get_all
