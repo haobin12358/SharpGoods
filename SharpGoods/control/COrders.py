@@ -36,7 +36,7 @@ class COrders():
             data = import_status("SUCCESS_MESSAGE_GET_ORDER_LIST", "OK")
 
             for order_main in order_list:
-                self.get_order_abo_by_order_main(order_main)
+                self._get_order_abo_by_order_main(order_main)
 
             data["data"] = order_list
             return data
@@ -53,7 +53,7 @@ class COrders():
                 return PARAMS_MISS
 
             order_main = get_model_return_dict(self.sorder.get_order_main_by_om_id(get_str(args, "OMid")))
-            self.get_order_abo_by_order_main(order_main)
+            self._get_order_abo_by_order_main(order_main)
             data = import_status("SUCCESS_MESSAGE_GET_ORDER_ABO", "OK")
             data["data"] = order_main
             return data
@@ -105,7 +105,7 @@ class COrders():
             print(self.title.format("system error"))
             return SYSTEM_ERROR
 
-        order_part_list = data.get("order_items")
+        order_part_list = data.get("orderitems")
         if not order_part_list:
             print("order items not find")
             return PARAMS_MISS
@@ -141,27 +141,34 @@ class COrders():
         print(self.title.format("data"))
         print(data)
         print(self.title.format("data"))
-        # if set(self.order_main_params).issuperset(data.keys()):
+        if "OMid" not in data or "OMstatus" not in data:
+            return PARAMS_MISS
+        order = {"OMstatus": cvs.conversion_OMstatus_reverse.get(get_str(data, "OMstatus"))}
+        print(self.title.format("order"))
+        print(order)
+        print(self.title.format("order"))
+        try:
+            self.sorder.update_omstatus_by_omid(get_str(data, "OMid"), order)
+            return import_status("SUCCESS_MESSAGE_UPDATE_ORDER", "OK")
+        except Exception as e:
+            print(self.title.format("update order error"))
+            print(e.message)
+            print(self.title.format("update order error"))
+            return SYSTEM_ERROR
 
-
-        return {
-            "status":200,
-            "messages":"更新订单状态成功"
-        }
-
-    def get_product_into_order_abo(self, pbid):
+    def _get_product_into_order_abo(self, pbid):
         product = get_model_return_dict(self.sproduct.get_product_by_pbid(pbid))
         product.update(get_model_return_dict(self.sproduct.get_product_by_prid(product.get("PRid"))))
-        product.update(self.get_brinfo(product.get("BRid")))
+        product.update(self._get_brinfo(product.get("BRid")))
         product["PBunit"] = cvs.conversion_PBunit.get(product.get("PBunit", "其他币种"))
         product["PRbrand"] = cvs.conversion_PRbrand.get(product.get("PRbrand"), "其他")
         product["PRtype"] = cvs.conversion_PRtype.get(product.get("PRtype"))
         return product
 
-    def get_order_abo_by_order_main(self, order_main):
+    def _get_order_abo_by_order_main(self, order_main):
         order_part_list = get_model_return_list(self.sorder.get_order_part_list_by_omid(order_main.get("OMid")))
         for order_part in order_part_list:
-            order_part.update(self.get_product_into_order_abo(order_part.get("PBid")))
+            order_part.update(self._get_product_into_order_abo(order_part.get("PBid")))
 
         order_main["order_abo"] = order_part_list
         order_main["OMcointype"] = cvs.conversion_PBunit.get(order_main.get("OMcointype"), "其他币种")
@@ -174,7 +181,7 @@ class COrders():
         coupon = get_model_return_dict(self.scoupons.get_coupons_by_couid(order_main.get("COid")))
         order_main.update(coupon)
 
-    def get_brinfo(self, brid):
+    def _get_brinfo(self, brid):
         brinfo = {}
         while True:
             brand = get_model_return_dict(self.sproduct.get_brand_by_brid(brid))
@@ -192,3 +199,67 @@ class COrders():
             brid = brand.get("BRfromid")
 
         return brinfo
+
+    def get_order_price(self):
+        args = request.args.to_dict()
+        print(self.title.format("arge"))
+        print(args)
+        print(self.title.format("arge"))
+
+        data = json.loads(request.data)
+        print(self.title.format("data"))
+        print(data)
+        print(self.title.format("data"))
+        products_list = data.get("productlist")
+        OMcointype = "￥"
+        order_list = []
+        OMprice = 0
+        for product in products_list:
+            prnumber = product.get("PRnumber")
+            product = self._get_product_into_order_abo(product.get("PBid"))
+            if product.get("PBunit") != OMcointype:
+                #TODO 增加换算过程
+                pass
+            OMprice += (product.get("PBprice") * prnumber)
+            order_list.append(product)
+
+        if "COid" in data and get_str(data, "COid"):
+            coupon = self.scoupons.get_coupons_by_couid(get_str(data, "Coid"))
+            OMprice = self.compute_om_price_by_coupons(coupon, OMprice)
+            if not isinstance(OMprice, float):
+                return OMprice
+
+        data = import_status("SUCCESS_MESSAGE_GET_ORDER_PRICE", "OK")
+        data["data"] = {"OMprice": OMprice, "OMcointype": OMcointype, "productlist": order_list}
+        return data
+
+    def compute_om_price_by_coupons(self, coupon, omprice):
+        time_now = get_db_time_str()
+        if time_now > coupon.get("COend"):
+            return import_status("ERROR_MESSAGE_COUPONS_TIMEEND", "SHARPGOODS_ERROR", "ERROR_TIMR")
+
+        if time_now < coupon.get("COstart"):
+            return import_status("ERROR_MESSAGE_COUPONS_TIMESTART", "SHARPGOODS_ERROR", "ERROR_TIMR")
+
+        if 801 == coupon.get("COtype"):
+            if omprice > coupon.get("COfilter"):
+                omprice = omprice - coupon.get("COamount")
+
+        elif 802 == coupon.get("COtype"):
+            if omprice > coupon.get("COfilter"):
+                omprice = omprice * coupon.get("COdiscount")
+        elif 803 == coupon.get("COtype"):
+            #TODO 增加商品类型的筛选判断逻辑
+            pass
+        elif 804 == coupon.get("COtype"):
+            if coupon.get("COamount"):
+                omprice = omprice - coupon.get("COamount")
+            elif coupon.get("COdiscount"):
+                omprice = omprice * coupon.get("COdiscount")
+            else:
+                raise Exception("DBERROR")
+        elif 805 == coupon.get("COtype"):
+            #TODO 增加用户类型的的筛选判断逻辑
+            pass
+
+        return omprice if omprice >= 0 else 0
