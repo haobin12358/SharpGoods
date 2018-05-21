@@ -26,7 +26,7 @@ class SUsers():
 
         return all_tel
 
-    def login_users(self, utel, upwd):
+    def login_users(self, utel, upwd, uinvate):
         """
         :param utel:
         :param uname:
@@ -40,7 +40,7 @@ class SUsers():
             new_user.USname = "用户" + utel
             new_user.USsex = None
             new_user.UScoin = 0
-            new_user.USinvate = str(uuid.uuid4())  # 待设计
+            new_user.USinvate = uinvate
             self.session.add(new_user)
             self.session.commit()
             self.session.close()
@@ -178,3 +178,15 @@ class SUsers():
         finally:
             self.session.close()
         return usname
+
+    @trans_params
+    def get_all_invate_code(self):
+        invate_code = None
+        try:
+            invate_code = self.session.query(model.Users.USinvate).all()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+        finally:
+            self.session.close()
+        return invate_code

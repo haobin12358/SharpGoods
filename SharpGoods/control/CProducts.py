@@ -90,12 +90,14 @@ class CProducts():
                 print "=================brand================="
                 brid, BRkey, BRvalue = brand.BRfromid, brand.BRkey, brand.BRvalue
                 if BRkey in product_info["PRquality"].keys():
-                    if BRvalue not in product_info["PRquality"][BRkey]:
-                        product_info["PRquality"][BRkey].append(BRvalue)
+                    if BRvalue not in product_info["PRquality"][BRkey]["choice"]:
+                        product_info["PRquality"][BRkey]["choice"].append(BRvalue)
                 else:
                     product_info["PRquality"].keys().append(BRkey)
-                    product_info["PRquality"][BRkey] = []
-                    product_info["PRquality"][BRkey].append(BRvalue)
+                    product_info["PRquality"][BRkey] = {}
+                    product_info["PRquality"][BRkey]["name"] = self.choose_key(BRkey)
+                    product_info["PRquality"][BRkey]["choice"] = []
+                    product_info["PRquality"][BRkey]["choice"].append(BRvalue)
         response_of_product = import_status("SUCCESS_MESSAGE_GET_PRODUCT", "OK")
         response_of_product["data"] = product_info
         return response_of_product
@@ -180,12 +182,14 @@ class CProducts():
                     print "=================brand================="
                     brid, BRkey, BRvalue = brand.BRfromid, brand.BRkey, brand.BRvalue
                     if BRkey in product_info["PRquality"].keys():
-                        if BRvalue not in product_info["PRquality"][BRkey]:
-                            product_info["PRquality"][BRkey].append(BRvalue)
+                        if BRvalue not in product_info["PRquality"][BRkey]["choice"]:
+                            product_info["PRquality"][BRkey]["choice"].append(BRvalue)
                     else:
                         product_info["PRquality"].keys().append(BRkey)
-                        product_info["PRquality"][BRkey] = []
-                        product_info["PRquality"][BRkey].append(BRvalue)
+                        product_info["PRquality"][BRkey] = {}
+                        product_info["PRquality"][BRkey]["name"] = self.choose_key(BRkey)
+                        product_info["PRquality"][BRkey]["choice"] = []
+                        product_info["PRquality"][BRkey]["choice"].append(BRvalue)
             product_infos.append(product_info)
         response_of_product = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         response_of_product["data"] = product_infos
@@ -348,3 +352,11 @@ class CProducts():
         response = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         response["data"] = data
         return response
+
+    def choose_key(self, BRkey):
+        if BRkey == "BRno":
+            return "版本选择"
+        elif BRkey == "BRcolor":
+            return "颜色选择"
+        else:
+            return "未知类目"

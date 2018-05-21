@@ -41,8 +41,10 @@ class CUsers():
 
         if "USinvate" in data:
             USinvate = data["USinvate"]
+            #TODO 优惠券发放
 
-        is_register = self.susers.login_users(data["UStelphone"], data["USpassword"])
+        USinvatecode = self.make_invate_code()
+        is_register = self.susers.login_users(data["UStelphone"], data["USpassword"], USinvatecode)
         print "=================is_register================="
         print is_register
         print "=================is_register================="
@@ -232,11 +234,13 @@ class CUsers():
 
         if response_send_message["Code"] == "OK":
             status = 200
+            message = "获取成功"
         else:
             status = 405
+            message = "获取验证码失败"
         response_ok = {}
         response_ok["status"] = status
-        response_ok["message"] = response_send_message["Message"]
+        response_ok["message"] = message
 
         return response_ok
 
@@ -279,3 +283,27 @@ class CUsers():
         response_of_get_all = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         response_of_get_all["data"] = response_user_info
         return response_of_get_all
+
+    def make_invate_code(self):
+        USinvate = self.susers.get_all_invate_code()
+        while True:
+            invate_code = self.make_random_code()
+            if invate_code not in USinvate:
+                break
+        return invate_code
+
+    def make_random_code(self):
+        import random
+        random_code = ""
+        while len(random_code) < 2:
+            a = random.randint(97, 122)
+            a = chr(a)
+            random_code = random_code + a
+        while len(random_code) < 6:
+            a = random.randint(0, 9)
+            random_code = random_code + str(a)
+        return random_code
+
+if __name__ == '__main__':
+    users = CUsers()
+    print users.make_invate_code()
