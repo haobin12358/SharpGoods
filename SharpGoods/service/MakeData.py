@@ -325,6 +325,47 @@ class MakeData():
         except Exception as e:
             print e.message
 
+    def make_omid(self):
+        omid_list = []
+        while len(omid_list) < 7:
+            omid_list.append(str(uuid.uuid4()))
+        return omid_list
+
+    def add_ordermain(self, omid_list):
+        try:
+            i = 0
+            while i < 7:
+                add_model("OrderMain",
+                        **{
+                            "OMid": omid_list[i],
+                            "OMtime": "20180524143253",
+                            "OMstatus": 7,
+                            "OMprice": 0.01,
+                            "USid": "de98529f-b1f0-4fd6-8908-8b7d522d22c6",
+                            "LOid": "ac988611-aed8-4c16-9f5e-eda6b772f152",
+                            "OMabo": "test pay",
+                            "OMcointype": 402,
+                            "COid": None
+                        })
+                i = i + 1
+        except Exception as e:
+            print e.message
+
+    def add_orderpart(self, omid_list):
+        try:
+            i = 0
+            while i < 7:
+                add_model("Orderpart",
+                          **{
+                              "OPid": str(uuid.uuid4()),
+                              "OMid": omid_list[i],
+                              "PBid": "0ca15394-593f-424f-b04d-da1bd2648236",
+                              "PRnumber": 1
+                          })
+                i = i + 1
+        except Exception as e:
+            print e.message
+
 if __name__ == "__main__":
 
     makedata = MakeData()
@@ -339,7 +380,11 @@ if __name__ == "__main__":
     makedata.add_cart(uid, pbid)
     makedata.add_brand(brid)
     makedata.add_productbrand(pbid,pid,brid)
-    '''
+    
     coid = makedata.set_coid()
     makedata.add_coupons(coid)
     makedata.add_cardpackage(coid)
+    '''
+    omid = makedata.make_omid()
+    makedata.add_ordermain(omid)
+    makedata.add_orderpart(omid)

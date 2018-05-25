@@ -122,7 +122,14 @@ class CCarts():
             if not product:
                 return SYSTEM_ERROR
             cart_info = {}
-            cart_info["PRquality"] = self.sproduct.get_all_brand_by_brid_last(BRid)
+            cart_info["PRquality"] = {}
+            quality_list = self.sproduct.get_all_brand_by_brid_last(BRid)
+            #cart_info["PRquality"] = self.sproduct.get_all_brand_by_brid_last(BRid)
+            for key in quality_list.keys():
+                cart_info["PRquality"][key] = {}
+                cart_info["PRquality"][key]["name"] = self.choose_key(key)
+                cart_info["PRquality"][key]["choice"] = []
+                cart_info["PRquality"][key]["choice"].append(quality_list[key])
             cart_info["PBid"] = cart.PBid
             cart_info["PBimage"] = cart_service_info.PBimage
             cart_info["PBsalesvolume"] = cart_service_info.PBsalesvolume
@@ -161,3 +168,11 @@ class CCarts():
         res_get_all = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         res_get_all["data"] = cart_info_list
         return res_get_all
+
+    def choose_key(self, BRkey):
+        if BRkey == "BRno":
+            return "版本选择"
+        elif BRkey == "BRcolor":
+            return "颜色选择"
+        else:
+            return "未知类目"
