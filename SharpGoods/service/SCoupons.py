@@ -60,3 +60,14 @@ class SCoupons(SBase):
         finally:
             self.session.close()
         return coupons
+
+    def get_coid_by_caid(self, caid):
+        coid = None
+        try:
+            coid = self.session.query(Cardpackage.COid).filter_by(CAid=caid).scalar()
+        except Exception as e:
+            print e.message
+            self.session.rollback()
+        finally:
+            self.session.close()
+        return coid

@@ -93,7 +93,7 @@ class COrders():
                 "OMabo": get_str(data, "OMmessage"),
                 "USid": args.get("token"),
                 "OMcointype": cvs.conversion_PBunit_reverse.get(get_str(data, "OMcointype"), 402),
-                "COid": get_str(data, "COid"),
+                "COid": get_str(data, "CAid"),
                 "OMprice": float(get_str(data, "OMprice")),
                 "OMtime": get_db_time_str(),
                 "OMstatus": cvs.conversion_OMstatus_reverse.get(get_str(data, "OMstatus"))
@@ -185,6 +185,7 @@ class COrders():
         order_main.update(location)
         coupon = get_model_return_dict(self.scoupons.get_coupons_by_couid(order_main.get("COid")))
         order_main.update(coupon)
+        order_main["CAid"] = order_main.pop("COid")
 
     def _get_brinfo(self, brid):
         brinfo = {}
@@ -229,8 +230,15 @@ class COrders():
                 OMprice += (product.get("PBprice") * prnumber)
                 order_list.append(product)
 
-            if "COid" in data and get_str(data, "COid"):
-                coupon = self.scoupons.get_coupons_by_couid(get_str(data, "Coid"))
+            if "CAid" in data and get_str(data, "CAid"):
+                couid = self.scoupons.get_coid_by_caid(get_str(data, "CAid"))
+                print(self.title.format("couid"))
+                print(couid)
+                print(self.title.format("couid"))
+
+                if not couid:
+                    return SYSTEM_ERROR
+                coupon = self.scoupons.get_coupons_by_couid(couid)
                 OMprice = self.compute_om_price_by_coupons(coupon, OMprice)
                 if not isinstance(OMprice, float):
                     return OMprice
