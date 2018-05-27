@@ -15,6 +15,7 @@ class CLocations():
     def __init__(self):
         self.slocation = SLocations()
         self.params_list = ["LOno", "LOname", "LOtelphone", "LOdetail", "LOprovince", "LOcity", "LOarea", "LOid"]
+        self.params_list2 = ["LOno", "LOname", "LOtelphone", "LOdetail", "LOprovince", "LOcity", "LOarea"]
         self.title = '============{0}============'
 
     def get_all_location(self):
@@ -45,7 +46,7 @@ class CLocations():
             return PARAMS_MISS
 
         location = {}
-        for key in self.params_list:
+        for key in self.params_list2:
             if key not in data:
                 return PARAMS_MISS
             location[key] = get_str(data, key)
