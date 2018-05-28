@@ -11,6 +11,13 @@ class AOther(Resource):
         pass
 
     def get(self, other):
+        if other == "getdata":
+            args = request.args.to_dict()
+            print(args)
+            data = request.data
+            print(data)
+            return
+
         if other == "disclaimer":
             return """欢迎您使用网上订餐服务。请您务必先仔细阅读本用户协议（包括隐私权条款及法律条款），我们将按以下的方式和条件为您提供我们的服务。如果您使用我们的服务，即表示您完全同意并接受本用户协议。 
               
@@ -56,3 +63,40 @@ class AOther(Resource):
             print s
             response["paySign"] = s.hexdigest().upper()
             return response
+
+        if other == "prepayconfig":
+            args = request.args.to_dict()
+            if "OMid" not in args:
+                return PARAMS_MISS
+            OMid = args["OMid"]
+            package = "prepay_id=" + OMid.replace("-", "")
+            import time
+            timeStamp = int(time.time())
+            response = {}
+            response["appId"] = "wx284751ea4c889568"
+            response["mch_id"] = "1504082901"
+            response["device_info"] = "WEB"
+            import uuid
+            response["nonce_str"] = str(uuid.uuid1()).replace("-", "")
+            key_sign = "appId={0}&nonceStr={1}&package={2}&signType={3}&timeStamp={4}&key={5}".format(
+                response["appId"], response["nonce_str"], package, "MD5",
+                timeStamp, "hangzhouzhenlangjinchukou"
+            )
+            import hashlib
+            s = hashlib.md5()
+            s.update(key_sign)
+            response["sign"] = s.hexdigest().upper()
+            response["sign_type"] = "MD5"
+            response["body"] = "美妆类-美妆镜"
+            response["out_trade_no"] = OMid
+            response["fee_type"] = "CNY"
+            response["total_fee"] = 1
+            response["spbill_create_ip"] = "120.79.182.43"
+            import datetime
+            response["time_start"] = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+            response["time_expire"] = (datetime.datetime.now() + datetime.timedelta(hours=2)).strftime("%Y%m%d%H%M%S")
+            response["notify_url"] = "https://h878.cn/sharp/goods/other/getdata"
+            response["trade_type"] = "JSAPI"
+            return response
+
+
