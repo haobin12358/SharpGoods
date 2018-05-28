@@ -238,7 +238,10 @@ class COrders():
 
                 if not couid:
                     return SYSTEM_ERROR
-                coupon = self.scoupons.get_coupons_by_couid(couid)
+                coupon = get_model_return_dict(self.scoupons.get_coupons_by_couid(couid))
+                print(self.title.format(coupon))
+                print(coupon)
+                print(self.title.format(coupon))
                 OMprice = self.compute_om_price_by_coupons(coupon, OMprice)
                 if not isinstance(OMprice, float):
                     return OMprice
@@ -256,7 +259,15 @@ class COrders():
             print(self.title.format("get order error"))
 
     def compute_om_price_by_coupons(self, coupon, omprice):
+        from decimal import Decimal
         time_now = get_db_time_str()
+        print(self.title.format("timenow"))
+        print(time_now)
+        print(self.title.format("timenow"))
+        print(self.title.format("coutime"))
+        print("endtime:" + coupon.get("COend")+"\n starttimeL:" + coupon.get("COstart") )
+        print(self.title.format("coutime"))
+
         if time_now > coupon.get("COend"):
             return import_status("ERROR_MESSAGE_COUPONS_TIMEEND", "SHARPGOODS_ERROR", "ERROR_TIMR")
 
@@ -265,23 +276,27 @@ class COrders():
 
         if 801 == coupon.get("COtype"):
             if omprice > coupon.get("COfilter"):
-                omprice = omprice - coupon.get("COamount")
+                omprice = Decimal(str(omprice)) - Decimal(str(coupon.get("COamount", 0)))
 
         elif 802 == coupon.get("COtype"):
             if omprice > coupon.get("COfilter"):
-                omprice = omprice * coupon.get("COdiscount")
+                omprice = Decimal(str(omprice)) * Decimal(str(coupon.get("COdiscount")))
         elif 803 == coupon.get("COtype"):
             #TODO 增加商品类型的筛选判断逻辑
             pass
         elif 804 == coupon.get("COtype"):
             if coupon.get("COamount"):
-                omprice = omprice - coupon.get("COamount")
+                omprice = Decimal(str(omprice)) - Decimal(str(coupon.get("COamount")))
             elif coupon.get("COdiscount"):
-                omprice = omprice * coupon.get("COdiscount")
+                omprice = Decimal(str(omprice)) * Decimal(str(coupon.get("COdiscount")))
             else:
                 raise Exception("DBERROR")
         elif 805 == coupon.get("COtype"):
             #TODO 增加用户类型的的筛选判断逻辑
             pass
 
-        return omprice if omprice >= 0 else 0
+        print(self.title.format("限定两位小数前的omproce"))
+        print(omprice)
+        print(self.title.format("限定两位小数前的omproce"))
+        omprice = omprice.quantize(Decimal("0.00"))
+        return float(omprice) if omprice >= 0 else 0.00
