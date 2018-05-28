@@ -8,8 +8,8 @@
 		"newFeature": true
 	},
 	"compileType": "miniprogram",
-	"appid": "wxb58e86e089115e0d",
-	"projectname": "lovebreakfast_app",
+	"appid": "",
+	"projectname": "",
 	"miniprogramRoot": "./dist",
 	"condition": {}
 }
