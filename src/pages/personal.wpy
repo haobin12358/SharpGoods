@@ -1,0 +1,169 @@
+<style scoped lang="less" rel="stylesheet/less">
+    @import "../styles/common";
+    .m-header-box {
+        width: 100%;
+        height: 280rpx;
+    }
+    .login_block {
+        width: 100%;
+        height: 280rpx;
+        display: flex;
+        align-items: center;
+        float: right;
+    }
+    .m-button {
+        width: 400rpx;
+    }
+    .m-header-content {
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
+        padding-top: 40rpx;
+        .m-avatar {
+            width: 150rpx;
+            height: 150rpx;
+            border-radius: 100px;
+        }
+        .m-nickname {
+            font-size: 35rpx;
+            padding-top: 15rpx;
+        }
+    }
+    .m-info_block-list {
+        margin-top: 10rpx;
+        padding: 0rpx 60rpx;
+        width: 100%;
+        font-size: 30rpx;
+        box-sizing: border-box;
+        .m-item {
+            border-top: 2rpx solid #dbdbdb;
+            background: #fff;
+            padding: 34rpx 0rpx;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .m-item:last-child {
+            border-bottom: 2rpx solid #dbdbdb;
+        }
+        .m-item_content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .m-item_img {
+                width: 42rpx;
+                height: 42rpx;
+            }
+            .m-text {
+                margin-left: 30rpx;
+                color: @grey-font;
+            }
+        }
+        .m-arrow {
+            width: 30rpx;
+            height: 30rpx;
+        }
+        .m-item-info {
+            width: auto;
+            height: 15px;
+        }
+    }
+</style>
+<template>
+    <view class="m-header-box">
+        <view class="m-header-content">
+            <image class="m-avatar" src="../images/test.jpeg"></image>
+            <view class="m-nickname">{{ userInfo.USname }}</view>
+        </view>
+    </view>
+    <view class="m-info_block-list">
+        <navigator class="m-item" url="/pages/baseInfo?name={{userInfo.USname}}&sex={{userInfo.USsex}}">
+            <view class="m-item_content">
+                <image class="m-item_img" src="../images/edit.png"></image>
+                <view class="m-text">基本信息</view>
+            </view>
+            <image class="m-arrow" src="../images/more.png"></image>
+        </navigator>
+        <navigator class="m-item" url="/pages/myOrder">
+            <view class="m-item_content">
+                <image class="m-item_img" src="../images/order.png"></image>
+                <view class="m-text">全部订单</view>
+            </view>
+            <image class="m-arrow" src="../images/more.png"></image>
+        </navigator>
+        <navigator class="m-item" url="/pages/setUp">
+            <view class="m-item_content">
+                <image class="m-item_img" src="../images/set.png"></image>
+                <view class="m-text">设置</view>
+            </view>
+            <image class="m-arrow" src="../images/more.png"></image>
+        </navigator>
+        <view class="m-item">
+            <view class="m-item_content">
+                <image class="m-item_img" src="../images/order.png"></image>
+                <view class="m-text">积分</view>
+            </view>
+            <view class="m-item-info">{{ userInfo.UScoin }}</view>
+        </view>
+        <view class="m-item">
+            <view class="m-item_content">
+                <image class="m-item_img" src="../images/invite.png"></image>
+                <view class="m-text">专属邀请码</view>
+            </view>
+            <view class="m-item-info">{{ userInfo.USinvate }}</view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import tip from '../utils/tip';
+    import api from '../api/api';
+
+
+    export default class Personal extends wepy.page {
+        config = {
+            navigationBarTitleText: '个人中心'
+        }
+        data = {
+            userInfo: {USname: '用户18768105036', USsex: '', UScoin: 0, USinvate: '666666'},
+            isToken: false,
+            token: ''
+        }
+
+        async getPersonInfo(token) {
+            let that = this;
+            tip.loading();
+            let res = await api.getUserInfo({query: {token: token}})
+            console.log(res, '获取个人信息')
+            if (res.data.status == '200') {
+//                that.userInfo = res.data.data;
+                console.log(that.userInfo, '页面data')
+                if (that.userInfo.Uname == null) {
+                    that.userInfo.Uname = ''
+                }
+                tip.loaded();
+                that.$apply();
+            }
+                else tip.error("加载失败")
+        }
+
+        async onShow() {
+            let that = this;
+            let token =  wepy.getStorageSync('token')
+                if(token){
+                    that.getPersonInfo(token)
+                    that.$parent.globalData.token = token;
+                    that.$apply()
+                }else{
+                    wx.navigateTo({
+                        url: '/pages/login'
+                    })
+                }
+
+        }
+
+        methods = {}
+    }
+</script>

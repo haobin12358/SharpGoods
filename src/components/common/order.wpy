@@ -1,0 +1,78 @@
+<template>
+  <view class="m-one-product">
+    <image src="{{order.PBimage}}" style="width: 80rpx;height: 80rpx;"></image>
+    <view class="m-right">
+      <view class="m-name">{{order.PRname}}</view>
+      <view class="m-info">
+        <view class="m-num">x{{order.CAnumber}}</view>
+        <view class="m-purchase-info">
+          <view class="m-purchase-detail" wx:for="{{order.PRquality}}" wx:for-item="option"> {{option.choice}}</view>
+        </view>
+        <!--<view class="m-num"> {{page}}</view>-->
+        <view>￥{{order.PBprice}}</view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+
+  export default class PlaceAnOrder extends wepy.page{
+    props = {
+//        order:Object,
+        order: {
+            type: Object,
+            default: {}
+        },
+        page: String
+    }
+    data = {
+        order: {}
+    }
+    onLoad(){
+//        let test = this.$parent.index;
+//        console.log(test, 'fuckfuckfuckfuckfuck!');
+//        console.log(this.order, 'fuckfuckfuckfuckfuck!')
+//        console.log(this.page, 'fuckfuckfuckfuckfuck!')
+    }
+    methods = {
+
+    }
+  }
+</script>
+<style scoped lang="less" rel="stylesheet/less">
+  @import "../../styles/common";
+  .m-one-product{
+    /*width: 94%;*/
+    margin: 0 20rpx;
+    padding: 20rpx  0;
+    border-bottom: 1px solid @border-color;
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    /*&:last-child{*/
+      /*border-bottom: none;*/
+    /*}*/
+    .m-right{
+      padding-left: 20rpx;
+      line-height: 42rpx;
+      font-size: 30rpx;
+      width: 75%;
+      .m-info{
+        color: @grey-font;
+        font-size: 28rpx;
+        width: 100%;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: space-between;
+
+        .m-purchase-info{
+          .m-purchase-detail{
+            display: inline;
+          }
+        }
+      }
+    }
+  }
+</style>

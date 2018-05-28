@@ -1,0 +1,156 @@
+<template>
+    <view class="address">
+        <repeat for="{{addressList}}" key="index" index="index" item="item">
+            <view class="list_box">
+                    <view class="address_list" @tap="tapSelAddress" data-id="{{item.LOid}}" data-address="{{item}}">
+                        <view class="title">
+                            <view class="user_info">
+                                <text class="name">{{item.LOname}} </text>
+                                <text class="phone">{{item.LOtelphone}}</text>
+                            </view>
+                            <view class="active_address">
+                                <!--<text class="default" wx:if="{{item.isDef==1}}"> [默认]</text>-->
+                                {{item.LOprovince}} {{item.LOcity}} {{item.LOarea}} {{item.LOdetail}}
+                            </view>
+                        </view>
+                        <view class="arrow"  @tap.stop="edit" data-address="{{item}}">
+                            <image class="m-image" src="../../images/edit.png"></image>
+                        </view>
+                    </view>
+            </view>
+        </repeat>
+    </view>
+    <view class="add_wrap">
+        <button class="button" @tap="add">新增地址</button>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    import tip from '../../utils/tip'
+    import api from "../../api/api";
+
+    export default class AddressList extends wepy.component {
+        props = {
+            addressList: {
+                default: [{
+                    style: 0
+                }, {
+                    style: 0
+                }],
+                type: Object
+            }
+        }
+        components = {
+        }
+
+        data = {
+            receiverInfo:{},
+            type: ""
+        }
+
+        methods = {
+            add() {
+                //0 列表 1新增 2编辑
+                this.$emit('currentPage', 1);
+            },
+            edit(e) {
+                let address = e.currentTarget.dataset.address;
+//                wepy.setStorageSync('EditAddress', address)
+//                let res = wepy.getStorageSync('address')
+                console.log(address, 'trigger from dataList')
+                this.$emit('currentPage', 2, address);
+            },
+            refreshList(val){
+                if (val==undefined) return;
+                console.log("val.....",val);
+                this.addressList = val;
+                this.$apply();
+            },
+            setOrgType (type) {
+                this.type=type;
+            },
+
+            tapSelAddress(e) {
+                if (this.type!="order") {
+                    return;
+                }
+                let address = e.currentTarget.dataset.address;
+                wepy.setStorageSync('address', address)
+                let res = wepy.getStorageSync('address')
+                console.log(address, 'store')
+                wepy.redirectTo({
+                    url: "/pages/placeAnOrder?select=1"
+                })
+            }
+        }
+
+        onLoad() {
+
+        }
+    }
+
+</script>
+<style lang="less">
+    @import "../../styles/common";
+    .list_box {
+        height: 150rpx;
+    }
+
+    .address {
+        .list_box:last-child {
+            border-bottom: 1px solid #efefef;
+        }
+        .address_list {
+            display: flex;
+            justify-content: space-between;
+            height: 150rpx;
+            align-items: center;
+            padding: 0rpx 0px 0px 35rpx;
+            border-top: 1px solid #efefef;
+            .title {
+                color: #000;
+                .user_info {
+                    color: #1a1a1a;
+                    padding-right: 15rpx;
+                }
+                .active_address {
+                    margin-top: 20rpx;
+                    color: @grey-font;
+                    font-size: 25rpx;
+                }
+            }
+            .arrow {
+                height: 150rpx;
+                width: 150rpx;
+                text-align: center;
+                display: flex;
+                align-items:center;
+                justify-content:center;
+                .m-image {
+                    height: 50rpx;
+                    width: 50rpx;
+                }
+            }
+            .default {
+                color: #f4690c;
+            }
+        }
+    }
+
+    .add_wrap {
+        display: block;
+        width: 85%;
+        left: 0;
+        right: 0;
+        position: absolute;
+        bottom: 20rpx;
+        margin: 0 auto;
+        text-align: center;
+
+        .button {
+            background-color: @common-color;
+            color: #fff;
+        }
+    }
+
+</style>

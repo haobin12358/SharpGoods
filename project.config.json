@@ -1,0 +1,15 @@
+{
+	"description": "A WePY project",
+	"setting": {
+		"urlCheck": false,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"appid": "wxb58e86e089115e0d",
+	"projectname": "lovebreakfast_app",
+	"miniprogramRoot": "./dist",
+	"condition": {}
+}

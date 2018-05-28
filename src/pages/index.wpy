@@ -1,0 +1,100 @@
+<style scoped lang="less" rel="stylesheet/less">
+  @import "../styles/common";
+  .m-index{
+    width: 100%;
+    background-color: #f8f8f8;
+    height: 100%;
+  }
+  .m-intro{
+    width: 100%;
+    background-color: #e5473c;
+    height: 100%;
+  }
+    .m-intro-img{
+      width: 100%;
+      height: 100%;
+      position: absolute;
+    }
+    .m-label{
+      font-size: 45rpx;
+      margin: 700rpx 250rpx 0 250rpx;
+      text-align: center;
+      float:left;
+      position: absolute;
+      color: #FFFFFF;
+      &:hover{
+        color: @common-color;
+      }
+    }
+    .m-navi{
+      font-size: 40rpx;
+      text-align: center;
+      margin: 900rpx 230rpx 0 230rpx;
+      position: absolute;
+      color: #FFFFFF;
+      &:hover{
+        color: @common-color;
+      }
+    }
+
+</style>
+<template>
+  <view class="m-index">
+    <view class="m-intro" wx:for="{{commodity}}">
+      <image class="m-intro-img" src="{{item.PRimage}}" mode="aspectFill"></image>
+      <view class="m-label">{{item.PRinfo}}</view>
+      <navigator class="m-navi" url="/pages/commodityIndex?PRid={{item.PRid}}">purchase now!</navigator>
+    </view>
+  </view>
+</template>
+
+<script >
+  import wepy from 'wepy';
+  import api from '../api/api';
+  import tip from '../utils/tip'
+
+
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: 'mine商城'
+    }
+
+    data = {
+        commodity: [
+            {
+                PRimage: "",
+                PRinfo: "",
+                Pid: ""
+            },
+            {
+                PRimage: "",
+                PRinfo: "",
+                pid: ""
+            }
+        ]
+    }
+
+    computed = {
+
+    }
+    async getProductList() {
+      let that = this;
+      tip.loading();
+        let res = await api.getProductAll()
+        console.log(res);
+        if(res.data.status == '200'){
+            that.commodity = res.data.data;
+            that.$apply()
+            tip.loaded()
+        }else{
+            tip.error(res.data.message)
+        }
+    }
+    onLoad(){
+        this.getProductList();
+    }
+    methods = {
+    }
+  }
+</script>

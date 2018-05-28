@@ -1,0 +1,146 @@
+<template>
+  <view class="m-business-content">
+    <view class="m-all-products">
+      <repeat for="{{list_data}}" key="index" index="index" item="item">
+        <List :list.sync="item" page="car" @listTap.user="productTap"></List>
+      </repeat>
+      <view style="height: 100rpx;"></view>
+      <!--<List :list.sync="list_data" page="car" @listTap.user="productTap"></List>-->
+      <view wx:if="{{list_data.length <=0}}" class="m-no">暂无商品</view>
+    </view>
+    <foot class="m-foot">
+      <view class="m-car">
+        <view>合计：<text class="m-price">￥{{total_money}}</text></view>
+      </view>
+      <view class="m-btn m-active" @tap="placeAnOrder">下单</view>
+    </foot>
+  </view>
+</template>
+<script >
+  import wepy from 'wepy';
+  import List from '../components/common/list'
+  import tip from '../utils/tip'
+  import api from '../api/api'
+  export default class Business extends wepy.page{
+    config = {
+      navigationBarTitleText: '购物车'
+    }
+    components = {
+      List:List
+    }
+    data = {
+      total_money:0,
+      list_data:[
+      ],
+      selected: [0,1,2],
+      count: 0,
+      num: 0,
+    }
+    async getAllCart(params) {
+        let that = this;
+        tip.loading();
+        let res = await api.getCartList({query: {token: params}})
+        let total = 0
+        if(res.data.status == '200'){
+            that.list_data = res.data.data;
+            console.log(that.list_data, 'this is what list looks like22222222222222')
+            for(let i=0;i< that.list_data.length;i++){
+              total += Number(that.list_data[i].CAnumber * that.list_data[i].PBprice)
+            }
+            total = total.toFixed(2)
+            that.total_money = total
+
+//            let selected = articles.map(item => {
+//                return Object.values(item)
+//            })
+
+            that.$apply()
+            tip.loaded()
+        }
+    }
+    onShow(){
+        let that = this;
+        let token =  wepy.getStorageSync('token')
+        if(token){
+            that.getAllCart(token)
+            that.$parent.globalData.token = token;
+            that.$apply();
+        }else{
+            wx.navigateTo({
+                url: '/pages/login'
+            })
+        }
+        }
+    methods = {
+      productTap(v){
+        wx.navigateTo({
+          url: '/pages/commodityIndex?PRid='+v.PRid
+        })
+      },
+      placeAnOrder(){
+        wx.navigateTo({
+          url: '/pages/placeAnOrder?list=' + this.list_data
+        })
+      }
+    }
+  }
+</script>
+<style scoped lang="less" rel="stylesheet/less">
+  @import "../styles/common";
+  .m-business-content{
+    .m-all-products{
+      margin-bottom: 220rpx;
+      .list{
+        padding: 0 20rpx;
+      }
+    }
+  }
+  .m-foot{
+    background-color: #fff;
+    position: fixed;
+    bottom: 0;
+    height: 80rpx;
+    width: 100%;
+    padding: 20rpx;
+    border-top: 1px solid @border-color;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    /*background-color: rgba(0,0,0,0.5);*/
+    .m-car{
+      position: relative;
+      .m-num{
+        position: absolute;
+        right: -5rpx;
+        top: -10rpx;
+        width: 40rpx;
+        height: 40rpx;
+        font-size: 20rpx;
+        text-align: center;
+        color: #ffffff;
+        line-height: 40rpx;
+        border-radius: 50%;
+        background-color: #f4690c;
+      }
+    }
+    .m-btn{
+      z-index: 999;
+      width: 150rpx;
+      height: 80rpx;
+      line-height: 80rpx;
+      margin-right: 40rpx;
+      border: 1px solid @border-color;
+      border-radius: 20px;
+      text-align: center;
+      background-color: #f8f8f8;
+      &.m-active{
+        background-color: @common-color;
+        color: #ffffff;
+        border-color: #ffffff;
+      }
+    }
+  }
+</style>
+
