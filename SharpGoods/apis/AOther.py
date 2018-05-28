@@ -12,11 +12,17 @@ class AOther(Resource):
 
     def get(self, other):
         if other == "getdata":
-            args = request.args.to_dict()
-            print(args)
             data = request.data
             print(data)
-            return
+            import json
+            data = json.loads(data)
+            if "return_code" not in data:
+                return PARAMS_MISS
+
+            return {
+                "return_code": "SUCCESS",
+                "return_msg": "OK"
+            }
 
         if other == "disclaimer":
             return """欢迎您使用网上订餐服务。请您务必先仔细阅读本用户协议（包括隐私权条款及法律条款），我们将按以下的方式和条件为您提供我们的服务。如果您使用我们的服务，即表示您完全同意并接受本用户协议。 
@@ -38,29 +44,101 @@ class AOther(Resource):
               4．适用法律
               
                   本使用条款及隐私权政策受中国的法律管辖。如果本网站条款或隐私权政策的任何部分失效，将不影响其余条款的有效性和可执行性。 """
+
+
         if other == "payconfig":
+            print("=======================api===================")
+            print("接口名称是{0}，接口方法是get".format("payconfig"))
+            print("=======================api===================")
             args = request.args.to_dict()
-            if "OMid" not in args:
+            if "code" not in args or "OMid" not in args:
                 return PARAMS_MISS
+            print("=======================args===================")
+            print(args)
+            print("=======================args===================")
+            code = args["code"]
+            APP_ID = "wx284751ea4c889568"
+            APP_SECRET_KEY = "051c81977efa8175e43686565265bb4f"
+            request_url = "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type={3}" \
+                .format(APP_ID, APP_SECRET_KEY, code, "authorization_code")
+            strResult = None
+            try:
+                import urllib2
+                req = urllib2.Request(request_url)
+                response = urllib2.urlopen(req)
+                strResult = response.read()
+                print strResult
+            except Exception as e:
+                print e.message
+            if "openid" not in strResult or "session_key" not in strResult:
+                return
+            import json
+            strResult = json.loads(strResult)
+            print("=======================strResult===================")
+            print(strResult)
+            print("=======================strResult===================")
+            openid = strResult["openid"]
+            session_key = strResult["session_key"]
             OMid = args["OMid"]
             response = {}
             response["appId"] = "wx284751ea4c889568"
+            response["openid"] = openid
+            response["session_key"] = session_key
             import time
             response["timeStamp"] = int(time.time())
             import uuid
             response["nonceStr"] = str(uuid.uuid1()).replace("-", "")
-            response["package"] = "prepay_id=" + OMid.replace("-", "")
+            body = {}
+            response = {}
+            body["appId"] = "wx284751ea4c889568"
+            body["mch_id"] = "1504082901"
+            body["device_info"] = "WEB"
+            body["nonce_str"] = str(uuid.uuid1()).replace("-", "")
+            key_sign = "appid={0}&body={1}&device_info={2}&mch_id={3}&nonce_str={4}".format(
+                body["appId"], "test", body["device_info"], body["mch_id"], body["nonce_str"]
+            )
+            key_sign = key_sign + "&key={0}".format("hangzhouzhenlangjinchukou")
+            import hashlib
+            s = hashlib.md5()
+            s.update(key_sign)
+            body["sign"] = s.hexdigest().upper()
+            body["sign_type"] = "MD5"
+            body["body"] = "美妆类-美妆镜"
+            body["out_trade_no"] = OMid
+            body["fee_type"] = "CNY"
+            body["total_fee"] = 1
+            body["spbill_create_ip"] = "120.79.182.43"
+            import datetime
+            body["time_start"] = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+            body["time_expire"] = (datetime.datetime.now() + datetime.timedelta(hours=2)).strftime("%Y%m%d%H%M%S")
+            body["notify_url"] = "https://h878.cn/sharp/goods/other/getdata"
+            body["trade_type"] = "JSAPI"
+            body["openid"] = openid
+            strResult = None
+            try:
+                import urllib2
+                url = "https://api.mch.weixin.qq.com/pay/unifiedorder"
+                headers = {'Content-Type': 'application/json'}
+                req = urllib2.Request(url, headers=headers, data=body)
+                response = urllib2.urlopen(req)
+                strResult = response.read()
+                print strResult
+            except Exception as e:
+                print e.message
+            if "prepay_id" not in strResult:
+                return
+            strResult = json.loads(strResult)
+            print("=======================strResult===================")
+            print(strResult)
+            print("=======================strResult===================")
+            prepay_id = strResult["prepay_id"]
+            response["package"] = "prepay_id=" + prepay_id
             response["signType"] = "MD5"
             key_sign = "appId={0}&nonceStr={1}&package={2}&signType={3}&timeStamp={4}&key={5}".format(
                 response["appId"], response["nonceStr"], response["package"], response["signType"], response["timeStamp"], "hangzhouzhenlangjinchukou"
             )
-            print key_sign
-            print type(key_sign)
-            import hashlib
             s = hashlib.md5()
-            print s
             s.update(key_sign)
-            print s
             response["paySign"] = s.hexdigest().upper()
             return response
 
@@ -98,5 +176,41 @@ class AOther(Resource):
             response["notify_url"] = "https://h878.cn/sharp/goods/other/getdata"
             response["trade_type"] = "JSAPI"
             return response
+
+        if other == "openid":
+            args = request.args.to_dict()
+            print args
+            if "code" not in args:
+                return PARAMS_MISS
+            code = args["code"]
+            APP_ID = "wx284751ea4c889568"
+            APP_SECRET_KEY = "051c81977efa8175e43686565265bb4f"
+            request_url = "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type={3}"\
+                .format(APP_ID, APP_SECRET_KEY, code, "authorization_code")
+            conn = None
+            bye = None
+            try:
+                import pycurl
+                import io
+                conn = pycurl.Curl()
+                bye = io.BytesIO()
+                conn.setopt(pycurl.WRITEFUNCTION, bye.write)
+                conn.setopt(conn.url, request_url)
+                conn.setopt(pycurl.SSL_VERIFYPEER, 1)
+                conn.setopt(pycurl.SSL_VERIFYHOST, 2)
+                conn.perform()
+                response = bye.getvalue().decode("utf-8")
+                #res = response.read()
+                #print res
+                print response
+                if "openid" in response:
+                    import json
+                    res = json.loads(response)
+                    return res["openid"]
+            except BaseException as e:
+                print e.message
+            finally:
+                conn.close()
+                bye.close()
 
 
