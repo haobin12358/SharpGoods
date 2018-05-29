@@ -61,12 +61,16 @@ class AOther(Resource):
             APP_SECRET_KEY = "051c81977efa8175e43686565265bb4f"
             request_url = "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type={3}" \
                 .format(APP_ID, APP_SECRET_KEY, code, "authorization_code")
+            print("=======================request_url===================")
+            print str(request_url)
+            print("=======================request_url===================")
             strResult = None
             try:
                 import urllib2
                 req = urllib2.Request(request_url)
                 response = urllib2.urlopen(req)
                 strResult = response.read()
+                response.close()
                 print strResult
             except Exception as e:
                 print e.message
@@ -78,34 +82,22 @@ class AOther(Resource):
             print(strResult)
             print("=======================strResult===================")
             openid = strResult["openid"]
-            session_key = strResult["session_key"]
             OMid = args["OMid"]
             response = {}
-            response["appId"] = "wx284751ea4c889568"
+            response["appid"] = "wx284751ea4c889568"
             response["openid"] = openid
-            response["session_key"] = session_key
             import time
             response["timeStamp"] = int(time.time())
             import uuid
             response["nonceStr"] = str(uuid.uuid1()).replace("-", "")
+            data = {}
             body = {}
-            response = {}
-            body["appId"] = "wx284751ea4c889568"
+            body["appid"] = "wx284751ea4c889568"
             body["mch_id"] = "1504082901"
             body["device_info"] = "WEB"
             body["nonce_str"] = str(uuid.uuid1()).replace("-", "")
-            key_sign = "appid={0}&body={1}&device_info={2}&mch_id={3}&nonce_str={4}".format(
-                body["appId"], "test", body["device_info"], body["mch_id"], body["nonce_str"]
-            )
-            key_sign = key_sign + "&key={0}".format("hangzhouzhenlangjinchukou")
-            import hashlib
-            s = hashlib.md5()
-            s.update(key_sign)
-            body["sign"] = s.hexdigest().upper()
-            body["sign_type"] = "MD5"
-            body["body"] = "美妆类-美妆镜"
-            body["out_trade_no"] = OMid
-            body["fee_type"] = "CNY"
+            body["body"] = "Beauty mirror"
+            body["out_trade_no"] = OMid.replace("-", "")
             body["total_fee"] = 1
             body["spbill_create_ip"] = "120.79.182.43"
             import datetime
@@ -114,28 +106,85 @@ class AOther(Resource):
             body["notify_url"] = "https://h878.cn/sharp/goods/other/getdata"
             body["trade_type"] = "JSAPI"
             body["openid"] = openid
+            key_sign = "appid={0}&body={1}&device_info={2}&mch_id={3}&nonce_str={4}&notify_url={5}&openid={6}" \
+                       "&out_trade_no={7}&time_expire={8}&time_start={9}&total_fee={10}&trade_type={11}".format(
+                body["appid"], "Beauty mirror", body["device_info"], body["mch_id"], body["nonce_str"],
+                body["notify_url"], body["openid"], body["out_trade_no"], body["time_expire"], body["time_start"],
+                body["total_fee"], body["trade_type"]
+            )
+            key_sign = key_sign + "&key={0}".format("HangZhouZhenLangHangZhouZhenLang")
+
+            import hashlib
+            s = hashlib.md5()
+            s.update(key_sign)
+            body["sign"] = s.hexdigest().upper()
+            xml_body = """<xml>\n\t
+                            <appid><![CDATA[{0}]]></appid>\n\t
+                            <body><![CDATA[{1}]]></body>\n\t
+                            <device_info><![CDATA[{2}]]></device_info>\n\t
+                            <mch_id><![CDATA[{3}]]></mch_id>\n\t
+                            <nonce_str><![CDATA[{4}]]></nonce_str>\n\t
+                            <notify_url><![CDATA[{5}]]></notify_url>\n\t
+                            <openid><![CDATA[{6}]]></openid>\n\t
+                            <out_trade_no><![CDATA[{7}]]></out_trade_no>\n\t
+                            <time_expire><![CDATA[{8}]]></time_expire>\n\t
+                            <time_start><![CDATA[{9}]]></time_start>\n\t
+                            <total_fee><![CDATA[{10}]]></total_fee>\n\t
+                            <trade_type><![CDATA[{11}]]></trade_type>\n\t
+                            <sign>{12}</sign>\n
+                            </xml>\n""".format(body["appid"], "Beauty mirror", body["device_info"], body["mch_id"],
+                                               body["nonce_str"],
+                                               body["notify_url"], body["openid"], body["out_trade_no"],
+                                               body["time_expire"], body["time_start"],
+                                               body["total_fee"], body["trade_type"], body["sign"])
+            print("=======================body===================")
+            print(body)
+            print("=======================body===================")
+            data["xml"] = body
             strResult = None
             try:
                 import urllib2
                 url = "https://api.mch.weixin.qq.com/pay/unifiedorder"
-                headers = {'Content-Type': 'application/json'}
-                req = urllib2.Request(url, headers=headers, data=body)
-                response = urllib2.urlopen(req)
-                strResult = response.read()
-                print strResult
+                headers = {'Content-Type': 'application/xml'}
+                # import xmltodict
+                # xml_body = xmltodict.unparse(data)
+                print("=======================xml_body===================")
+                print xml_body
+                print("=======================xml_body===================")
+                req = urllib2.Request(url, headers=headers, data=xml_body)
+                url_response = urllib2.urlopen(req)
+                strResult = url_response.read()
+                print 1
             except Exception as e:
                 print e.message
-            if "prepay_id" not in strResult:
+            print("=======================strResult===================")
+            print(str(strResult))
+            print("=======================strResult===================")
+            if not strResult:
                 return
-            strResult = json.loads(strResult)
-            print("=======================strResult===================")
-            print(strResult)
-            print("=======================strResult===================")
-            prepay_id = strResult["prepay_id"]
-            response["package"] = "prepay_id=" + prepay_id
+            import xmltodict
+            json_strResult = xmltodict.parse(strResult)
+            import json
+            json_strResult = json.loads(json.dumps(json_strResult))
+
+            json_result = json_strResult["xml"]
+            print("=======================json_result===================")
+            print(str(json_result))
+            print("=======================json_result===================")
+            if not json_strResult:
+                return
+            if "prepay_id" not in json_result:
+                return
+
+            prepay_id = json_result["prepay_id"]
+            print("=======================prepay_id===================")
+            print(str(prepay_id))
+            print("=======================prepay_id===================")
+            response["package"] = "prepay_id=" + str(prepay_id)
             response["signType"] = "MD5"
             key_sign = "appId={0}&nonceStr={1}&package={2}&signType={3}&timeStamp={4}&key={5}".format(
-                response["appId"], response["nonceStr"], response["package"], response["signType"], response["timeStamp"], "hangzhouzhenlangjinchukou"
+                response["appid"], response["nonceStr"], response["package"], response["signType"],
+                response["timeStamp"], "HangZhouZhenLangHangZhouZhenLang"
             )
             s = hashlib.md5()
             s.update(key_sign)
@@ -143,74 +192,119 @@ class AOther(Resource):
             return response
 
         if other == "prepayconfig":
+            print("=======================api===================")
+            print("接口名称是{0}，接口方法是get".format("prepayconfig"))
+            print("=======================api===================")
             args = request.args.to_dict()
-            if "OMid" not in args:
+            if "openid" not in args or "OMid" not in args:
                 return PARAMS_MISS
+            print("=======================args===================")
+            print(args)
+            print("=======================args===================")
+            openid = args["openid"]
             OMid = args["OMid"]
-            package = "prepay_id=" + OMid.replace("-", "")
-            import time
-            timeStamp = int(time.time())
             response = {}
-            response["appId"] = "wx284751ea4c889568"
-            response["mch_id"] = "1504082901"
-            response["device_info"] = "WEB"
+            response["appid"] = "wx284751ea4c889568"
+            response["openid"] = openid
+            import time
+            response["timeStamp"] = int(time.time())
             import uuid
-            response["nonce_str"] = str(uuid.uuid1()).replace("-", "")
-            key_sign = "appId={0}&nonceStr={1}&package={2}&signType={3}&timeStamp={4}&key={5}".format(
-                response["appId"], response["nonce_str"], package, "MD5",
-                timeStamp, "hangzhouzhenlangjinchukou"
+            response["nonceStr"] = str(uuid.uuid1()).replace("-", "")
+            data = {}
+            body = {}
+            body["appid"] = "wx284751ea4c889568"
+            body["mch_id"] = "1504082901"
+            body["device_info"] = "WEB"
+            body["nonce_str"] = str(uuid.uuid1()).replace("-", "")
+            body["body"] = "Beauty mirror"
+            body["out_trade_no"] = OMid.replace("-", "")
+            body["total_fee"] = 1
+            body["spbill_create_ip"] = "120.79.182.43"
+            import datetime
+            body["time_start"] = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+            body["time_expire"] = (datetime.datetime.now() + datetime.timedelta(hours=2)).strftime("%Y%m%d%H%M%S")
+            body["notify_url"] = "https://h878.cn/sharp/goods/other/getdata"
+            body["trade_type"] = "JSAPI"
+            body["openid"] = openid
+            key_sign = "appid={0}&body={1}&device_info={2}&mch_id={3}&nonce_str={4}&notify_url={5}&openid={6}" \
+                       "&out_trade_no={7}&time_expire={8}&time_start={9}&total_fee={10}&trade_type={11}".format(
+                body["appid"], "Beauty mirror", body["device_info"], body["mch_id"], body["nonce_str"],
+                body["notify_url"], body["openid"], body["out_trade_no"], body["time_expire"], body["time_start"],
+                body["total_fee"], body["trade_type"]
             )
+            key_sign = key_sign + "&key={0}".format("HangZhouZhenLangHangZhouZhenLang")
+
             import hashlib
             s = hashlib.md5()
             s.update(key_sign)
-            response["sign"] = s.hexdigest().upper()
-            response["sign_type"] = "MD5"
-            response["body"] = "美妆类-美妆镜"
-            response["out_trade_no"] = OMid
-            response["fee_type"] = "CNY"
-            response["total_fee"] = 1
-            response["spbill_create_ip"] = "120.79.182.43"
-            import datetime
-            response["time_start"] = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-            response["time_expire"] = (datetime.datetime.now() + datetime.timedelta(hours=2)).strftime("%Y%m%d%H%M%S")
-            response["notify_url"] = "https://h878.cn/sharp/goods/other/getdata"
-            response["trade_type"] = "JSAPI"
-            return response
-
-        if other == "openid":
-            args = request.args.to_dict()
-            print args
-            if "code" not in args:
-                return PARAMS_MISS
-            code = args["code"]
-            APP_ID = "wx284751ea4c889568"
-            APP_SECRET_KEY = "051c81977efa8175e43686565265bb4f"
-            request_url = "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type={3}"\
-                .format(APP_ID, APP_SECRET_KEY, code, "authorization_code")
-            conn = None
-            bye = None
+            body["sign"] = s.hexdigest().upper()
+            xml_body = """<xml>\n\t
+                <appid><![CDATA[{0}]]></appid>\n\t
+                <body><![CDATA[{1}]]></body>\n\t
+                <device_info><![CDATA[{2}]]></device_info>\n\t
+                <mch_id><![CDATA[{3}]]></mch_id>\n\t
+                <nonce_str><![CDATA[{4}]]></nonce_str>\n\t
+                <notify_url><![CDATA[{5}]]></notify_url>\n\t
+                <openid><![CDATA[{6}]]></openid>\n\t
+                <out_trade_no><![CDATA[{7}]]></out_trade_no>\n\t
+                <time_expire><![CDATA[{8}]]></time_expire>\n\t
+                <time_start><![CDATA[{9}]]></time_start>\n\t
+                <total_fee><![CDATA[{10}]]></total_fee>\n\t
+                <trade_type><![CDATA[{11}]]></trade_type>\n\t
+                <sign>{12}</sign>\n
+                </xml>\n""".format(body["appid"], "Beauty mirror", body["device_info"], body["mch_id"], body["nonce_str"],
+                    body["notify_url"], body["openid"], body["out_trade_no"], body["time_expire"], body["time_start"],
+                    body["total_fee"], body["trade_type"], body["sign"])
+            print("=======================body===================")
+            print(body)
+            print("=======================body===================")
+            data["xml"] = body
+            strResult = None
             try:
-                import pycurl
-                import io
-                conn = pycurl.Curl()
-                bye = io.BytesIO()
-                conn.setopt(pycurl.WRITEFUNCTION, bye.write)
-                conn.setopt(conn.url, request_url)
-                conn.setopt(pycurl.SSL_VERIFYPEER, 1)
-                conn.setopt(pycurl.SSL_VERIFYHOST, 2)
-                conn.perform()
-                response = bye.getvalue().decode("utf-8")
-                #res = response.read()
-                #print res
-                print response
-                if "openid" in response:
-                    import json
-                    res = json.loads(response)
-                    return res["openid"]
-            except BaseException as e:
+                import urllib2
+                url = "https://api.mch.weixin.qq.com/pay/unifiedorder"
+                headers = {'Content-Type': 'application/xml'}
+                #import xmltodict
+                #xml_body = xmltodict.unparse(data)
+                print("=======================xml_body===================")
+                print xml_body
+                print("=======================xml_body===================")
+                req = urllib2.Request(url, headers=headers, data=xml_body)
+                url_response = urllib2.urlopen(req)
+                strResult = url_response.read()
+                print 1
+            except Exception as e:
                 print e.message
-            finally:
-                conn.close()
-                bye.close()
+            print("=======================strResult===================")
+            print(str(strResult))
+            print("=======================strResult===================")
+            if not strResult:
+                return
+            import xmltodict
+            json_strResult = xmltodict.parse(strResult)
+            import json
+            json_strResult = json.loads(json.dumps(json_strResult))
 
+            json_result = json_strResult["xml"]
+            print("=======================json_result===================")
+            print(str(json_result))
+            print("=======================json_result===================")
+            if not json_strResult:
+                return
+            if "prepay_id" not in json_result:
+                return
 
+            prepay_id = json_result["prepay_id"]
+            print("=======================prepay_id===================")
+            print(str(prepay_id))
+            print("=======================prepay_id===================")
+            response["package"] = "prepay_id=" + str(prepay_id)
+            response["signType"] = "MD5"
+            key_sign = "appId={0}&nonceStr={1}&package={2}&signType={3}&timeStamp={4}&key={5}".format(
+                response["appid"], response["nonceStr"], response["package"], response["signType"],
+                response["timeStamp"], "HangZhouZhenLangHangZhouZhenLang"
+            )
+            s = hashlib.md5()
+            s.update(key_sign)
+            response["paySign"] = s.hexdigest().upper()
+            return response
