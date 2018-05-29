@@ -1,33 +1,31 @@
 <template>
   <view class="list" @tap = "bindTap({{list}})" wx:if="{{page != 'car' || (page == 'car' && list.Pnum != 0)}}">
-    <image class="m-business-img" src="{{list.PBimage}}" wx:if="{{page != 'product_info'}}"  style="width: 200rpx;height: 200rpx;" mode="aspectFill"/>
+    <image class="m-business-img" src="{{list.PBimage}}" wx:if="{{page != 'product_info'}}"  style="width: 200rpx;height: 200rpx; margin: 20rpx;" mode="aspectFill"/>
     <view class="m-business-info">
       <view class="m-first">
         <view class="m-first-left">
-          <view class="m-name">{{list.PRname}}</view>
-          <view class="m-time m-grey" wx:if="{{list.time && list.time != ''}}">{{list.time}}</view>
+          <view class="m-name">{{list.PRname}}--高端大气上档次6666</view>
         </view>
-        <view class="m-first-right {{list.label == '推荐'? 'm-recommend':''}} {{list.label == '配送中'? 'm-distribution':''}} {{list.label == '已完成'? 'm-completed':''}}" wx:if="{{list.label && list.label != ''}}">{{list.label}}</view>
+        <view class="m-price">￥{{list.PBprice}}</view>
       </view>
-      <view class="m-business-star score-grey" wx:if="{{list.PBsalesvolume && list.PBscore}}">月销{{list.PBsalesvolume}}份 好评率{{list.PBscore}}%</view>
-      <!--<view class="m-business-star m-grey" wx:if="{{list.PRinfo}}">{{list.PRinfo}}</view>-->
-      <!--<view class="m-purchase-info">-->
-        <!--<view wx:for="{{list.PRquality}}" wx:for-item="option"> {{option.choice}}</view>-->
+      <view class="m-business-loc">
+        <view class="score-grey" wx:if="{{list.PBsalesvolume && list.PBscore}}">月销{{list.PBsalesvolume}}</view>
+        <view class="m-price"></view>
+      </view>
+      <!--<view class="score-grey" wx:if="{{list.PBsalesvolume && list.PBscore}}">月销{{list.PBsalesvolume}}</view>-->
+      <!--<view class="m-business-loc">-->
+        <!--<view class="m-option">-->
+          <!--<view wx:for="{{list.PRquality}}" wx:for-item="option"> {{option.choice }}</view>-->
+        <!--</view>-->
       <!--</view>-->
-      <!--<view class="m-business-star m-grey" wx:if="{{page == 'myOrder'}}">数量：{{list.CAnumber}}</view>-->
-      <!--<view class="m-business-star m-grey" >x {{list.CAnumber}}</view>-->
       <view class="m-business-loc" >
-        <view class="m-add-cut">
+        <view class="m-option">
           <view wx:for="{{list.PRquality}}" wx:for-item="option"> {{option.choice }}</view>
         </view>
-        <!--<view class="m-add-cut " >x {{list.CAnumber}}</view>-->
-      </view>
-      <view class="m-business-loc" >
-        <view class="m-price">￥{{list.PBprice}}</view>
         <view class="m-add-cut" wx:if="{{page != 'myOrder' && page != 'product_info' }}">
-          <image src="/images/cut.png" style="width: 48rpx;height: 48rpx;" wx:if="{{list.CAnumber > 0 && page != 'index'}}" @tap.stop="cutTap({{list.CAnumber}})"/>
-          <input type="number" value="{{list.CAnumber}}" wx:if="{{list.CAnumber > 0 && page != 'index'}}" bindblur="bindKeyInput" />
-          <image src="/images/add.png" style="width: 48rpx;height: 48rpx;" @tap.stop="addTap({{list.CAnumber}})"/>
+          <image src="/images/cut.png" style="width: 48rpx;height: 48rpx;"  @tap.stop="cutTap({{list.PBid}})"/>
+          <input type="number" value="{{list.CAnumber}}" bindblur="bindKeyInput" />
+          <image src="/images/add.png" style="width: 48rpx;height: 48rpx;" @tap.stop="addTap({{list.PBid}})"/>
         </view>
       </view>
     </view>
@@ -43,45 +41,29 @@
       page:String
     }
     data = {
-      number:0,
+      number: null,
       token:''
     }
-    async dealCar(params,token) {
-      let that = this;
-      tip.loading();
-      wx.request({
-        url:api.update_car+'?token='+token,
-        method:'POST',
-        data:{Pid:params.Pid,Pnum:params.Pnum},
-        header:{
-          'content-type':'application/json',
-        },
-        success:function (res) {
-          tip.loaded()
-          // console.log(res,'aaa')
-          if(res.data.status == '200'){
-//            that.list_data = res.data.data;
+    async operateCart(params) {
+        tip.loading();
+        let res = await api.operateCart({query: params, token: this.token, method: 'POST'})
+        if(res.data.status == '200'){
+//            if(params.CAnumber == 1)
+//                this.list.CAnumber = this.list.CAnumber -1;
+//            else if(params.CAnumber == -1)
+//                this.list.CAnumber++;
+            this.$apply();
             wx.showToast({
               title: '修改成功',
               icon: 'success',
               duration: 800
             })
-            that.$apply()
-          }
         }
-      })
     }
     onLoad(){
-      let token = '';
-      let that = this;
-      wx.getStorage({
-        key: 'token',
-        success: function(res){
-          token = res.data;
-          that.token = res.data
-          that.$apply()
-        }
-      })
+        let token =  wepy.getStorageSync('token')
+        this.token = token
+        this.$apply()
     }
 
     methods = {
@@ -89,42 +71,40 @@
         this.$emit('listTap',v)
       },
       cutTap(v){
-        if(this.page == 'car' && v == 1){
+        if(this.page == 'car' && v.CAnumber == 1){
           let _that = this;
           wx.showModal({
             title:'提示',
             content:'确定要删除该商品吗？',
             success:function (res) {
               if(res.confirm){
-                _that.list.Pnum = v-1;
-                _that.dealCar(_that.list,_that.$data.token)
+                  let param = {
+                      PBid: v,
+                      CAnumber: -1
+                  }
+                _that.operateCart(param)
 
-                _that.$apply();
               }else if(res.cancel){
               }
             }
           })
         }else{
-          v>0 && (v = v-1)
-          this.list.Pnum = v;
-          this.operateCart(this.list,this.$data.token)
-          this.$apply();
+            let param = {
+                PBid: v,
+                CAnumber: -1
+            }
+            this.operateCart(param)
         }
       },
       bindKeyInput(e){
-
-        this.list.Pnum = e.detail.value;
-        this.dealCar(this.list,this.$data.token)
-        this.$apply();
       },
 
       addTap(v){
-
-        v = Number(v)+1;
-        this.list.Pnum = v;
-        this.dealCar(this.list,this.$data.token);
-
-        this.$apply();
+          let param = {
+              PBid: v,
+              CAnumber: +1
+          }
+          this.operateCart(param)
       }
     }
   }
@@ -190,19 +170,21 @@
       }
     }
     .m-business-loc{
-       width: 100%;
-       font-size: 28rpx;
-       color: @grey-font;
-       display: flex;
-       flex-flow: row;
-       justify-content: space-between;
+      width: 100%;
+      font-size: 28rpx;
+      color: @grey-font;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      .m-option {
+        display: flex;
+        flex-direction: row;
+      }
      }
     .m-add-cut{
-      /*width: 30%;*/
       display: flex;
       flex-flow: row;
       align-items: center;
-
       input{
         width: 100rpx;
         height: 50rpx;

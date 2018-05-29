@@ -1,5 +1,5 @@
 {
-  "name": "breakfast_app",
+  "name": "A shop",
   "version": "0.0.1",
   "description": "A WePY project",
   "main": "dist/app.js",
@@ -14,7 +14,7 @@
     "module-a": false,
     "./src/components/list": "./src/components/wepy-list.wpy"
   },
-  "author": "maoyaY <1335679005@qq.com>",
+  "author": "",
   "license": "MIT",
   "dependencies": {
     "promise-polyfill": "^6.0.2",

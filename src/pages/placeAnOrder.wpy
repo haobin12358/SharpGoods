@@ -291,6 +291,7 @@
                       if (res.code) {
                           console.log(res.code, 'this is code')
                           let successFun = (res3) => {
+                              console.log(res3, 'gg')
                               let timeStamp = res3.data.timeStamp.toString()
                               wx.requestPayment({
                                   'appId': res3.data.appId,

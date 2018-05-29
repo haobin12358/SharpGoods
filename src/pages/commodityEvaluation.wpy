@@ -1,12 +1,12 @@
 <template>
   <view class="m-evaluation">
     <view class="m-head">
-      <view class="m-left">
-        <image src="/images/icon_radio.png" wx:if="{{!is_radio}}" style="width: 60rpx; height: 60rpx;" @tap="radioTap"></image>
-        <image src="/images/icon_radio_active.png" wx:if="{{is_radio}}" style="width: 60rpx; height: 60rpx;" @tap="radioTap"></image>
-        <text>全选</text>
-      </view>
-
+      <!--<view class="m-left">-->
+        <!--<image src="/images/icon_radio.png" wx:if="{{!is_radio}}" style="width: 60rpx; height: 60rpx;" @tap="radioTap"></image>-->
+        <!--<image src="/images/icon_radio_active.png" wx:if="{{is_radio}}" style="width: 60rpx; height: 60rpx;" @tap="radioTap"></image>-->
+        <!--<text>全选</text>-->
+      <!--</view>-->
+      <view class=""></view>
       <Star @allStar.user="allStar"></Star>
     </view>
     <view class="m-content">
@@ -114,16 +114,18 @@
       })
     }
     onLoad(option){
-      let token = '';
       let that = this;
-      wx.getStorage({
-        key: 'token',
-        success: function(res){
-          token = res.data
-          that.getAllCommodity({token:token,Oid:option.Oid});
-          that.$apply()
-        }
-      })
+//      wx.getStorage({
+//        key: 'token',
+//        success: function(res){
+//          token = res.data
+//          that.getAllCommodity({token:token,Oid:option.Oid});
+//          that.$apply()
+//        }
+//      })
+//        OMid
+        console.log(option, '778')
+        let token = wepy.getStorageSync('token');
 
     }
     methods = {

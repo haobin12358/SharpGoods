@@ -36,20 +36,20 @@
     }
 
     onLoad(){
-        let token = this.$parent.globalData.token;
+        let token =  wepy.getStorageSync('token')
         this.getAllOrder(token)
     }
     onShow(option){
     }
     methods = {
       productTap(v){
-        wx.navigateTo({
-          url: '/pages/oneOrder?Oid='+v.Oid
-        })
+//        wx.navigateTo({
+//          url: '/pages/oneOrder?Oid='+v.Oid
+//        })
       },
       evalTap(v){
         wx.navigateTo({
-          url: '/pages/commodityEvaluation?Oid='+v.Oid
+          url: '/pages/commodityEvaluation?OMid='+v.OMid + '&PBid=' +v.PBid
         })
       },
       evalookTap(v){

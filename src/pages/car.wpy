@@ -43,16 +43,11 @@
         let total = 0
         if(res.data.status == '200'){
             that.list_data = res.data.data;
-            console.log(that.list_data, 'this is what list looks like22222222222222')
             for(let i=0;i< that.list_data.length;i++){
               total += Number(that.list_data[i].CAnumber * that.list_data[i].PBprice)
             }
             total = total.toFixed(2)
             that.total_money = total
-
-//            let selected = articles.map(item => {
-//                return Object.values(item)
-//            })
 
             that.$apply()
             tip.loaded()
@@ -89,7 +84,6 @@
   @import "../styles/common";
   .m-business-content{
     .m-all-products{
-      margin-bottom: 220rpx;
       .list{
         padding: 0 20rpx;
       }
