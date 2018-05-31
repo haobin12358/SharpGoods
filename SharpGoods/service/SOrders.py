@@ -66,3 +66,7 @@ class SOrders(SBase):
             OrderMain.OMabo, OrderMain.OMcointype, OrderMain.OMstatus,
             OrderMain.OMtime, OrderMain.OMprice
         ).filter(OrderMain.OMid == omid).first()
+
+    @close_session
+    def get_omprice_by_omid(self, omid):
+        return self.session.query(OrderMain.OMprice).filter_by(OMid=omid).scalar()

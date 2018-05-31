@@ -5,13 +5,20 @@ import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask_restful import Resource,request
 from config.response import PARAMS_MISS
+from common.import_status import import_status
+from config.response import SYSTEM_ERROR
 
 class AOther(Resource):
     def __init__(self):
-        pass
+        from service.SOrders import SOrders
+        self.sorders = SOrders()
+        self.title = '============{0}============'
 
     def get(self, other):
         if other == "getdata":
+            print("=======================api===================")
+            print("接口名称是{0}，接口方法是get".format("getdata"))
+            print("=======================api===================")
             data = request.data
             print(data)
             import json
@@ -98,7 +105,11 @@ class AOther(Resource):
             body["nonce_str"] = str(uuid.uuid1()).replace("-", "")
             body["body"] = "Beauty mirror"
             body["out_trade_no"] = OMid.replace("-", "")
-            body["total_fee"] = 1
+            OMprice = self.sorders.get_omprice_by_omid(OMid)
+            print("============OMprice=========")
+            print OMprice
+            print("============OMprice=========")
+            body["total_fee"] = int(OMprice * 100)
             body["spbill_create_ip"] = "120.79.182.43"
             import datetime
             body["time_start"] = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
@@ -189,6 +200,17 @@ class AOther(Resource):
             s = hashlib.md5()
             s.update(key_sign)
             response["paySign"] = s.hexdigest().upper()
+            order = {"OMstatus": 14}
+            print(self.title.format("order"))
+            print(order)
+            print(self.title.format("order"))
+            try:
+                self.sorders.update_omstatus_by_omid(OMid, order)
+            except Exception as e:
+                print(self.title.format("update order error"))
+                print(e.message)
+                print(self.title.format("update order error"))
+                return SYSTEM_ERROR
             return response
 
         if other == "prepayconfig":
@@ -308,3 +330,20 @@ class AOther(Resource):
             s.update(key_sign)
             response["paySign"] = s.hexdigest().upper()
             return response
+
+    def post(self, other):
+        if other == "getdata":
+            print("=======================api===================")
+            print("接口名称是{0}，接口方法是get".format("getdata"))
+            print("=======================api===================")
+            data = request.data
+            print(data)
+            import json
+            data = json.loads(data)
+            if "return_code" not in data:
+                return PARAMS_MISS
+
+            return {
+                "return_code": "SUCCESS",
+                "return_msg": "OK"
+            }

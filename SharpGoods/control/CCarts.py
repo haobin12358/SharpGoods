@@ -57,9 +57,12 @@ class CCarts():
             return PARAMS_MISS
         uid = args.get("token")
         pbid = data.get("PBid")
-        pnum = data.get("CAnumber")
-        if pnum <= 0:
-            return self.del_cart()
+        CAnumber = data.get("CAnumber")
+        if CAnumber <= 0:
+            PBnumber = self.scarts.get_pbnumber_by_pbid_and_usid(pbid, uid)
+            pnum = int(CAnumber) + int(PBnumber)
+            if pnum <= 0:
+                return self.del_cart()
         try:
             if not self.sproduct.get_product_by_pbid(pbid):
                 return import_status("ERROR_MESSAGE_NONE_PRODUCT", "SHARPGOODS_ERROR", "ERROR_NONE_PRODUCT")
@@ -68,12 +71,14 @@ class CCarts():
             print cart
             print "=================cart================="
             if cart:
+                PBnumber = self.scarts.get_pbnumber_by_pbid_and_usid(pbid, uid)
+                pnum = int(CAnumber) + int(PBnumber)
                 self.scarts.update_num_cart(pnum, cart.CAid)
             else:
                 add_model("Cart",
                           **{
                               "CAid": str(uuid.uuid4()),
-                              "CAnumber": pnum,
+                              "CAnumber": CAnumber,
                               "USid": uid,
                               "CAstatus": 1,
                               "PBid": pbid

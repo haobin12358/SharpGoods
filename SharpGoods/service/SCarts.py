@@ -45,3 +45,7 @@ class SCarts(SBase):
     @close_session
     def get_cart_by_uid_pid(self, uid, pid):
         return self.session.query(Cart.CAid, Cart.CAnumber, Cart.CAstatus).filter(Cart.USid == uid, Cart.PBid == pid).first()
+
+    @close_session
+    def get_pbnumber_by_pbid_and_usid(self, pbid, usid):
+        return self.session.query(Cart.CAnumber).filter_by(PBid=pbid).filter_by(USid=usid).scalar()
