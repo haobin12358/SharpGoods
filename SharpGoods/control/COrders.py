@@ -10,6 +10,7 @@ from service.SOrders import SOrders
 from service.SProduct import SProduct
 from service.SLocations import SLocations
 from service.SCoupons import SCoupons
+from service.SCarts import SCarts
 from config import conversion as cvs
 
 from common.get_str import get_str
@@ -22,6 +23,7 @@ class COrders():
         self.slocation = SLocations()
         self.sproduct = SProduct()
         self.scoupons = SCoupons()
+        self.scart = SCarts()
         self.title = '============{0}============'
         self.order_main_params = ["OMstatus", "OMprice", "LOid", "OMabo", "COid", "OMcointype", "order_item"]
         self.order_part_param = ["PBid", "PRnumber"]
@@ -118,6 +120,12 @@ class COrders():
                     "PRnumber": int(get_str(order_part_info, "PRnumber"))
                 }
                 self.sorder.add_model("Orderpart", **order_part)
+                cart = get_model_return_dict(self.scart.get_cart_by_uid_pid(get_str(args, "token"), get_str(order_part_info, "PBid")))
+                print(self.title.format("cartt"))
+                print(cart)
+                print(self.title.format("cartt"))
+                self.scart.del_carts(cart.get("CAid"))
+
             except Exception as e:
                 print(self.title.format("ERROR MSG"))
                 print(e.message)
