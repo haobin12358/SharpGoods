@@ -70,7 +70,7 @@ class SProduct():
         try:
             product = self.session.query(model.Products.PRname, model.Products.PRbrand, model.Products.PRinfo,
                                          model.Products.PRvideo, model.Products.PRtype, model.Products.PRimage,
-                                         model.Products.PRaboimage).filter_by(PRid=prid).first()
+                                         model.Products.PRaboimage, model.Products.PRvideostart).filter_by(PRid=prid).first()
         except Exception as e:
             print e.message
             self.session.rollback()

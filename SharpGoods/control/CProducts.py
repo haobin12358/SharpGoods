@@ -54,6 +54,7 @@ class CProducts():
         product_info["PRname"] = product.PRname
         product_info["PRvideo"] = product.PRvideo
         product_info["PRinfo"] = product.PRinfo
+        product_info["PRvideostart"] = product.PRvideostart
         product_info["PRimage"] = product.PRimage
         product_info["PRaboimage"] = product.PRaboimage
         PRbrand = product.PRbrand

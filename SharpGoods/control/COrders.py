@@ -80,7 +80,7 @@ class COrders():
         if "LOid" not in data:
             print("LOid is not find")
             return PARAMS_MISS
-        loid = get_str(data, "Loid")
+        loid = get_str(data, "LOid")
 
         try:
             self.slocation.update_locations_by_loid(loid, {"LOisedit": 302})

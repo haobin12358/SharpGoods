@@ -56,6 +56,7 @@ class Products(Base):
     PRtype = Column(Integer, nullable=False) # 营销类型 {501自营， 502非自营}
     PRbrand = Column(Integer, nullable=False) # 类目 {601美妆类， 602 3C类}
     # PRquality = Column(String(64)) # 商品属性，包含类目、颜色等等，以json进行保存
+    PRvideostart = Column(String(64))
 
 class ProductsBrands(Base):
     __tablename__ = "ProductsBrands"
