@@ -1,0 +1,148 @@
+<template>
+    <view class="{{currentPage==0?'':'hidden'}}">
+        <addressList :addressList.sync="addressList" @currentPage.user="getCurrentPage"></addressList>
+    </view>
+    <view class="{{currentPage==1?'':'hidden'}}">
+        <addressAdd @currentPage.user="getCurrentPage"></addressAdd>
+    </view>
+    <view class="{{currentPage==2?'':'hidden'}}">
+        <addressEdit @currentPage.user="getCurrentPage" ></addressEdit>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy';
+    import AddressList from "../components/common/addressList";
+    import AddressAdd from "../components/common/addressAdd";
+    import AddressEdit from "../components/common/addressEdit";
+    import api from "../api/api";
+    import tip from '../utils/tip';
+
+    export default class Address extends wepy.page {
+        config = {
+            navigationBarTitleText: '地址管理',
+        }
+        components = {
+            addressList: AddressList,
+            addressAdd: AddressAdd,
+            addressEdit: AddressEdit
+        }
+        data = {
+            addressList: [
+                {
+                    LOid: 1,
+                    LOname: '羊羊羊',
+                    LOtelphone: '18768105036',
+                    LOprovince: '浙江省',
+                    LOcity: '杭州市',
+                    LOarea: '下沙',
+                    LOdetail: '杭州电子科技大学',
+                    isDef: 1,
+                },
+                {
+                    LOid: 2,
+                    LOname: '羊羊羊2',
+                    LOtelphone: '18768105036',
+                    LOprovince: '浙江省',
+                    LOcity: '杭州市',
+                    LOarea: '下沙',
+                    LOdetail: '杭州电子科技大学',
+                    isDef: 0
+                },
+                {
+                    LOid: 3,
+                    LOname: '羊羊羊3',
+                    LOtelphone: '18768105036',
+                    LOprovince: '浙江省',
+                    LOcity: '杭州市',
+                    LOarea: '下沙',
+                    LOdetail: '杭州电子科技大学',
+                    isDef: 0
+                },
+            ],
+            editInfo:{},
+            //显示当前组件 0 列表 1新增 2编辑
+            currentPage: 0,
+            type: "",
+            //哪个页面跳转过来的
+            token: ''
+        }
+
+        async getUserAddress(token) {
+            let that = this;
+            const res = await api.getAddress({ query: {token: token} });
+            console.log(res, 'request from address')
+
+            if(res.data.status == '200'){
+                this.addressList=res.data.data;
+                this.$invoke("addressList","refreshList", this.addressList);
+            } else {
+                tip.error('addressErr')
+            }
+            that.showLoading = false;
+        }
+//        async receiverInf(id) {
+//            let that = this;
+//            const json = await api.receiverInfoById({
+//                query: {
+//                    id: id
+//                }
+//            });
+//            if (json.data.code == 0) {
+//                this.receiverInfo=json.data.receiverInfo;
+//                this.$invoke("addressEdit","refresh", this.receiverInfo);
+//                console.log("=================================")
+//            } else {
+//                tip.error(json.data.msg)
+//            }
+//            that.showLoading = false;
+//        }
+        async editAddress(data) {
+//            let res = wepy.getStorageSync('EditAddress')
+//            this.editInfo=res;
+            this.editInfo = data;
+            this.$invoke("addressEdit","refresh", this.editInfo);
+
+//            this.showLoading = false;
+        }
+
+        onLoad(option) {
+            let token =  wepy.getStorageSync('token')
+            this.token = token
+            this.currentPage = 0;
+            this.getUserAddress(token);
+            this.type = (option.type==undefined?"":option.type);
+            this.$invoke("addressList","setOrgType", this.type);
+        }
+
+        onShow(){
+//            let token =  wepy.getStorageSync('token')
+//            this.getUserAddress(token);
+        }
+        computed = {
+
+        }
+        methods = {
+            getCurrentPage(num, data) {
+                this.currentPage = num;
+                if (num!=1&&num!=0) {
+                    this.editAddress(data);
+                    console.log(data, 'trigger edit')
+                }
+            }
+        }
+        onUnload() {
+        }
+        events = {
+            refreshAddressList(msg){
+//                let token =  wepy.getStorageSync('token')
+                this.getUserAddress(this.token);
+            }
+        }
+    }
+
+</script>
+<style lang="less">
+    .hidden {
+        display: none;
+    }
+</style>

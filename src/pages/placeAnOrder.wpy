@@ -1,0 +1,619 @@
+<template>
+<form bindsubmit="formSubmit">
+  <view class="m-place-order" >
+    <view class="address" @tap="setAddress">
+      <view class="empty_address" wx:if="{{!exist_address}}">
+        <view class="title">设置收货地址</view>
+        <view class="arrow">&gt;</view>
+      </view>
+      <view class="address_info" wx:else>
+        <view class="title">
+          <view class="user_info">
+            <text class="name">{{address.LOname}} </text>
+            <text class="phone">{{address.LOtelphone}}</text>
+          </view>
+          <view class="active_address">
+            <!--<text class="default" wx:if="{{address.LOcode==1}}"> [默认]</text>-->
+            {{address.LOprovince}}{{address.LOcity}}{{address.LOarea}}{{address.LOdetail}}
+          </view>
+        </view>
+        <view class="arrow">&gt;</view>
+      </view>
+    </view>
+    <view class="m-content">
+      <repeat for="{{all_order}}" key="index" index="index" item="item">
+        <Order :order.sync="item" :page.sync="test"></Order>
+      </repeat>
+      <view class="m-li-m" catchtap="showModal">
+        <view class="m-label">优惠券</view>
+        <view class="m-coupon" wx:if="{{choose_ticket.COcut }}">折扣：{{choose_ticket.COcut }}</view>
+        <view class="m-coupon" wx:if="{{choose_ticket.COuse }}">{{choose_ticket.COuse}}</view>
+        <view wx:if="{{!choose_ticket}}">选择优惠券</view>
+      </view>
+      <view class="m-li-more">合计：<i class="m-price">￥{{total_money}}</i></view>
+    </view>
+    <view class="m-remark">
+      <view class="m-li">
+        <picker bindchange="PickerChangeWay" value="{{payment_method.index}}" range="{{payment_method.array}}">
+          <view class="picker">
+            支付方式：<image src="/images/icon-more.png" style="width: 42rpx;height: 36rpx;float: right"></image><i class="m-select">{{payment_method.array[payment_method.index]}}</i>
+          </view>
+        </picker>
+      </view>
+      <view class="m-li">
+        <view class="m-input-box">
+          备注：<input class="m-input" value="{{Oabo}}" bindinput="bindKeyInput"  maxlength="200" placeholder="备注信息" />
+        </view>
+      </view>
+    </view>
+    <foot class="m-foot">
+      <view class="m-car">
+        <!--<image src="/images/car.png" style="width: 100rpx;height: 100rpx;"></image>-->
+        <!--<view class="m-num">2</view>-->
+        <view>合计：<text class="m-price">￥{{total_money}}</text></view>
+      </view>
+      <view class="m-btn m-active" @tap="placeAnOrder">支付</view>
+    </foot>
+  </view>
+  <view class="m-cover" catchtouchmove="Touch" wx:if="{{show_modal}}">
+    <view class="m-modal" >
+      <view class="m-modal-head">
+        <image src="/images/icon_back.png" style="width: 60rpx; height: 60rpx;" catchtap="modalBack"></image>
+        <view class="m-sure"></view>
+        <!--<view class="m-sure" catchtap="cardSure">确定 </view>-->
+        <!--优惠券-->
+      </view>
+      <view class="m-scroll">
+        <scroll-view class="m-modal-content" scroll-y="true" catchtouchmove="modalTouch">
+
+          <view class="m-modal-title" wx:if="{{tickets.length > 0}}">可用的优惠卷</view>
+          <view class="m-no" wx:if="{{tickets.length <= 0}}">无可使用优惠券</view>
+          <view class="m-card-box">
+            <repeat for="{{tickets}}" key="index" index="index" item="item">
+              <Card :list.sync="item" @cardTap.user="cardTap"></Card>
+            </repeat>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+  </view>
+</form>
+</template>
+<script >
+  import wepy from 'wepy';
+//  import Pick from '../components/common/picker'
+  import AddressPicker from '../components/common/addressPicker'
+  import Order from '../components/common/order'
+  import tip from '../utils/tip'
+  import api from '../api/api'
+  import Card from '../components/common/card'
+  export default class PlaceAnOrder extends wepy.page{
+    config = {
+      navigationBarTitleText: ''
+    }
+    components = {
+        Order:Order,
+        Card:Card,
+        addressPicke: AddressPicker
+    }
+    data = {
+        exist_address: true,
+        address: {
+            LOname: '',
+            LOtelphone: '',
+            LOprovince: '',
+            LOcity: '',
+            LOarea: '',
+            LOdetail :'',
+            LOid: ''
+        },
+        Oabo:'',
+        addreddPicker: {},
+        all_order:[],
+        Uname:'',
+        Utel:'',
+        payment_method:
+          {
+            sort:'支付方式',
+            array: ['微信支付'],
+            index:0,
+          },
+        total_money:0,
+        show_modal:false,
+        tickets:[],
+        choose_ticket:null,
+          isDefult: false,
+          province: '',
+          city: '',
+          area: '',
+          provinceCode: '',
+          cityCode: '',
+          areaCode: '',
+        from: '',
+        test: 'a test',
+        token : ''
+    }
+      async getAddressInfo(token) {
+//          let res = await api.getAddress({ token: token });
+          const res = await api.getAddress({ query: {token: token} });
+          if (res.data.data.length != 0) {
+              this.exist_address = true;
+              this.address=res.data.data[0];
+          } else {
+              tip.error(res.data.message)
+          }
+      }
+    events = {
+    }
+    async getAllCar(token) {
+
+        let that = this;
+        tip.loading();
+        let res = await api.getCartList({query: {token: token}})
+        this.all_order = res.data.data;
+        let num = 0;
+        for(let i=0;i< that.all_order.length;i++){
+//            that.total_money += Number(that.all_order[i].CAnumber * that.all_order[i].PBprice)
+            num += Number(that.all_order[i].CAnumber * that.all_order[i].PBprice);
+            that.total_money = num.toFixed(2);
+        }
+        that.$apply()
+    }
+
+    async getAllTicket(token) {
+        let that = this;
+        tip.loading();
+//        let res = api.getTicketAll({query: { token: token }})
+        let res = await api.getTicketAll({query: { token: 'de98529f-b1f0-4fd6-8908-8b7d522d22c6' }})         //////////////////
+        if(res.data.status == 200){
+            that.tickets = res.data.data;
+            that.$apply();
+        }
+        tip.loaded();
+    }
+
+    deal_arr(data,name){
+      let _arr = [];
+      for(let i = 0;i<data.length;i++){
+        _arr.push(data[i][name])
+      }
+      return _arr;
+    }
+    onLoad(option){
+        let that = this
+        let token =  wepy.getStorageSync('token')
+        this.token = token;
+        this.total_money = 0;
+        if(option.from != '') {that.from = option.from }
+        let select = option.select==undefined?"":option.select;
+        if (select=="1") {
+            //选择地址
+            let res = wepy.getStorageSync('address')
+            that.address=res;
+        }else {
+            this.getAddressInfo(token);
+        }
+        this.getAllCar(token);
+        this.getAllTicket(token);
+    }
+      async submitAll(token,params) {
+//          let that = this;
+//          tip.loading();
+//
+//          let params = {
+//              "LOid": LOid,
+//              "orderitems": [],
+//              "OMessage": '',
+//              "OMcointype": "￥",
+//              "OMstatus": "未支付",
+//              "OMprice": 0,
+//              "COid": ""
+//
+//          };
+//
+//          wx.request({
+//              url:api.make_main_order+'?token='+token,
+//              method:'POST',
+//              data:params,
+//              header:{
+//                  'content-type':'application/json',
+//              },
+//              success:function (res) {
+//                  tip.loaded()
+//                  that.total_money = 0;
+//                  if(res.data.status == '200'){
+//
+//                      //
+//                      that.$apply();
+//                      wx.showToast({
+//                          title: '下单成功',
+//                          icon: 'success',
+//                          duration: 1000
+//                      });
+//                  }
+//              }
+//          })
+      }
+    methods = {
+        setAddress() {
+            wepy.navigateTo({
+                url: "/pages/address?type=order"
+            })
+        },
+        changeCheckBoxState() {
+            this.isDefult = !this.isDefult;
+        },
+      bindKeyInput(e){
+        this.Oabo = e.detail.value;
+        this.$apply();
+      },
+      async placeAnOrder(e){
+          let param = {};
+          let params = {};
+
+          param = {
+              "productlist" :[],
+          }
+          params = {
+              "LOid": this.address.LOid,
+              "orderitems": [],
+              "OMmessage": this.Oabo,
+              "OMcointype": "￥",
+              "OMstatus": "未支付",
+              "OMprice": this.total_money
+          }
+          let len = this.all_order.length
+          for(let i=0; i<len; i++){
+              params.orderitems[i] = {};
+              param.productlist[i] = {};
+              params.orderitems[i].PBid = this.all_order[i].PBid;
+              param.productlist[i].PBid = this.all_order[i].PBid;
+              params.orderitems[i].PRnumber = this.all_order[i].CAnumber;
+              param.productlist[i].PRnumber = this.all_order[i].CAnumber;
+          }
+
+          let ticket = this.choose_ticket
+          if( ticket !== null){
+              param.CAid = this.choose_ticket.CAid
+              params.CAid = this.choose_ticket.CAid
+          }
+          console.log(param, '价格！')
+          console.log(params, '支付！')
+          let res1 = await api.getAllPrice({query: param, token: this.token, method: 'POST'})
+          if(res1.data.status == 200) {
+              this.total_money = res1.data.OMprice
+              let res2 = await api.makeOrder({query: params,token: this.token, method: 'POST'})
+              let OMid = res2.data.data.OMid;
+//              let res3 = await api.getPayParam({query: {OMid: OMid}})
+//              console.log(res3, 'dadada')
+              await wx.login({
+                  success: function(res) {
+                      if (res.code) {
+                          console.log(res.code, 'this is code')
+                          let successFun = (res3) => {
+                              console.log(res3, 'gg')
+                              let timeStamp = res3.data.timeStamp.toString()
+                              wx.requestPayment({
+                                  'appId': res3.data.appId,
+                                  'timeStamp': timeStamp,
+                                  'nonceStr': res3.data.nonceStr,
+                                  'package': res3.data.package,
+                                  'signType': res3.data.signType,
+                                  'paySign': res3.data.paySign,
+                                  'success':function(res){
+                                      tip.success("支付成功")
+                                      console.log(res)
+                                  },
+                                  'fail':function(res){
+                                      tip.error("支付失败")
+                                      console.log(res)
+                                  }
+                              })
+                          }
+                          let failFun = (res) => {
+                              console.log(res, 'fail!')
+                              tip.error("服务器开小差了")
+                          }
+                          api.getPayParam({query: {OMid: OMid, code: res.code }}).then(successFun, failFun)
+                      } else {
+                          console.log('获取用户登录态失败！' + res.errMsg)
+                      }
+                  }
+              });
+//              let timeStamp = res3.data.timeStamp.toString()
+//              await wx.requestPayment({
+//                  'appId': res3.data.appId,
+//                  'timeStamp': timeStamp,
+//                  'nonceStr': res3.data.nonceStr,
+//                  'package': res3.data.package,
+//                  'signType': res3.data.signType,
+//                  'paySign': res3.data.paySign,
+//                  'success':function(res){
+//                      console.log(res)
+//                  },
+//                  'fail':function(res){
+//                      console.log(res)
+//                  }
+//              })
+//          wx.getStorage({
+//            key: 'token',
+//            success: function(res){
+//              token = res.data
+//              that.submitAll(token,params)
+//              that.$apply()
+//            }
+//          })
+
+          }else{
+              tip.error(res1.data.message)
+          }
+
+
+
+      },
+      Touch(e){
+//        console.log(e)
+//        e.preventDefault()
+        return;
+      },
+      modalBack(){
+        this.show_modal = false;
+      },
+      showModal(){
+        this.show_modal = true;
+        let date = new Date();
+        let token ='';
+        let that = this;
+      },
+      cardTap(v){
+        this.show_modal = false;
+        if(this.choose_ticket != v){
+            this.choose_ticket = v;
+        }
+        console.log(v, 'this is a v test')
+//        console.log(this.choose_ticket, 'chosen-ticket');
+//        let data = v;
+//        let count = v.Coudiscount;
+//        console.log(data, 'ticket')
+//        console.log(count, 'count')
+
+//        let num = this.total_money;
+
+      },
+      modalTouch(e){
+        console.log(e)
+      }
+    }
+  }
+</script>
+<style scoped lang="less" rel="stylesheet/less">
+  @import "../styles/common";
+  .m-place-order{
+    width: 100%;
+    background-color: #f8f8f8;
+    .address {
+      border-top: 1px solid #efefef;
+      background: #fff;
+      .empty_address,
+      .address_info {
+        display: flex;
+        justify-content: space-between;
+        height: 103rpx;
+        align-items: center;
+        padding: 0rpx 35rpx;
+        .title {
+          color: #000;
+        }
+        .arrow {
+          color: #9a9a9a;
+        }
+        .user_info {
+          color: #1a1a1a;
+        }
+        .active_address {
+          margin-top: 20rpx;
+          color: @grey-font;
+          font-size: 25rpx;
+        }
+        .default {
+          color: #ea4a3a;
+        }
+      }
+      .address_info {
+        height: 200rpx;
+      }
+    }
+    .m-content{
+      margin: 40rpx 40rpx 40rpx 40rpx;
+      background-color: #fff;
+      border: 1px solid #f8f8f8;
+      .m-li-more{
+        font-size: 30rpx;
+        margin: 0 20rpx;
+        padding: 20rpx;
+        text-align: right;
+      }
+      .m-li-m{
+        margin: 0 20rpx;
+        padding: 20rpx  0;
+        font-size: 30rpx;
+        border-bottom: 1px solid @border-color;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: space-between;
+        .m-label{
+          padding: 5rpx 10rpx;
+          color: #f4690c;
+          background-color: #FEF0F4;
+          border: 1px solid #f4690c;
+          border-radius: 5px;
+        }
+        .m-coupon{
+
+        }
+        .m-total{
+
+        }
+      }
+    }
+    .m-remark{
+      margin: 0 40rpx 140rpx 40rpx;
+      background-color: #fff;
+      border: 1px solid #f8f8f8;
+      padding: 0 20rpx;
+      .m-li{
+        font-size: 30rpx;
+        padding: 30rpx 0;
+        border-bottom: 1px solid #dfdfdf;
+        /*&:last-child{*/
+        /*border-bottom: none;*/
+        /*}*/
+        .picker{
+          .m-select{
+            font-style: normal;
+            color: @common-color;
+            float: right;
+            &:before{
+              content: '';
+              display: block;
+              clear: both;
+            }
+          }
+        }
+        .m-input-box{
+          display: flex;
+          flex-flow: row;
+          align-items: center;
+          .m-input{
+
+          }
+        }
+      }
+      /*.m-li:last-child{*/
+        /*border-bottom: none;*/
+      /*}*/
+    }
+    .m-foot{
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      padding: 20rpx;
+      border-top: 1px solid @border-color;
+      background-color: #fff;
+      display: flex;
+      flex-flow: row;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      /*background-color: rgba(0,0,0,0.5);*/
+      .m-car{
+        position: relative;
+        .m-num{
+          position: absolute;
+          right: -5rpx;
+          top: -10rpx;
+          width: 40rpx;
+          height: 40rpx;
+          font-size: 20rpx;
+          text-align: center;
+          color: #ffffff;
+          line-height: 40rpx;
+          border-radius: 50%;
+          background-color: #f4690c;
+        }
+      }
+      .m-btn{
+        width: 150rpx;
+        height: 80rpx;
+        line-height: 80rpx;
+        margin-right: 40rpx;
+        border: 1px solid @border-color;
+        border-radius: 20px;
+        text-align: center;
+        background-color: #f8f8f8;
+        &.m-active{
+          background-color: @common-color;
+          color: #ffffff;
+          border-color: #ffffff;
+        }
+      }
+    }
+
+  }
+  .m-cover{
+    position: fixed;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: rgba(0,0,0,0.5);
+    .m-modal{
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 60%;
+
+      background-color: #f8f8f8;
+      .m-modal-head{
+        background-color: @common-color;
+        color: #fff;
+        z-index: 1001;
+        /*display: flex;*/
+        /*flex-flow: row;*/
+        /*align-items: center;*/
+        /*font-size: 30rpx;*/
+        /*justify-content: space-between;*/
+
+        /*text-align: center;*/
+        padding: 20rpx ;
+      }
+      .m-scroll{
+        height: 100%;
+        overflow-y: auto;
+
+        background-color: #fff;
+        .m-modal-content{
+          /*min-height: 80%;*/
+          padding-bottom: 75rpx;
+          .m-modal-title{
+            padding: 10rpx;
+            border-bottom: 1px solid @border-color;
+            font-size: 30rpx;
+          }
+          .m-no-card{
+            display: flex;
+            flex-flow: row;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid @border-color;
+            padding: 10rpx;
+          }
+          .m-card-box{
+            margin-top: 20rpx;
+            .m-one-card{
+              border: 1px solid @border-color;
+              border-radius: 5px;
+              margin: 40rpx;
+              padding: 40rpx;
+              display: flex;
+              flex-flow: row;
+              align-items: center;
+              justify-content: space-around;
+              &.m-active{
+                border: 1px solid #f4690c;
+              }
+              &.m-disable{
+                color: @border-color;
+              }
+            }
+          }
+        }
+      }
+
+    }
+  }
+
+</style>

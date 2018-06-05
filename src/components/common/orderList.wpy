@@ -1,0 +1,125 @@
+<template>
+  <view class="list" @tap = "bindTap({{list}})" >
+    <view class="m-bar">
+      <view class="m-bar-time">{{list.OMtime}}</view>
+      <view class="m-bar-status"> {{list.OMstatus}}</view>
+    </view>
+    <view class="m-content" wx:for="{{list.order_abo}}" wx:for-item="good">
+      <image class="m-business-img" src="{{good.PRaboimage}}"  style="width: 100rpx;height: 100rpx; margin: 20rpx;"/>
+      <view class="m-business-info">
+        <view class="m-business-detail" >{{good.PRname}} x {{good.PRnumber}}</view>
+        <view class="m-business-price">
+          <view class="m-price">￥{{good.PBprice}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="m-business-price">￥{{list.OMprice}}</view>
+    <view class="m-footer" >
+      <!--<button>未支付： 支付（标红）、取消订单  ； 已支付：确认收货 评价  已评价：评价详情： </button>-->
+      <button class="m-btn m-puchase-button" wx:if="{{list.OMstatus == '未支付'}}" @tap="">支付</button>
+      <button class="m-btn" wx:if="{{list.OMstatus == '未支付'}}" @tap="">取消订单</button>
+      <button class="m-btn " wx:if="{{list.OMstatus == '已完成'}}" @tap="confirmGet({{list}})">确认收货</button>
+      <button class="m-btn " wx:if="{{list.OMstatus == '已完成'}}" @tap="evaluateTap({{list}})">评价</button>
+      <button class="m-btn " wx:if="{{list.OMstatus == '已评价'}}" @tap="evaluateLookTap({{list}})">评价详情</button>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  export default class List extends wepy.component{
+      props = {
+          list:Object,
+          page:String
+      }
+      data = {
+          number:0
+      }
+
+      methods = {
+          bindTap(v){
+              this.$emit('listTap',v)
+          },
+          evaluateTap(v){
+              this.$emit('evalTap',v)
+      //        wx.navigateTo({
+      //          url: '/pages/commodityEvaluation'
+      //        })
+          },
+            confirmGet(v) {
+              this.$emit('', v)
+            },
+            evaluateLookTap(v){
+              this.$emit('evalookTap',v)
+      //        wx.navigateTo({
+      //          url: '/pages/commodityDetails'
+      //        })
+          }
+        }
+  }
+</script>
+<style scoped lang="less" rel="stylesheet/less">
+  @import "../../styles/common";
+  .list{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: @margin-interval ;
+    padding-left: 0;
+    padding-right: 40rpx;
+    border-bottom: 1px solid @border-color;
+    .m-bar {
+      height: 70rpx;
+      width: 100%;
+      justify-content: space-between;
+      border-bottom: 1rpx solid @border-color;
+      border-top: 1rpx solid @border-color;
+      display: flex;
+      font-size: 25rpx;
+      align-items: center;
+    }
+    .m-content {
+      display: flex;
+      width: 100%;
+      flex-direction: row;
+      .m-business-img{
+        background-color: #bfbfbf;
+        margin-right: @margin-interval;
+      }
+      .m-business-info{
+        font-size: 25rpx;
+        line-height: 60rpx;
+        width: 100%;
+        padding-right: @margin-interval;
+        .m-business-detail{
+
+        }
+        .m-business-price{
+
+        }
+      }
+    }
+    .m-business-loc{
+      width: 100%;
+      font-size: 28rpx;
+      color: @grey-font;
+      display: flex;
+      flex-direction: row-reverse;
+    }
+    .m-footer{
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      .m-btn{
+        font-size: 28rpx;
+        padding: 2rpx 20rpx;
+      }
+      .m-puchase-button {
+        font-size: 28rpx;
+        padding: 2rpx 20rpx;
+        background-color: @common-color;
+        color: #fff;
+      }
+    }
+  }
+</style>
+
