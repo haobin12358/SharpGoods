@@ -73,7 +73,8 @@
 <template>
     <view class="m-header-box">
         <view class="m-header-content">
-            <image class="m-avatar" src="../images/test.jpeg"></image>
+            <image wx:if="{{userInfo.USsex == '男' }}" class="m-avatar" src="../images/test2.png"></image>
+            <image wx:else class="m-avatar" src="../images/test.png"></image>
             <view class="m-nickname">{{ userInfo.USname }}</view>
         </view>
     </view>
@@ -92,7 +93,7 @@
             </view>
             <image class="m-arrow" src="../images/more.png"></image>
         </navigator>
-        <navigator class="m-item" url="/pages/setUp">
+        <navigator class="m-item" url="/pages/setUp?tel={{userInfo.UStelphone}}">
             <view class="m-item_content">
                 <image class="m-item_img" src="../images/set.png"></image>
                 <view class="m-text">设置</view>
@@ -127,7 +128,7 @@
             navigationBarTitleText: '个人中心'
         }
         data = {
-            userInfo: {USname: '用户18768105036', USsex: '', UScoin: 0, USinvate: '666666'},
+            userInfo: {USname: '', USsex: '', UScoin: 0, USinvate: ''},
             isToken: false,
             token: ''
         }
@@ -136,13 +137,8 @@
             let that = this;
             tip.loading();
             let res = await api.getUserInfo({query: {token: token}})
-            console.log(res, '获取个人信息')
             if (res.data.status == '200') {
-//                that.userInfo = res.data.data;
-                console.log(that.userInfo, '页面data')
-                if (that.userInfo.Uname == null) {
-                    that.userInfo.Uname = ''
-                }
+                that.userInfo = res.data.data;
                 tip.loaded();
                 that.$apply();
             }
@@ -164,6 +160,7 @@
 
         }
 
-        methods = {}
+        methods = {
+        }
     }
 </script>

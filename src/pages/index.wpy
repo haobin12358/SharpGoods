@@ -15,22 +15,27 @@
       height: 100%;
       position: absolute;
     }
+  .m-detail {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    bottom: 100rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
     .m-label{
-      font-size: 45rpx;
-      margin: 700rpx 250rpx 0 250rpx;
       text-align: center;
-      float:left;
-      position: absolute;
+      font-size: 50rpx;
       color: #FFFFFF;
       &:hover{
         color: @common-color;
       }
     }
     .m-navi{
-      font-size: 40rpx;
+      margin-top: 80rpx;
       text-align: center;
-      margin: 900rpx 230rpx 0 230rpx;
-      position: absolute;
+      font-size: 50rpx;
       color: #FFFFFF;
       &:hover{
         color: @common-color;
@@ -42,8 +47,10 @@
   <view class="m-index">
     <view class="m-intro" wx:for="{{commodity}}">
       <image class="m-intro-img" src="{{item.PRimage}}" mode="aspectFill"></image>
-      <view class="m-label">{{item.PRinfo}}</view>
-      <navigator class="m-navi" url="/pages/commodityIndex?PRid={{item.PRid}}">purchase now!</navigator>
+      <view class="m-detail">
+        <view class="m-label">{{item.PRinfo}}</view>
+        <navigator class="m-navi" url="/pages/commodityIndex?PRid={{item.PRid}}">立 即 抢 购!</navigator>
+      </view>
     </view>
   </view>
 </template>

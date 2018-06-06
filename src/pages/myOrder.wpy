@@ -2,7 +2,7 @@
   <view class="m-business-content">
     <view class="m-all-products">
       <repeat for="{{list_data}}" key="index" index="index" item="item">
-        <List :list="item" page="myOrder" @listTap.user="productTap" @evalTap.user="evalTap" @evalookTap.user="evalookTap"></List>
+        <List :list="item" page="myOrder" @listTap.user="productTap" @evalTap.user="evalTap" @evalookTap.user="evalookTap" @payTap.user="ToPay" @confirmTap.user="confirmGet" @cancelTap.user="cancelOrder"></List>
       </repeat>
       <view wx:if="{{list_data.length <=0}}" class="m-no">暂无订单</view>
   </view>
@@ -21,7 +21,18 @@
       List:List
     }
     data = {
-        list_data:[]
+        list_data:[],
+        token: ''
+    }
+    async updateOrderStatus(params) {
+        let that = this
+        let res = await api.updateOrderStatus({token: this.token, query: params, method: 'POST'})
+        if(res.data.status == '200')
+        {
+            tip.success("操作成功")
+            that.getAllOrder(that.token)
+        }
+        else tip.error(res.data.message)
     }
     async getAllOrder(params) {
         let that = this;
@@ -34,29 +45,108 @@
         }
         console.log(res, 'res from order')
     }
-
-    onLoad(){
+    async onLoad(){
         let token =  wepy.getStorageSync('token')
+        this.token = token;
+        this.$apply()
         this.getAllOrder(token)
     }
-    onShow(option){
+    onShow(){
+        let that = this
+        this.getAllOrder(that.token)
+    }
+    async pay(param){
+        let that = this
+        await wx.login({
+            success: function(res) {
+                if (res.code) {
+                    console.log(res.code, 'this is code')
+                    let successFun = (res3) => {
+                        let timeStamp = res3.data.timeStamp.toString()
+                        wx.requestPayment({
+                            'appId': res3.data.appId,
+                            'timeStamp': timeStamp,
+                            'nonceStr': res3.data.nonceStr,
+                            'package': res3.data.package,
+                            'signType': res3.data.signType,
+                            'paySign': res3.data.paySign,
+                            'success':function(res){
+                                tip.success("支付成功")
+                                that.getAllOrder(that.token)
+                                that.$apply()
+                                console.log(res)
+                            },
+                            'fail':function(res){
+                                tip.error("支付失败")
+                                console.log(res)
+                            }
+                        })
+                    }
+                    let failFun = (res) => {
+                        console.log(res, 'fail!')
+                        tip.error("服务器开小差了")
+                    }
+                    api.getPayParam({query: {OMid: param, code: res.code }}).then(successFun, failFun)
+                } else {
+                    console.log('获取用户登录态失败！' + res.errMsg)
+                }
+            }
+        });
     }
     methods = {
-      productTap(v){
-//        wx.navigateTo({
-//          url: '/pages/oneOrder?Oid='+v.Oid
-//        })
-      },
-      evalTap(v){
-        wx.navigateTo({
-          url: '/pages/commodityEvaluation?OMid='+v.OMid + '&PBid=' +v.PBid
-        })
-      },
-      evalookTap(v){
-        wx.navigateTo({
-          url: '/pages/commodityDetails?Oid='+v.Oid
-        })
-      }
+        productTap(v){
+          wx.navigateTo({
+            url: '/pages/commodityIndex?PRid='+v
+          })
+        },
+        evalTap(v){
+          wx.navigateTo({
+            url: '/pages/commodityEvaluation?OMid='+v.OMid
+          })
+        },
+        evalookTap(v){
+          wx.navigateTo({
+            url: '/pages/commodityDetails?PRid='+v.Oid
+          })
+        },
+        cancelOrder(v){
+            let that = this
+            wx.showModal({
+                title:'提示',
+                content:'确认取消？',
+                success:function (res) {
+                    if(res.confirm){
+                        let params = {
+                            OMid: v,
+                            OMstatus: '已取消'
+                        }
+                        that.updateOrderStatus(params)
+                    }else if(res.cancel){
+                    }
+                }
+            })
+        },
+        confirmGet(v) {
+            let that = this
+            wx.showModal({
+                title:'提示',
+                content:'确定收货？',
+                success:function (res) {
+                    if(res.confirm){
+                        let params = {
+                            OMid: v,
+                            OMstatus: '已完成'
+                        }
+                        that.updateOrderStatus(params)
+                    }else if(res.cancel){
+                    }
+                }
+            })
+        },
+        ToPay(v){
+            console.log(333)
+            this.pay(v)
+        }
     }
   }
 </script>

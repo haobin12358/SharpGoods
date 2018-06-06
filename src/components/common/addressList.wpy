@@ -55,9 +55,6 @@
             },
             edit(e) {
                 let address = e.currentTarget.dataset.address;
-//                wepy.setStorageSync('EditAddress', address)
-//                let res = wepy.getStorageSync('address')
-                console.log(address, 'trigger from dataList')
                 this.$emit('currentPage', 2, address);
             },
             refreshList(val){

@@ -1,10 +1,10 @@
 <template>
-  <view class="list" @tap = "bindTap({{list}})" wx:if="{{page != 'car' || (page == 'car' && list.Pnum != 0)}}">
+  <view class="list" @tap = "bindTap({{list.PBid}})" wx:if="{{page != 'car' || (page == 'car' && list.Pnum != 0)}}">
     <image class="m-business-img" src="{{list.PBimage}}" wx:if="{{page != 'product_info'}}"  style="width: 200rpx;height: 200rpx; margin: 20rpx;" mode="aspectFill"/>
     <view class="m-business-info">
       <view class="m-first">
         <view class="m-first-left">
-          <view class="m-name">{{list.PRname}}--高端大气上档次6666</view>
+          <view class="m-name">{{list.PRname}}</view>
         </view>
         <view class="m-price">￥{{list.PBprice}}</view>
       </view>
@@ -12,20 +12,18 @@
         <view class="score-grey" wx:if="{{list.PBsalesvolume && list.PBscore}}">月销{{list.PBsalesvolume}}</view>
         <view class="m-price"></view>
       </view>
-      <!--<view class="score-grey" wx:if="{{list.PBsalesvolume && list.PBscore}}">月销{{list.PBsalesvolume}}</view>-->
-      <!--<view class="m-business-loc">-->
-        <!--<view class="m-option">-->
-          <!--<view wx:for="{{list.PRquality}}" wx:for-item="option"> {{option.choice }}</view>-->
-        <!--</view>-->
-      <!--</view>-->
       <view class="m-business-loc" >
         <view class="m-option">
           <view wx:for="{{list.PRquality}}" wx:for-item="option"> {{option.choice }}</view>
         </view>
         <view class="m-add-cut" wx:if="{{page != 'myOrder' && page != 'product_info' }}">
-          <image src="/images/cut.png" style="width: 48rpx;height: 48rpx;"  @tap.stop="cutTap({{list.PBid}})"/>
+          <view class="m-operate-button">
+            <image src="/images/cut.png" style="width: 48rpx;height: 48rpx;" data-PBid="{{list.PBid}}" data-CAnumber="{{list.CAnumber}}" @tap.stop="cutTap"/>
+          </view>
           <input type="number" value="{{list.CAnumber}}" bindblur="bindKeyInput" />
-          <image src="/images/add.png" style="width: 48rpx;height: 48rpx;" @tap.stop="addTap({{list.PBid}})"/>
+          <view class="m-operate-button">
+            <image src="/images/add.png" style="width: 48rpx;height: 48rpx;" @tap.stop="addTap({{list.PBid}})"/>
+          </view>
         </view>
       </view>
     </view>
@@ -48,16 +46,13 @@
         tip.loading();
         let res = await api.operateCart({query: params, token: this.token, method: 'POST'})
         if(res.data.status == '200'){
-//            if(params.CAnumber == 1)
-//                this.list.CAnumber = this.list.CAnumber -1;
-//            else if(params.CAnumber == -1)
-//                this.list.CAnumber++;
             this.$apply();
             wx.showToast({
               title: '修改成功',
               icon: 'success',
               duration: 800
             })
+            this.$emit('refresh')
         }
     }
     onLoad(){
@@ -71,7 +66,10 @@
         this.$emit('listTap',v)
       },
       cutTap(v){
-        if(this.page == 'car' && v.CAnumber == 1){
+          let CAnumber = v.target.dataset.canumber
+          let PBid = v.target.dataset.pbid
+          console.log(v, 'aaaaaaaaaa')
+        if(CAnumber == 1){
           let _that = this;
           wx.showModal({
             title:'提示',
@@ -79,7 +77,7 @@
             success:function (res) {
               if(res.confirm){
                   let param = {
-                      PBid: v,
+                      PBid: PBid,
                       CAnumber: -1
                   }
                 _that.operateCart(param)
@@ -90,7 +88,7 @@
           })
         }else{
             let param = {
-                PBid: v,
+                PBid: PBid,
                 CAnumber: -1
             }
             this.operateCart(param)
@@ -100,6 +98,7 @@
       },
 
       addTap(v){
+          console.log(v, 'aaaaaa')
           let param = {
               PBid: v,
               CAnumber: +1
@@ -166,7 +165,7 @@
           background-color: #e5473c;
           width: 500rpx;
           display: inline;
-          font-size: 15x;
+          font-size: 15rpx;
       }
     }
     .m-business-loc{
@@ -176,6 +175,7 @@
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+      align-items: center;
       .m-option {
         display: flex;
         flex-direction: row;
@@ -183,8 +183,16 @@
      }
     .m-add-cut{
       display: flex;
-      flex-flow: row;
       align-items: center;
+      flex-direction: row;
+
+      .m-operate-button {
+        width: 80rpx;
+        height: 80rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
       input{
         width: 100rpx;
         height: 50rpx;

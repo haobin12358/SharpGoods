@@ -72,32 +72,6 @@
     async getOrderInfo(params) {
       let that = this;
       tip.loading();
-//      wx.request({
-//        url:api.get_order_abo,
-//        method:'GET',
-//        data:{token:params.token,Oid:params.Oid},
-//        header:{
-//          'content-type':'application/json',
-//        },
-//        success:function (res) {
-//          tip.loaded()
-//          if(res.data.status == '200'){
-//            that.Lboxno = res.data.data.Lboxno;
-//            that.Lname = res.data.data.Lname;
-//            that.Lno = res.data.data.Lno;
-//            that.Oabo = res.data.data.Oabo;
-//            that.Oid = res.data.data.Oid;
-//            that.Oprice = res.data.data.Oprice;
-//            that.Ostatus = res.data.data.Ostatus;
-//            that.Otime = res.data.data.Otime;
-//            that.Uname = res.data.data.Uname;
-//            that.Utel = res.data.data.Utel;
-//            that.all_order = res.data.data.Order_items;
-//            that.Opic = res.data.data.Opic;
-//            that.$apply()
-//          }
-//        }
-//      })
         let res = await api.getGoodInfo({data: {token:params.token,Oid:params.Oid}})
         console.log(res,'fuck!')
     }

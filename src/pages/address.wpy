@@ -28,36 +28,6 @@
         }
         data = {
             addressList: [
-                {
-                    LOid: 1,
-                    LOname: '羊羊羊',
-                    LOtelphone: '18768105036',
-                    LOprovince: '浙江省',
-                    LOcity: '杭州市',
-                    LOarea: '下沙',
-                    LOdetail: '杭州电子科技大学',
-                    isDef: 1,
-                },
-                {
-                    LOid: 2,
-                    LOname: '羊羊羊2',
-                    LOtelphone: '18768105036',
-                    LOprovince: '浙江省',
-                    LOcity: '杭州市',
-                    LOarea: '下沙',
-                    LOdetail: '杭州电子科技大学',
-                    isDef: 0
-                },
-                {
-                    LOid: 3,
-                    LOname: '羊羊羊3',
-                    LOtelphone: '18768105036',
-                    LOprovince: '浙江省',
-                    LOcity: '杭州市',
-                    LOarea: '下沙',
-                    LOdetail: '杭州电子科技大学',
-                    isDef: 0
-                },
             ],
             editInfo:{},
             //显示当前组件 0 列表 1新增 2编辑
@@ -70,7 +40,6 @@
         async getUserAddress(token) {
             let that = this;
             const res = await api.getAddress({ query: {token: token} });
-            console.log(res, 'request from address')
 
             if(res.data.status == '200'){
                 this.addressList=res.data.data;
@@ -80,29 +49,9 @@
             }
             that.showLoading = false;
         }
-//        async receiverInf(id) {
-//            let that = this;
-//            const json = await api.receiverInfoById({
-//                query: {
-//                    id: id
-//                }
-//            });
-//            if (json.data.code == 0) {
-//                this.receiverInfo=json.data.receiverInfo;
-//                this.$invoke("addressEdit","refresh", this.receiverInfo);
-//                console.log("=================================")
-//            } else {
-//                tip.error(json.data.msg)
-//            }
-//            that.showLoading = false;
-//        }
         async editAddress(data) {
-//            let res = wepy.getStorageSync('EditAddress')
-//            this.editInfo=res;
             this.editInfo = data;
             this.$invoke("addressEdit","refresh", this.editInfo);
-
-//            this.showLoading = false;
         }
 
         onLoad(option) {
@@ -115,8 +64,6 @@
         }
 
         onShow(){
-//            let token =  wepy.getStorageSync('token')
-//            this.getUserAddress(token);
         }
         computed = {
 
@@ -126,7 +73,6 @@
                 this.currentPage = num;
                 if (num!=1&&num!=0) {
                     this.editAddress(data);
-                    console.log(data, 'trigger edit')
                 }
             }
         }
@@ -134,7 +80,6 @@
         }
         events = {
             refreshAddressList(msg){
-//                let token =  wepy.getStorageSync('token')
                 this.getUserAddress(this.token);
             }
         }

@@ -1,62 +1,39 @@
 <template>
-  <view class="list" @tap = "bindTap({{list}})" >
+  <view class="list" >
     <view class="m-bar">
       <view class="m-bar-time">{{list.OMtime}}</view>
       <view class="m-bar-status"> {{list.OMstatus}}</view>
     </view>
     <view class="m-content" wx:for="{{list.order_abo}}" wx:for-item="good">
-      <image class="m-business-img" src="{{good.PRaboimage}}"  style="width: 100rpx;height: 100rpx; margin: 20rpx;"/>
-      <view class="m-business-info">
-        <view class="m-business-detail" >{{good.PRname}} x {{good.PRnumber}}</view>
-        <view class="m-business-price">
-          <view class="m-price">￥{{good.PBprice}}</view>
+      <view class="m-content-row">
+        <image class="m-business-img" src="{{good.PBimage}}"  style="width: 100rpx;height: 100rpx; margin: 20rpx;"/>
+        <view class="m-business-info">
+          <view class="m-business-detail" >{{good.PRname}} x {{good.PRnumber}}</view>
+          <view class="m-business-detail" wx:for="{{good.PRquality}}" wx:for-item="option"> {{option.choice}}</view>
+          <view class="m-business-price">
+            <view class="m-price">￥{{good.PBprice}}</view>
+          </view>
         </view>
       </view>
+      <view class="m-content-line"></view>
     </view>
-    <view class="m-business-price">￥{{list.OMprice}}</view>
+    <view class="m-address-container">
+      <view class="m-address">收货地址：{{list.LOprovince }}{{list.LOcity}}{{list.LOarea}}{{list.LOdetail}}</view>
+    </view>
+    <view class="m-price-container">
+      <view class="m-business-price">合计：￥{{list.OMprice}}</view>
+    </view>
+
+
     <view class="m-footer" >
-      <!--<button>未支付： 支付（标红）、取消订单  ； 已支付：确认收货 评价  已评价：评价详情： </button>-->
-      <button class="m-btn m-puchase-button" wx:if="{{list.OMstatus == '未支付'}}" @tap="">支付</button>
-      <button class="m-btn" wx:if="{{list.OMstatus == '未支付'}}" @tap="">取消订单</button>
-      <button class="m-btn " wx:if="{{list.OMstatus == '已完成'}}" @tap="confirmGet({{list}})">确认收货</button>
+      <button class="m-btn " wx:if="{{list.OMstatus == '已支付' || list.OMstatus == '配送中'}}" @tap="confirmGet({{list.OMid}})">确认收货</button>
       <button class="m-btn " wx:if="{{list.OMstatus == '已完成'}}" @tap="evaluateTap({{list}})">评价</button>
-      <button class="m-btn " wx:if="{{list.OMstatus == '已评价'}}" @tap="evaluateLookTap({{list}})">评价详情</button>
+      <!--<button class="m-btn " wx:if="{{list.OMstatus == '已评价'}}" @tap="evaluateLookTap({{list}})">评价详情</button>-->
+      <button class="m-btn m-puchase-button" wx:if="{{list.OMstatus == '未支付'}}" @tap="pay({{list.OMid}})">支付</button>
+      <button class="m-btn" wx:if="{{list.OMstatus == '未支付'}}" @tap="cancelTap({{list.OMid}})">取消订单</button>
     </view>
   </view>
 </template>
-<script>
-  import wepy from 'wepy';
-  export default class List extends wepy.component{
-      props = {
-          list:Object,
-          page:String
-      }
-      data = {
-          number:0
-      }
-
-      methods = {
-          bindTap(v){
-              this.$emit('listTap',v)
-          },
-          evaluateTap(v){
-              this.$emit('evalTap',v)
-      //        wx.navigateTo({
-      //          url: '/pages/commodityEvaluation'
-      //        })
-          },
-            confirmGet(v) {
-              this.$emit('', v)
-            },
-            evaluateLookTap(v){
-              this.$emit('evalookTap',v)
-      //        wx.navigateTo({
-      //          url: '/pages/commodityDetails'
-      //        })
-          }
-        }
-  }
-</script>
 <style scoped lang="less" rel="stylesheet/less">
   @import "../../styles/common";
   .list{
@@ -66,13 +43,12 @@
     padding: @margin-interval ;
     padding-left: 0;
     padding-right: 40rpx;
-    border-bottom: 1px solid @border-color;
+    border-bottom: 30rpx solid @border-color;
     .m-bar {
       height: 70rpx;
       width: 100%;
       justify-content: space-between;
       border-bottom: 1rpx solid @border-color;
-      border-top: 1rpx solid @border-color;
       display: flex;
       font-size: 25rpx;
       align-items: center;
@@ -80,7 +56,12 @@
     .m-content {
       display: flex;
       width: 100%;
-      flex-direction: row;
+      flex-direction: column;
+      .m-content-row{
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+      }
       .m-business-img{
         background-color: #bfbfbf;
         margin-right: @margin-interval;
@@ -91,11 +72,28 @@
         width: 100%;
         padding-right: @margin-interval;
         .m-business-detail{
-
         }
-        .m-business-price{
+      }
+      .m-content-line{
+        background-color: @border-color;
+        height: 1rpx;
+        width: 100%;
+      }
+    }
+    .m-address-container{
+      width: 100%;
+      text-align: right;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .m-price-container{
+      width: 100%;
+      text-align: right;
+      color: red;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      .m-business-price{
 
-        }
       }
     }
     .m-business-loc{
@@ -107,19 +105,59 @@
     }
     .m-footer{
       display: flex;
-      flex-direction: row-reverse;
-      align-items: center;
+      justify-content: flex-end;
+      width: 100%;
       .m-btn{
         font-size: 28rpx;
+        border:1px solid @grey-font;
+        background-color: white;
         padding: 2rpx 20rpx;
+        border-radius: 20px;
+        width: 200rpx;
+        height: 80rpx;
       }
       .m-puchase-button {
         font-size: 28rpx;
         padding: 2rpx 20rpx;
         background-color: @common-color;
+        border-color: @common-color;
         color: #fff;
       }
     }
   }
 </style>
+
+<script>
+    import wepy from 'wepy';
+    export default class List extends wepy.component{
+        props = {
+            list:Object,
+            page:String
+        }
+        data = {
+            number:0
+        }
+
+        methods = {
+//            bindTap(v){
+//                this.$emit('listTap',v.PRid)
+//            },
+            evaluateTap(v){
+                this.$emit('evalTap',v)
+            },
+            confirmGet(v) {
+                this.$emit('confirmTap', v)
+            },
+            evaluateLookTap(v){
+                this.$emit('evalookTap',v)
+            },
+            pay(v){
+                this.$emit('payTap', v)
+            },
+            cancelTap(v) {
+                this.$emit('cancelTap', v)
+            }
+        }
+    }
+</script>
 

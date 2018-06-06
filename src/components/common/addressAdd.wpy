@@ -91,26 +91,6 @@
         }
 
         async saveAddress(query) {
-
-//            let that = this;
-//            console.log("=======province=======");
-//            console.log(that.province);
-//            let isDefult = 0;
-//            if (this.isDefult) {
-//                isDefult = 1;
-//            }
-//            console.log("address:");
-//            console.log(address);
-//            const json = await api.saveAddress({
-//                query: {
-//                    openId: openId,
-//                    address: address,
-////                    isDef: isDefult,
-//                    province:that.provinceCode,
-//                    city:that.cityCode,
-//                    area:that.areaCode
-//                }
-//            });
             let token =  wepy.getStorageSync('token')
             let res = await api.saveAddress({query: query, token: token, method: 'POST'})
             if (res.data.status == 200) {
@@ -128,9 +108,6 @@
             changeCheckBoxState() {
                 this.isDefult = !this.isDefult;
             },
-//            up() {
-//                this.$emit('upup', 'hehe'); //主动触发upup方法，'hehe'为向父组件传递的数据
-//            },
             formSubmit(e) {
 
                 let receiverName = e.detail.value.receiverName;

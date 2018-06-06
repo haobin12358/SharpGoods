@@ -2,10 +2,9 @@
   <view class="m-business-content">
     <view class="m-all-products">
       <repeat for="{{list_data}}" key="index" index="index" item="item">
-        <List :list.sync="item" page="car" @listTap.user="productTap"></List>
+        <List :list.sync="item" page="car" @refresh.user="refresh"></List>
       </repeat>
       <view style="height: 100rpx;"></view>
-      <!--<List :list.sync="list_data" page="car" @listTap.user="productTap"></List>-->
       <view wx:if="{{list_data.length <=0}}" class="m-no">暂无商品</view>
     </view>
     <foot class="m-foot">
@@ -29,12 +28,14 @@
       List:List
     }
     data = {
-      total_money:0,
-      list_data:[
-      ],
-      selected: [0,1,2],
-      count: 0,
-      num: 0,
+        total_money:0,
+        list_data:[
+        ],
+        selected: [0,1,2],
+        count: 0,
+        num: 0,
+        token: ''
+
     }
     async getAllCart(params) {
         let that = this;
@@ -56,6 +57,7 @@
     onShow(){
         let that = this;
         let token =  wepy.getStorageSync('token')
+        this.token = token
         if(token){
             that.getAllCart(token)
             that.$parent.globalData.token = token;
@@ -67,16 +69,21 @@
         }
         }
     methods = {
-      productTap(v){
-        wx.navigateTo({
-          url: '/pages/commodityIndex?PRid='+v.PRid
-        })
-      },
-      placeAnOrder(){
-        wx.navigateTo({
-          url: '/pages/placeAnOrder?list=' + this.list_data
-        })
-      }
+//        productTap(v){
+//            console.log(v, 'vvv')
+//          wx.navigateTo({
+//            url: '/pages/commodityIndex?PRid='+v
+//          })
+//        },
+        placeAnOrder(){
+          wx.navigateTo({
+            url: '/pages/placeAnOrder?list=' + this.list_data
+          })
+        },
+        refresh(){
+            let that = this
+            this.getAllCart(that.token)
+        }
     }
   }
 </script>
