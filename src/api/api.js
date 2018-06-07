@@ -22,6 +22,8 @@ const getPBid = (params) => wxRequest(params, api2+'/goods/product/get_pbid_by_a
 
 //个人
 const getUserInfo = (params) => wxRequest(params, api2+'/goods/users/all_info')
+const updateUserInfo = (params) => wxRequest(params, api2+'/goods/users/update_info?token=' + params.token)
+const updatePass = (params) => wxRequest(params, api2+ '/goods/users/update_pwd')
 
 //
 // http://120.79.182.43:7444/sharp/goods/product/get_all?
@@ -29,6 +31,7 @@ const getUserInfo = (params) => wxRequest(params, api2+'/goods/users/all_info')
 const getAddress = (params) => wxRequest(params, api2+'/goods/locations/get_all_location')
 const editAddress = (params) => wxRequest(params, api2+ '/goods/locations/update_location?token='+ params.token)
 const saveAddress = (params) => wxRequest(params, api2+ '/goods/locations/new_location?token='+ params.token)
+const deleteAddress = (params) => wxRequest(params, api2+'/goods/locations/del_location')
 
 //支付
 const getAllPrice = (params) => wxRequest(params, api2+'/goods/orders/order_price?token='+params.token)
@@ -38,8 +41,9 @@ const getPayParam = (params) => wxRequest(params, api2+'/goods/other/payconfig')
 
 //订单
 const getOrderList = (params) => wxRequest(params, api2+'/goods/orders/get_order_list')
-const getOrderInfo = (params) => wxRequest(params, api2+'/orders/get_order_abo?token='+params.token+'&Oid='+params.Oid)
-const getGoodInfo = (params) => wxRequest(params, api2+'/orders/get_order_abo')
+const getOrderInfo = (params) => wxRequest(params, api2+'/goods/orders/get_order_abo?token='+params.token+'&OMid='+params.OMid)
+const updateOrderStatus = (params) => wxRequest(params, api2+ '/goods/orders/update_order_status?token=' + params.token)
+// const getGoodInfo = (params) => wxRequest(params, api2+'/orders/get_order_abo')
 const getComment = (params) => wxRequest(params, api2+'/goods/review/get_review')
 const makeComment = (params) => wxRequest(params, api2+'/goods/review/create_review?token=' + params.token + '&OMid=' + params.OMid)
 
@@ -56,7 +60,9 @@ module.exports = {
     getValidate, register, login, getUserInfo,getPBid,
     getProductInfo,getAddress,editAddress,getText,getLeft,
     getOrderList, getOrderInfo, getCartList, operateCart,
-    getGoodInfo, getProductAll,getTicketAll,makeOrder,saveAddress,getAllPrice,
-    getPayParam,getOpenID,getComment,makeComment
+    // getGoodInfo,
+    getProductAll,getTicketAll,makeOrder,saveAddress,getAllPrice,
+    getPayParam,getOpenID,getComment,makeComment,deleteAddress,
+    updateUserInfo, updatePass,updateOrderStatus
 
 }

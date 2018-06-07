@@ -64,6 +64,9 @@
             <button class="button type_red" formType="submit">修改</button>
         </view>
     </form>
+    <view class="btn_box">
+        <button class="button " @tap="deleteAddress({{editInfo.LOid}})">删除</button>
+    </view>
 </template>
 <script>
     import wepy from 'wepy'
@@ -92,33 +95,6 @@
             areaPicker: AreaPicker
         }
         async editAddress(query) {
-//            let that = this;
-//            let isDefult = 0;
-//            if (this.isDefult) {
-//                isDefult = 1;
-//            }
-//            console.log("address:");
-//            console.log(this.id);
-//            const json = await api.saveAddress({
-//                query: {
-//                    openId: openId,
-//                    id: this.id,
-//                    address: address,
-//                    isDef: isDefult,
-//                    province:that.provinceCode,
-//                    city:that.cityCode,
-//                    area:that.areaCode
-//                }
-//            });
-//            if (json.data.code == 0) {
-//                //0 列表 1新增 2编辑 (显示列表)
-//                this.$emit('currentPage', 0);
-//                this.$emit('refreshAddList', '');
-//
-//            } else {
-//                tip.error(json.data.msg)
-//            }
-//            that.showLoading = false;
             let token =  wepy.getStorageSync('token')
             let res = await api.editAddress({query: query,method : 'POST', token: token})
             if (res.data.status == 200) {
@@ -196,6 +172,17 @@
                 this.cityCode = city.code;
                 this.areaCode = area.code;
                 this.$apply();
+            },
+            async deleteAddress(v){
+                let token =  wepy.getStorageSync('token')
+                let res = await api.deleteAddress({
+                    query: {token: token, LOid: v}
+                })
+                if(res.data.status == '200')
+                    tip.success("删除成功")
+                else{
+                    tip.error("删除失败")
+                }
             }
         }
 

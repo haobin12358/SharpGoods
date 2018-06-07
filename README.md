@@ -21,12 +21,12 @@
          api.js //接口地址
       components
          common  //公用组件
-      images 
-         //整个项目需要使用的图片
-      pages//页面
-      utils//公共函数
-        tip.js//弹出框
-        util.js//数的处理
+      images //整个项目需要使用的图片
+      pages //页面
+      utils //工具
+        region //地区
+        request //请求
+        tip.js//提示
         wxRequest.js//请求封装
       app.wpy
 

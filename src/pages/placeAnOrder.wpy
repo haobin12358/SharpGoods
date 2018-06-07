@@ -4,9 +4,10 @@
     <view class="address" @tap="setAddress">
       <view class="empty_address" wx:if="{{!exist_address}}">
         <view class="title">设置收货地址</view>
+
         <view class="arrow">&gt;</view>
       </view>
-      <view class="address_info" wx:else>
+      <view class="address_info" wx:else >
         <view class="title">
           <view class="user_info">
             <text class="name">{{address.LOname}} </text>
@@ -48,8 +49,6 @@
     </view>
     <foot class="m-foot">
       <view class="m-car">
-        <!--<image src="/images/car.png" style="width: 100rpx;height: 100rpx;"></image>-->
-        <!--<view class="m-num">2</view>-->
         <view>合计：<text class="m-price">￥{{total_money}}</text></view>
       </view>
       <view class="m-btn m-active" @tap="placeAnOrder">支付</view>
@@ -60,8 +59,6 @@
       <view class="m-modal-head">
         <image src="/images/icon_back.png" style="width: 60rpx; height: 60rpx;" catchtap="modalBack"></image>
         <view class="m-sure"></view>
-        <!--<view class="m-sure" catchtap="cardSure">确定 </view>-->
-        <!--优惠券-->
       </view>
       <view class="m-scroll">
         <scroll-view class="m-modal-content" scroll-y="true" catchtouchmove="modalTouch">
@@ -70,7 +67,7 @@
           <view class="m-no" wx:if="{{tickets.length <= 0}}">无可使用优惠券</view>
           <view class="m-card-box">
             <repeat for="{{tickets}}" key="index" index="index" item="item">
-              <Card :list.sync="item" @cardTap.user="cardTap"></Card>
+              <Card :list.sync="item" :caid.sync="choose_ticket" @cardTap.user="cardTap"></Card>
             </repeat>
           </view>
         </scroll-view>
@@ -97,7 +94,7 @@
         addressPicke: AddressPicker
     }
     data = {
-        exist_address: true,
+        exist_address: false,
         address: {
             LOname: '',
             LOtelphone: '',
@@ -134,7 +131,6 @@
         token : ''
     }
       async getAddressInfo(token) {
-//          let res = await api.getAddress({ token: token });
           const res = await api.getAddress({ query: {token: token} });
           if (res.data.data.length != 0) {
               this.exist_address = true;
@@ -152,19 +148,35 @@
         let res = await api.getCartList({query: {token: token}})
         this.all_order = res.data.data;
         let num = 0;
+        try{
+            if(that.all_order.length < 1){
+            tip.error("请选择商品")
+            setTimeout( () => {
+                wepy.switchTab({
+                    url: 'car'
+                })
+            }, 1000)
+
+        }
+        }catch(err){
+            tip.error("请选择商品")
+            setTimeout( () => {
+                wepy.switchTab({
+                    url: 'car'
+                })
+            }, 1000)
+        }
         for(let i=0;i< that.all_order.length;i++){
-//            that.total_money += Number(that.all_order[i].CAnumber * that.all_order[i].PBprice)
             num += Number(that.all_order[i].CAnumber * that.all_order[i].PBprice);
             that.total_money = num.toFixed(2);
         }
         that.$apply()
-    }
+        }
 
     async getAllTicket(token) {
         let that = this;
         tip.loading();
-//        let res = api.getTicketAll({query: { token: token }})
-        let res = await api.getTicketAll({query: { token: 'de98529f-b1f0-4fd6-8908-8b7d522d22c6' }})         //////////////////
+        let res = await api.getTicketAll({query: { token: token }})
         if(res.data.status == 200){
             that.tickets = res.data.data;
             that.$apply();
@@ -188,6 +200,7 @@
         let select = option.select==undefined?"":option.select;
         if (select=="1") {
             //选择地址
+            that.exist_address = true;
             let res = wepy.getStorageSync('address')
             that.address=res;
         }else {
@@ -197,42 +210,6 @@
         this.getAllTicket(token);
     }
       async submitAll(token,params) {
-//          let that = this;
-//          tip.loading();
-//
-//          let params = {
-//              "LOid": LOid,
-//              "orderitems": [],
-//              "OMessage": '',
-//              "OMcointype": "￥",
-//              "OMstatus": "未支付",
-//              "OMprice": 0,
-//              "COid": ""
-//
-//          };
-//
-//          wx.request({
-//              url:api.make_main_order+'?token='+token,
-//              method:'POST',
-//              data:params,
-//              header:{
-//                  'content-type':'application/json',
-//              },
-//              success:function (res) {
-//                  tip.loaded()
-//                  that.total_money = 0;
-//                  if(res.data.status == '200'){
-//
-//                      //
-//                      that.$apply();
-//                      wx.showToast({
-//                          title: '下单成功',
-//                          icon: 'success',
-//                          duration: 1000
-//                      });
-//                  }
-//              }
-//          })
       }
     methods = {
         setAddress() {
@@ -248,6 +225,11 @@
         this.$apply();
       },
       async placeAnOrder(e){
+          let that = this;
+          if(that.address.LOid == ''){
+              tip.error("请选择地址")
+              return
+          }
           let param = {};
           let params = {};
 
@@ -277,15 +259,11 @@
               param.CAid = this.choose_ticket.CAid
               params.CAid = this.choose_ticket.CAid
           }
-          console.log(param, '价格！')
-          console.log(params, '支付！')
           let res1 = await api.getAllPrice({query: param, token: this.token, method: 'POST'})
           if(res1.data.status == 200) {
               this.total_money = res1.data.OMprice
               let res2 = await api.makeOrder({query: params,token: this.token, method: 'POST'})
               let OMid = res2.data.data.OMid;
-//              let res3 = await api.getPayParam({query: {OMid: OMid}})
-//              console.log(res3, 'dadada')
               await wx.login({
                   success: function(res) {
                       if (res.code) {
@@ -302,11 +280,15 @@
                                   'paySign': res3.data.paySign,
                                   'success':function(res){
                                       tip.success("支付成功")
-                                      console.log(res)
+                                      setTimeout( () => {
+                                          wepy.switchTab({
+                                              url: 'car'
+                                          })
+                                      }, 1000)
                                   },
                                   'fail':function(res){
                                       tip.error("支付失败")
-                                      console.log(res)
+                                      that.getAllCar()
                                   }
                               })
                           }
@@ -320,30 +302,6 @@
                       }
                   }
               });
-//              let timeStamp = res3.data.timeStamp.toString()
-//              await wx.requestPayment({
-//                  'appId': res3.data.appId,
-//                  'timeStamp': timeStamp,
-//                  'nonceStr': res3.data.nonceStr,
-//                  'package': res3.data.package,
-//                  'signType': res3.data.signType,
-//                  'paySign': res3.data.paySign,
-//                  'success':function(res){
-//                      console.log(res)
-//                  },
-//                  'fail':function(res){
-//                      console.log(res)
-//                  }
-//              })
-//          wx.getStorage({
-//            key: 'token',
-//            success: function(res){
-//              token = res.data
-//              that.submitAll(token,params)
-//              that.$apply()
-//            }
-//          })
-
           }else{
               tip.error(res1.data.message)
           }
@@ -352,8 +310,6 @@
 
       },
       Touch(e){
-//        console.log(e)
-//        e.preventDefault()
         return;
       },
       modalBack(){
@@ -366,19 +322,18 @@
         let that = this;
       },
       cardTap(v){
-        this.show_modal = false;
-        if(this.choose_ticket != v){
-            this.choose_ticket = v;
-        }
-        console.log(v, 'this is a v test')
-//        console.log(this.choose_ticket, 'chosen-ticket');
-//        let data = v;
-//        let count = v.Coudiscount;
-//        console.log(data, 'ticket')
-//        console.log(count, 'count')
-
-//        let num = this.total_money;
-
+          let that = this
+          this.show_modal = false;
+            if(this.choose_ticket != null) {
+              if(that.choose_ticket.CAid == v.CAid) {
+                  this.choose_ticket = null;
+              }else {
+                  this.choose_ticket = v;
+              }
+            }else {
+                this.choose_ticket = v;
+            }
+          that.$apply();
       },
       modalTouch(e){
         console.log(e)

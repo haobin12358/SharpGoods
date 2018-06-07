@@ -1,14 +1,10 @@
 <template>
-  <view class="m-one-card {{_click?'m-active':''}} {{list.Carstatus==2?'m-disable':''}} " catchtap="clickCard({{list}})" >
-    <!--<image src="/images/icon_radio.png" style="width: 60rpx;height: 60rpx;"></image>-->
+  <view class="m-one-card {{ caid.CAid == list.CAid? 'm-active' : '' }} {{list.Carstatus==2?'m-disable':''}} " catchtap="clickCard({{list}})" >
     <view class="m-modal-left">
-      <!--<view class="m-price" wx:if="{{list.Couamount}}">￥{{list.COcut}}</view>-->
-      <!--<view class="m-price" wx:if="{{list.Coudiscount}}">{{list.COcut}}</view>-->
       <view class="m-price">{{list.COcut}}</view>
       <view class="instruction">{{list.COuse}}</view>
     </view>
     <view class="m-modal-left">
-      <!--<view>{{list.}}</view>-->
       <view class="m-time">{{list.COstart}}</view>
       <view class="m-time">至{{list.COend}}</view>
     </view>
@@ -24,22 +20,17 @@
         type:Object,
         default:null,
         twoWay:true
-      }
+      },
+        caid: {
+            type:Object,
+            default:null,
+            twoWay:true
+        }
     }
     data = {
       _click:false
     }
     onLoad(){
-//      let token = '';
-//      let that = this;
-//      wx.getStorage({
-//        key: 'token',
-//        success: function(res){
-//          token = res.data;
-//          that.token = res.data
-//          that.$apply()
-//        }
-//      })
     }
 
     methods = {

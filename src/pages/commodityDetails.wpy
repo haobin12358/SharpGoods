@@ -1,32 +1,8 @@
 <template>
   <view class="m-evaluation">
-    <view class="m-content">
-      <!--<repeat for="{{list_data}}" key="index" index="index" item="item">-->
-      <!--<Evaluation :list.sync="item" @starChange.user="starChange" ></Evaluation>-->
-      <!--</repeat>-->
-      <view class="m-content-one" wx:for="{{list_data}}" wx:key="index" wx:for-index="index" wx:for-item="item">
-        <view class="m-product-title">
-          <text >{{item.Pname}}</text>
-        </view>
-        <view class="m-textarea" >
-          <!--wx:if="{{item.Rcontent != ''}}"-->
-          <text >{{item.Rcontent}}</text>
-        </view>
-        <view class="m-foot">
-          <text>星级:</text>
-          <view class="m-star-box">
-            <view wx:for="{{arr}}" wx:key="i"  wx:for-index = "in" wx:for-item="i" >
-              <image src="/images/icon_star.png" wx:if="{{item.Rscore < (in+1)}}"  style="width: 60rpx; height: 60rpx"></image>
-              <image src="/images/icon_star_active.png" wx:if="{{item.Rscore >= (in+1)}}" style="width: 60rpx; height: 60rpx"></image>
-            </view>
-          </view>
-        </view>
-      </view>
-
-      <EvaluationDetail :list.sync="list_data"></EvaluationDetail>
+    <view class="m-head">
+      <rate :len.sync="len" :info.sync="list_data"></rate>
     </view>
-
-
   </view>
 
 </template>
@@ -34,14 +10,14 @@
   import wepy from 'wepy';
   import api from '../api/api'
   import tip from '../utils/tip'
-  import EvaluationDetail from '../components/common/evaluationDetail'
+  import Rate from '../components/common/rate'
   export default class CommondityDetails extends wepy.page{
     config = {
       navigationBarTitleText: '评价详情'
     }
-    components={
-      EvaluationDetail:EvaluationDetail
-    }
+      components = {
+          rate: Rate
+      }
     data = {
       is_radio:false,
       list_data:[],
@@ -54,27 +30,6 @@
     async getAllCommodity(params) {
       let that = this;
       tip.loading();
-      wx.request({
-        url:api.get_review,
-        method:'GET',
-        data:{token:params.token,Oid:params.Oid},
-        header:{
-          'content-type':'application/json',
-        },
-        success:function (res) {
-          tip.loaded()
-          // console.log(res,'aaa')
-          if(res.data.status == '200'){
-            that.list_data = res.data.data.Order_items;
-            for(let i=0;i<that.list_data.length;i++){
-              that.list_data[i].Oid = params.Oid;
-              that.list_data[i].Rscore = 0;
-              that.list_data[i].Rcontent = '';
-            }
-            that.$apply()
-          }
-        }
-      })
     }
     onLoad(option){
       let token = '';

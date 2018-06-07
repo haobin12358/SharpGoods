@@ -83,7 +83,7 @@
       </view>
       <view class="m-section">
         <image class="m-icon" src='/images/pass.png'></image>
-        <input class="m-post" name="pass" type="number" placeholder="密码" />
+        <input class="m-post" password name="pass" type="number" placeholder="密码" />
       </view>
       <view class="m-section">
         <image class="m-icon" src='/images/invite.png'></image>

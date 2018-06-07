@@ -4,7 +4,7 @@
         <swiper class="swiper" autoplay="true" interval="5000" duration="500" indicator-dots="true" autoplay="false" indicator-active-color="#ffc452" indicator-color="#efefef">
             <block wx:for="{{commodity.PBimage}}" key="item" item="item" wx:key="key">
                 <swiper-item>
-                    <image class="slider-img" src="{{ item }}" data-src="{{item}}" @tap="previewImage"></image>
+                    <image class="slider-img" src="{{ item }}" data-src="{{item}}"></image>
                 </swiper-item>
             </block>
         </swiper>
@@ -17,12 +17,15 @@
         </view>
         <view class="m-commodity-intro">
             <view class="m-commodity-video">
-                <video id="intro-video" src="{{ commodity.PRvideo }}" show-center-play-btn="true" controls="true" show-fullscreen-btn="true" binderror="videoErrorCallback"></video>
+                <video  wx:if="{{onPlay}}" id="intro-video" src="{{ commodity.PRvideo }}" show-center-play-btn="true" controls="true" show-fullscreen-btn="true" binderror="videoErrorCallback"></video>
+                <image  wx:else src="{{ commodity.PRvideostart}}" @tap="videoPlay"></image>
             </view>
-            <view class="m-commodity-detail">
-                <image class="intro-pic" src="{{ commodity.PRaboimage }}" mode="aspectFill"></image>
+            <view class="m-commodity-video">
+                <image  src="{{ commodity.PRaboimage }}" mode="widthFix"></image>
             </view>
+            <!--</block>-->
         </view>
+        <view style="width: 100%; " ></view>
         <foot class="m-footer">
             <button class="m-addToCart" @tap="addToCart">加入购物车</button>
         </foot>
@@ -45,7 +48,6 @@
                             <view class="item {{ option.its == selected[ex] ? 'active' :'' }} {{ option.able ? '': 'disabled'}} " wx:for="{{item.choice}}" wx:for-item="option" @tap.stop="setProperty" data-data="{{option}}" data-id="{{item.id}}" data-able="{{option.able}}" data-a="{{option.its}}" data-b="{{selected[ex]}}">{{option.its}}
                             </view>
                         </view>
-
                     </view>
                     <view class="count-box">
                         <view class="title">数量</view>
@@ -79,7 +81,7 @@ export  default class commodityIndex extends wepy.page {
             PRsalevolume: 10,
             PRinfo: '化妆镜',
             PRvideo: '',
-            PRaboimage: '',
+            PRaboimage: [],
             PRid: ''
         },
         num: 0,
@@ -94,7 +96,9 @@ export  default class commodityIndex extends wepy.page {
         color: '',
         pick: [{name: '版本选择'}, {choice: [{its:1.0, able: true}, {its:2.0, able: true}]},{name: '颜色选择', choice: [ {its: '红' , able: true},{its: '蓝', able: true},{its: '白', able: true} ]} ],
         selected: ['','', '', '', ''],
-        selectable: [[], [], [], [], []]
+        selectable: [[], [], [], [], []],
+        onPlay: false,
+        detailImg: []
     }
     async setable(){
 
@@ -128,8 +132,8 @@ export  default class commodityIndex extends wepy.page {
                     }
                     j++;
                 }
-                console.log(result, 'this is what pick looks like');
                 this.pick = result;
+                this.$apply();
                 }else {
                     tip.error("服务器开小差啦")
                 }
@@ -199,9 +203,16 @@ export  default class commodityIndex extends wepy.page {
             for(z=0; z<len2; z++)
                 this.pick[x].choice[z].able = query;
         }
-
     }
     methods = {
+        videoPlay(e) {
+//            this.setData({
+//                curr_id: e.currentTarget.dataset.id,
+//            })
+            this.onPlay = true
+            this.$apply()
+            this.videoContext.play()
+        },
         closeModel() {
             this.winHeight = "100%";
             this.animation.height(0).step();
@@ -213,24 +224,25 @@ export  default class commodityIndex extends wepy.page {
                 this.$apply();
             }, 100)
         },
-        previewImage(e) {
-            let current = e.target.dataset.src;
-            let imageArray = [];
-            let obj = this.commodity.List;
-            Object.keys(obj).forEach((item) => {
-                imageArray.push(obj[item])
-            });
-            wx.previewImage({
-                current: current,
-                urls: imageArray,/////////////需要https
-            })
-        },
+//        previewImage(e) {
+//            let current = e.target.dataset.src;
+//            let imageArray = [];
+//            let obj = this.commodity.List;
+//            Object.keys(obj).forEach((item) => {
+//                imageArray.push(obj[item])
+//            });
+//            wx.previewImage({
+//                current: current,
+//                urls: imageArray,/////////////需要https
+//            })
+//        },
         videoErrorCallback (e) {
             console.log(e.detail.errMsg, 'videoErr')
         },
         addToCart() {
             let token =  wepy.getStorageSync('token')
             if(token){
+                this.onPlay = false
                 this.showConfirmData();
             }else{
                 wx.navigateTo({
@@ -331,7 +343,8 @@ export  default class commodityIndex extends wepy.page {
 <style lang="less">
     @import "../styles/common";
     .container {
-        height: 1600rpx;
+        height: auto;
+        width: 100%;
     }
     .m-commodity{
         margin-bottom: 120rpx;
@@ -368,7 +381,7 @@ export  default class commodityIndex extends wepy.page {
         .intro-pic {
             width: 100%;
             height: 100%;
-            position: absolute;
+            text-align: center;
         }
     }
     .m-footer{
@@ -424,7 +437,10 @@ export  default class commodityIndex extends wepy.page {
         }
     }
     .m-commodity-intro {
-
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
     }
 
     .opt-box {
@@ -464,6 +480,7 @@ export  default class commodityIndex extends wepy.page {
         justify-content: space-between;
         align-items: center;
         padding: 15rpx 0rpx;
+        height: 100px;
         .title {
             color: #4c4c4c;
             font-size: 32rpx;
@@ -475,8 +492,8 @@ export  default class commodityIndex extends wepy.page {
             display: flex;
             font-size: 24 rpx;
             text-align: center;
-            padding: 10rpx;
-            background-color: #e5473c;
+            padding: 30rpx;
+            //background-color: #e5473c;
             .m-minus {
                 width: 48 rpx;
                 height: 100%;
@@ -485,6 +502,8 @@ export  default class commodityIndex extends wepy.page {
                 border-top: 1 rpx solid #ccc;
                 border-bottom-left-radius: 6 rpx;
                 border-top-left-radius: 6 rpx;
+                margin-right: 20rpx;
+                font-size: 40rpx;
             }
             .m-minus.disabled {
                 background-color: #f5f5f9;
@@ -501,12 +520,15 @@ export  default class commodityIndex extends wepy.page {
                 border-top: 1 rpx solid #ccc;
                 border-bottom-right-radius: 6 rpx;
                 border-top-right-radius: 6 rpx;
+                font-size: 40rpx;
+                margin-left: 20rpx;
             }
-            m-commodity-count {
-                background-color: #e0e0e0;
+            .m-commodity-count {
+                //background-color: #e0e0e0;
                 width: 68rpx;
-                height: 48rpx;
-                font-size: 24rpx;
+                //height: 48rpx;
+                font-size: 40rpx;
+
             }
         }
     }
@@ -517,6 +539,7 @@ export  default class commodityIndex extends wepy.page {
         background: #fff;
     }
     .model_content {
+        width: 95%;
         background-color: #fff;
         padding: 20rpx;
         bottom: 100rpx;

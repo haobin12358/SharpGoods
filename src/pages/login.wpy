@@ -57,7 +57,7 @@
         </view>
         <view class="m-section">
           <image class="m-icon" src='/images/pass.png'></image>
-          <input class="m-code" name="code" type="number" placeholder="密码" />
+          <input class="m-code" password name="code" type="number" placeholder="密码" />
         </view>
         <view class="m-btn_confirm">
           <button class="m-button" formType="submit">登录</button>
@@ -85,16 +85,10 @@
           let that = this
           let res = await api.login({query: {UStelphone: phone, USpassword: pass}, method: 'POST'})
           console.log(res,'fuck?')
-//          console.log(res.data.token,'fuck?')
           if(res.data.status == 200){
-//              tip.success("登录成功")
-//              wepy.setStorageSync('token', res.data.token)
               wepy.setStorageSync('token', res.data.data.token)
-              let test =  wepy.getStorageSync('token')
-              console.log(test, '=.=')
               wepy.navigateBack()
               that.$apply()
-              console.log('============')
           }else{
               tip.error(res.data.message)
           }
@@ -112,6 +106,8 @@
           wx.navigateTo({
             url: '/pages/register'
           })
+        },
+        authorizeTap(){
         }
       }
   }

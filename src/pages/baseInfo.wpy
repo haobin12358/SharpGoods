@@ -2,6 +2,24 @@
   @import "../styles/common.less";
   .m-info-form {
     margin-top: 20 rpx;
+    .m-bar{
+      width: 100%;
+      font-size: 30rpx;
+      float: left;
+      border-bottom: 1rpx solid @border-color;
+      padding: 30rpx 0;
+      margin: 20rpx 0;
+      .m-info-prefix{
+        float: left;
+        margin: 0 40rpx;
+      }
+      .m-info-content{
+        float: right;
+        text-align: right;
+        margin: 0 40rpx;
+        color: @grey-font;
+      }
+    }
   }
   .m-info-button {
     border: 1px solid #fff;
@@ -15,13 +33,15 @@
 <template>
 <view class="m-info-form">
   <form bindsubmit="formSubmit">
-    <view class="barOne">
-      <bar prefix="昵称" :syncInfo.sync="nickName" :twoWayInfo="nickName">
-      </bar>
+    <view class="m-bar">
+      <view class="m-info-prefix">昵称</view>
+      <input class="m-info-content" value="{{name}}" name="name"  focus="true"/>
     </view>
-    <view class="barTwo">
-      <secBar prefix="性别" :syncInfo.sync="ssex" :twoWayInfo="ssex">
-      </secBar>
+    <view class="m-bar">
+      <view class="m-info-prefix">性别</view>
+      <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
+        <view class="m-info-content">{{array[index]}}</view>
+      </picker>
     </view>
     <button class="m-info-button" formType="submit">修改</button>
   </form>
@@ -32,57 +52,52 @@
   import tip from '../utils/tip';
   import api from '../api/api'
   import wepy from 'wepy';
-  import Bar from '../components/common/bar';
 
   export default class BaseInfo extends wepy.page {
-    config = {
-      navigationBarTitleText: '基本信息'
-    }
-    data = {
-      nickName : '',
-      ssex : ''
-    };
-    components = {
-      bar: Bar,
-      secBar: Bar
-    };
-    async formSubmit(){
-      let res = await wepy.getStorage({ key: 'token' })
-      let token = res.data
-      let that = this;
-      tip.loading();
-      wx.request({
-        url: `${api.change_person_info}?token=${token}`,
-        method: 'POST',
-        data: {
-          "Uname":this.nickName,
-          "Usex": this.ssex
-        },
-        header: {
-          'content-type': 'application/json'
-        },
-        success: function(res) {
-          tip.loaded()
-          if(res.data.status=='200'){
-            wx.showToast({
-              title: '修改成功',
-              icon: 'success',
-              duration: 2000
-            })
-            setTimeout(function () {
-              wepy.navigateBack();
-            },2000);
-          }
-        }
-      })
+      config = {
+        navigationBarTitleText: '基本信息'
+      }
+      data = {
+          token: '',
+          name: '',
+          array: ['男', '女'],
+          index: 0
+      }
+      bindPickerChange(e){
+          this.index = e.detail.value
+      }
+      async updateUserInfo(params){
+          let that = this;
+          tip.loading();
+          let res = await api.updateUserInfo({query: params, token : that.token, method: 'POST'})
+          if(res.data.status == '200'){
+              tip.success("修改信息成功")
+              setTimeout( wx.navigateBack, 1000)
 
-    }
-    async onShow(){
-      this.nickName = this.$parent.globalData.userInfo.Uname
-      this.ssex = this.$parent.globalData.userInfo.Usex
-      this.$apply()
-    }
-    methods = {
-    };
+          }
+          else tip.error(res.data.message)
+      }
+      async formSubmit(e){
+          let that = this
+          let params = {
+              USsex: that.array[this.index],
+              USname: e.detail.value.name
+          }
+          this.updateUserInfo(params)
+
+      }
+      onLoad(params) {
+          let that = this
+          this.name = params.name;
+          let token =  wepy.getStorageSync('token')
+          this.token = token
+          for(let i=0; i<2; i++){
+              if(params.sex == that.array[i])
+                  that.index = i;
+          }
+      }
+
+      methods = {
+      };
   }
 </script>
