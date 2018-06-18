@@ -56,7 +56,34 @@ class CProducts():
         product_info["PRinfo"] = product.PRinfo
         product_info["PRvideostart"] = product.PRvideostart
         product_info["PRimage"] = product.PRimage
-        product_info["PRaboimage"] = product.PRaboimage
+        product_info["PRaboimage"] = [
+            "https://h878.cn/imgs/img_abo_01.png",
+            "https://h878.cn/imgs/img_abo_02.png",
+            "https://h878.cn/imgs/img_abo_03.png",
+            "https://h878.cn/imgs/img_abo_04.png",
+            "https://h878.cn/imgs/img_abo_05.png",
+            "https://h878.cn/imgs/img_abo_06.png",
+            "https://h878.cn/imgs/img_abo_07.png",
+            "https://h878.cn/imgs/img_abo_08.png",
+            "https://h878.cn/imgs/img_abo_09.png",
+            "https://h878.cn/imgs/img_abo_10.png",
+            "https://h878.cn/imgs/img_abo_11.png",
+            "https://h878.cn/imgs/img_abo_12.png",
+            "https://h878.cn/imgs/img_abo_13.png",
+            "https://h878.cn/imgs/img_abo_14.png",
+            "https://h878.cn/imgs/img_abo_15.png",
+            "https://h878.cn/imgs/img_abo_16.png",
+            "https://h878.cn/imgs/img_abo_17.png",
+            "https://h878.cn/imgs/img_abo_18.png",
+            "https://h878.cn/imgs/img_abo_19.png",
+            "https://h878.cn/imgs/img_abo_20.png",
+            "https://h878.cn/imgs/img_abo_21.png",
+            "https://h878.cn/imgs/img_abo_22.png",
+            "https://h878.cn/imgs/img_abo_23.png",
+            "https://h878.cn/imgs/img_abo_24.png",
+            "https://h878.cn/imgs/img_abo_25.png",
+            "https://h878.cn/imgs/img_abo_26.png"
+        ]
         PRbrand = product.PRbrand
         PRtype = product.PRtype
         if PRbrand == 601:
