@@ -20,8 +20,11 @@
                 <video  wx:if="{{onPlay}}" id="intro-video" src="{{ commodity.PRvideo }}" show-center-play-btn="true" controls="true" show-fullscreen-btn="true" binderror="videoErrorCallback"></video>
                 <image  wx:else src="{{ commodity.PRvideostart}}" @tap="videoPlay"></image>
             </view>
-            <view class="m-commodity-video">
-                <image  src="{{ commodity.PRaboimage }}" mode="widthFix"></image>
+            <view class="m-commodity-video m-img-box">
+                <view wx:for="{{ commodity.PRaboimage }}" wx:key="item" class="m-img">
+                    <image  src="{{item}}" mode="widthFix"></image>
+                </view>
+                <!--<image  src="{{ commodity.PRaboimage }}" mode="widthFix"></image>-->
             </view>
             <!--</block>-->
         </view>
@@ -567,5 +570,21 @@ export  default class commodityIndex extends wepy.page {
         bottom: 0;
         left: 0;
         z-index: 1003;
+    }
+    .m-img-box{
+        display: flex;
+        flex-flow: column;
+        flex-wrap: wrap;
+    }
+    .m-img{
+        box-sizing: content-box;
+        padding: 0;
+        margin: 0;
+        border: none;
+    }
+    .m-img image{
+        margin: 0;
+        padding: 0;
+        border: none;
     }
 </style>

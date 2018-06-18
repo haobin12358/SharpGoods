@@ -45,8 +45,8 @@
 </style>
 <template>
   <view class="m-index">
-    <view class="m-intro" wx:for="{{commodity}}">
-      <image class="m-intro-img" src="{{item.PRimage}}" mode="aspectFill"></image>
+    <view class="m-intro" wx:for="{{commodity}}" wx:key="{{item}}">
+        <image class="m-intro-img"  src="{{item.PRimage}}" mode="aspectFill"></image>
       <view class="m-detail">
         <view class="m-label">{{item.PRinfo}}</view>
         <navigator class="m-navi" url="/pages/commodityIndex?PRid={{item.PRid}}">立 即 抢 购!</navigator>
@@ -58,15 +58,13 @@
 <script >
   import wepy from 'wepy';
   import api from '../api/api';
-  import tip from '../utils/tip'
-
+  import tip from '../utils/tip';
 
 
   export default class Index extends wepy.page {
     config = {
       navigationBarTitleText: 'mine商城'
     }
-
     data = {
         commodity: [
             {
