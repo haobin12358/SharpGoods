@@ -27,8 +27,11 @@ class GetOrdermain():
         print(value)
         print(self.title.format(name))
 
-    def task(self, start, end):
+    def task(self):
         print("run task")
+        start = datetime.datetime.now()
+        end = start - datetime.timedelta(days=1)
+
         start = start.strftime(fomat_for_db)
         end = end.strftime(fomat_for_db)
         self.print_log("start", start)
@@ -62,31 +65,30 @@ class GetOrdermain():
             line += 1
         wb.save(filename)
 
-    def timer(self):
-        print("start")
-        flag = False
-        stime = datetime.datetime(2018, 6, 20, 9, 39)
-        stime_bk = datetime.datetime(2018, 6, 20, 9)
-        while True:
-            now = datetime.datetime.now()
-            if now.year == stime.year and now.day == stime.day and now.hour == stime.hour and now.minute == stime.minute:
-                self.task(stime_bk, stime)
-                stime_bk = stime
-                flag = True
-            elif now > stime:
-                self.task(stime, now)
-                stime_bk = now
-                stime = now
-
-                flag = True
-            if flag:
-                stime = stime + datetime.timedelta(days=1)
-                flag = False
-            time.sleep(3600)
+#     def timer(self):
+#         print("start")
+#         flag = False
+#         stime = datetime.datetime(2018, 6, 20, 9, 39)
+#         stime_bk = datetime.datetime(2018, 6, 20, 9)
+#         while True:
+#             now = datetime.datetime.now()
+#             if now.year == stime.year and now.day == stime.day and now.hour == stime.hour and now.minute == stime.minute:
+#                 self.task(stime_bk, stime)
+#                 stime_bk = stime
+#                 flag = True
+#             elif now > stime:
+#                 self.task(stime, now)
+#                 stime_bk = now
+#                 stime = now
+#
+#                 flag = True
+#             if flag:
+#                 stime = stime + datetime.timedelta(days=1)
+#                 flag = False
+#             time.sleep(3600)
 
 if __name__ == "__main__":
-    GetOrdermain().timer()
+    GetOrdermain().task()
     # start = datetime.datetime(2018, 6, 1, 0, 0, 0)
     # end = datetime.datetime(2018, 6, 19, 0, 0, 0)
     # GetOrdermain().task(start, end)
-    pass
