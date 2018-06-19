@@ -31,6 +31,9 @@ class GetOrdermain():
         print("run task")
         start = start.strftime(fomat_for_db)
         end = end.strftime(fomat_for_db)
+        self.print_log("start", start)
+        self.print_log("end", end)
+
         order_list = get_model_return_list(self.sorder.get_order_main_list(start, end))
         for ordermain in order_list:
             location = get_model_return_dict(self.sloc.get_location_by_loid(ordermain.get("LOid")))
@@ -61,22 +64,27 @@ class GetOrdermain():
 
     def timer(self):
         flag = False
-        stime = datetime.datetime(2018, 6, 20, 9)
-        stime_bk = datetime.datetime(2018, 6, 19, 9)
+        stime = datetime.datetime(2018, 6, 20, 9, 39)
+        stime_bk = datetime.datetime(2018, 6, 20, 9)
         while True:
             now = datetime.datetime.now()
             if now.year == stime.year and now.day == stime.day and now.hour == stime.hour and now.minute == stime.minute:
                 self.task(stime_bk, stime)
                 stime_bk = stime
                 flag = True
-            else:
-                if flag:
-                    stime = stime + datetime.timedelta(days=1)
-                    flag = False
+            elif now > stime:
+                self.task(stime, now)
+                stime_bk = now
+                stime = now
+
+                flag = True
+            if flag:
+                stime = stime + datetime.timedelta(days=1)
+                flag = False
             time.sleep(3600)
 
 if __name__ == "__main__":
-    # GetOrdermain().timer()
+    GetOrdermain().timer()
     # start = datetime.datetime(2018, 6, 1, 0, 0, 0)
     # end = datetime.datetime(2018, 6, 19, 0, 0, 0)
     # GetOrdermain().task(start, end)

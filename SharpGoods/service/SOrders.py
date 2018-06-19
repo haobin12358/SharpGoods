@@ -73,6 +73,5 @@ class SOrders(SBase):
 
     @close_session
     def get_order_main_list(self, start, end):
-        from sqlalchemy import or_
         return self.session.query(OrderMain.OMid, OrderMain.LOid, OrderMain.OMabo, OrderMain.OMtime)\
-            .filter(or_(start <= OrderMain.OMtime, OrderMain.OMtime <= end)).order_by(OrderMain.OMtime).all()
+            .filter(start <= OrderMain.OMtime, OrderMain.OMtime <= end).order_by(OrderMain.OMtime).all()
