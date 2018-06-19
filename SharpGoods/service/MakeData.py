@@ -369,7 +369,7 @@ class MakeData():
 if __name__ == "__main__":
 
     makedata = MakeData()
-    '''
+
     uid = makedata.setUid()
     pbid = makedata.set_pbid()
     pid = makedata.set_pid()
@@ -384,7 +384,7 @@ if __name__ == "__main__":
     coid = makedata.set_coid()
     makedata.add_coupons(coid)
     makedata.add_cardpackage(coid)
-    '''
+
     omid = makedata.make_omid()
     makedata.add_ordermain(omid)
     makedata.add_orderpart(omid)

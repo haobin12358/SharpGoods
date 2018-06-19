@@ -28,6 +28,7 @@ class SLocations(SBase):
     def update_locations_by_loid(self, loid, new_location):
         self.session.query(Locations).filter_by(
             LOid=loid).update(new_location)
+
     @close_session
     def get_location_by_loid(self, loid):
         return self.session.query(

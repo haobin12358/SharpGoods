@@ -5,12 +5,13 @@ sys.path.append(os.path.dirname(os.getcwd()))
 from flask import request
 import json
 from common.import_status import import_status
-from config.response import SYSTEM_ERROR, PARAMS_MISS
+from config.response import SYSTEM_ERROR, PARAMS_MISS, TOKEN_ERROR
 from service.SOrders import SOrders
 from service.SProduct import SProduct
 from service.SLocations import SLocations
 from service.SCoupons import SCoupons
 from service.SCarts import SCarts
+from service.SUsers import SUsers
 from config import conversion as cvs
 
 from common.get_str import get_str
@@ -24,6 +25,7 @@ class COrders():
         self.sproduct = SProduct()
         self.scoupons = SCoupons()
         self.scart = SCarts()
+        self.suser = SUsers()
         self.title = '============{0}============'
         self.order_main_params = ["OMstatus", "OMprice", "LOid", "OMabo", "COid", "OMcointype", "order_item"]
         self.order_part_param = ["PBid", "PRnumber"]
@@ -33,6 +35,11 @@ class COrders():
             args = request.args.to_dict()
             if "token" not in args:
                 return PARAMS_MISS
+
+            user = self.suser.get_usname_by_usid(get_str(args, "token"))
+            if not user:
+                return TOKEN_ERROR
+
             order_list = get_model_return_list(self.sorder.get_order_main_list_by_usid(get_str(args, "token")))
 
             data = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
@@ -54,6 +61,10 @@ class COrders():
             if "token" not in args or "OMid" not in args:
                 return PARAMS_MISS
 
+            user = self.suser.get_usname_by_usid(get_str(args, "token"))
+            if not user:
+                return TOKEN_ERROR
+
             order_main = get_model_return_dict(self.sorder.get_order_main_by_om_id(get_str(args, "OMid")))
             self._get_order_abo_by_order_main(order_main)
             data = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
@@ -73,6 +84,9 @@ class COrders():
 
         if "token" not in args:
             return PARAMS_MISS
+        user = self.suser.get_usname_by_usid(get_str(args, "token"))
+        if not user:
+            return TOKEN_ERROR
 
         data = json.loads(request.data)
         print(self.title.format("data"))
@@ -145,6 +159,10 @@ class COrders():
         if "token" not in args:
             return PARAMS_MISS
 
+        user = self.suser.get_usname_by_usid(get_str(args, "token"))
+        if not user:
+            return TOKEN_ERROR
+
         data = json.loads(request.data)
         print(self.title.format("data"))
         print(data)
@@ -216,9 +234,13 @@ class COrders():
 
     def get_order_price(self):
         args = request.args.to_dict()
-        print(self.title.format("arge"))
+        print(self.title.format("args"))
         print(args)
-        print(self.title.format("arge"))
+        print(self.title.format("args"))
+
+        user = self.suser.get_usname_by_usid(get_str(args, "token"))
+        if not user:
+            return TOKEN_ERROR
 
         data = json.loads(request.data)
         print(self.title.format("data"))
