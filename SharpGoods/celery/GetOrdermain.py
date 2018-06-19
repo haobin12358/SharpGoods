@@ -63,6 +63,7 @@ class GetOrdermain():
         wb.save(filename)
 
     def timer(self):
+        print("start")
         flag = False
         stime = datetime.datetime(2018, 6, 20, 9, 39)
         stime_bk = datetime.datetime(2018, 6, 20, 9)
