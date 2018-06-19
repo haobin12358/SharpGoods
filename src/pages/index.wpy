@@ -19,7 +19,7 @@
     width: 100%;
     height: auto;
     position: absolute;
-    bottom: 100rpx;
+    bottom: 50rpx;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -29,11 +29,11 @@
       font-size: 50rpx;
       color: #FFFFFF;
       &:hover{
-        color: @common-color;
+        color: #fabdca;
       }
     }
     .m-navi{
-      margin-top: 80rpx;
+      margin-top: 40rpx;
       text-align: center;
       font-size: 50rpx;
       color: #FFFFFF;
