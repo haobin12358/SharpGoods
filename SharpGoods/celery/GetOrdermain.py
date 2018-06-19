@@ -4,7 +4,7 @@ import os
 import datetime
 import time
 import xlwt
-sys.path.append(os.path.dirname(os.getcwd()))
+sys.path.append("/opt/SharpGoods")
 from common.get_model_return_list import get_model_return_list, get_model_return_dict
 from common.timeformate import fomat_for_db
 import platform
