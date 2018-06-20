@@ -1,5 +1,7 @@
 <style scoped lang="less" rel="stylesheet/less">
   @import "../styles/common";
+
+
   .m-index{
     width: 100%;
     background-color: #f8f8f8;
@@ -10,45 +12,53 @@
     background-color: #e5473c;
     height: 100%;
   }
-    .m-intro-img{
-      width: 100%;
-      height: 100%;
-      position: absolute;
+  .m-intro-img{
+    width: 100%;
+    height: 100%;
+    /*position: absolute;*/
+  }
+  .m-label{
+    font-size: 50rpx;
+    color: #FFFFFF;
+    text-align: center;
+    width: 100%;
+    height: auto;
+    position: absolute;
+    bottom: 15%;
+    &:hover{
+      color: #fabdca;
     }
+  }
+
   .m-detail {
     width: 100%;
     height: auto;
     position: absolute;
-    bottom: 50rpx;
+    bottom: 6%;
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
-    .m-label{
-      text-align: center;
-      font-size: 50rpx;
-      color: #FFFFFF;
-      &:hover{
-        color: #fabdca;
-      }
+
+  .m-navi{
+    /*margin-top: 40rpx;*/
+    text-align: center;
+    font-size: 50rpx;
+    color: #FFFFFF;
+    &:hover{
+      color: @common-color;
     }
-    .m-navi{
-      margin-top: 40rpx;
-      text-align: center;
-      font-size: 50rpx;
-      color: #FFFFFF;
-      &:hover{
-        color: @common-color;
-      }
-    }
+  }
+
+
 
 </style>
 <template>
   <view class="m-index">
     <view class="m-intro" wx:for="{{commodity}}" wx:key="{{item}}">
-        <image class="m-intro-img"  src="{{item.PRimage}}" mode="aspectFill"></image>
+      <image class="m-intro-img" src="{{item.PRimage}}" mode="aspectFill"></image>
+      <view class="m-label">{{item.PRinfo}}</view>
       <view class="m-detail">
-        <view class="m-label">{{item.PRinfo}}</view>
         <navigator class="m-navi" url="/pages/commodityIndex?PRid={{item.PRid}}">立 即 抢 购!</navigator>
       </view>
     </view>
@@ -83,6 +93,7 @@
     computed = {
 
     }
+
     async getProductList() {
       let that = this;
       tip.loading();
@@ -96,8 +107,15 @@
             tip.error(res.data.message)
         }
     }
-    onLoad(){
+    async onLoad(){
         this.getProductList();
+
+        let sysInfo = await wepy.getSystemInfo();
+        // console.log('sysinfo',sysInfo.windowHeight, 50rpx);
+
+        let bottom = sysInfo.windowHeight * 50 / 456;
+
+        console.log('bottom',bottom);
     }
     methods = {
     }
