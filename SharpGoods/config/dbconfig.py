@@ -1,6 +1,6 @@
 
 database = "SharpGoods"
-host = "120.79.182.43"
+host = "47.104.228.112"
 port = ""
 username = "root"
 password = "root"

@@ -252,11 +252,8 @@ class CProducts():
         print "=================key_list================="
         print key_list
         print "=================key_list================="
-        # 根据高层的key去找低层的所有id
-        if key_list[0] in data.keys():
-            BRid_list = self.sproduct.get_brid_by_key_value(key_list[0], data[key_list[0]])
-        else:
-            BRid_list = self.sproduct.get_brid_by_prid(args["PRid"])
+        BRid_list = self.sproduct.get_brid_by_prid(args["PRid"])
+        brid_list = self.sproduct.get_brid_by_prid(args["PRid"])
         print "=================BRid_list================="
         print BRid_list
         print "=================BRid_list================="
@@ -282,24 +279,28 @@ class CProducts():
         print "=================BRid_list================="
         print BRid_list
         print "=================BRid_list================="
-        data = {}
+        back_data = {}
         for key in key_list:
-            data.keys().append(key)
-            data[key] = []
+            back_data.keys().append(key)
+            back_data[key] = []
             for BRid in BRid_list:
                 brand = self.sproduct.get_brand_by_brid(BRid)
                 BRkey, BRvalue = brand.BRkey, brand.BRvalue
-                if BRkey == key and BRvalue not in data[key]:
-                    data[key].append(BRvalue)
+                if BRkey == key and BRvalue not in back_data[key]:
+                    back_data[key].append(BRvalue)
                 else:
                     while BRid != "0":
                         brand_parent = self.sproduct.get_brand_by_brid(BRid)
                         BRid, BRkey, BRvalue = brand_parent.BRfromid, brand_parent.BRkey, brand_parent.BRvalue
-                        if BRvalue not in data[key] and BRkey == key:
-                            data[key].append(BRvalue)
+                        if BRvalue not in back_data[key] and BRkey == key:
+                            back_data[key].append(BRvalue)
+
+        key_list_control = data.keys()
+        for key in key_list_control:
+            back_data[key] = self.get_m_by_n(key, key_list_control, data, brid_list)
 
         response = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
-        response["data"] = data
+        response["data"] = back_data
         return response
 
     def get_pbid_by_all_brand(self):
@@ -388,3 +389,57 @@ class CProducts():
             return "颜色选择"
         else:
             return "未知类目"
+
+    def get_m_by_n(self, key, key_list, brands, brid_list):
+        # key=BRcolor key_list=[] brands={"BRcolor":"钻石银"} brid_list=[1234]
+        # 首先移除需要判断的key
+        key_list.remove(key)
+        print "!!!!!!!!!!brid_list"
+        print brid_list
+        print "!!!!!!!!!!brid_list"
+        len_brid_list = len(brid_list)
+        # 倒序循环，移除不合适的，放跳位
+        while len_brid_list > 0:
+            # 备份一个brid，用于remove
+            raw = brid_list[len_brid_list - 1]
+            row = brid_list[len_brid_list - 1]
+            print "=================raw================="
+            print raw
+            print "=================raw================="
+            # 循环，直至找到根节点的brid
+            while row != "0":
+                # 获取父节点和当前节点的key、value
+                brand = self.sproduct.get_brand_by_brid(row)
+                print "=================brand================="
+                print brand
+                print "=================brand================="
+                # 替代当前值
+                row, BRkey, BRvalue = brand.BRfromid, brand.BRkey, brand.BRvalue
+                # 判断，如果存在一个key对应的value和实际brands中key对应的value不同，移除当前的brid
+                if BRkey in key_list and brands[BRkey] != BRvalue:
+                    brid_list.remove(raw)
+                    print "=================BRid_list_remove================="
+                    print brid_list
+                    print "=================BRid_list_remove================="
+            len_brid_list = len_brid_list - 1
+
+        # 设置最后要返回的可选值
+        control_key = []
+
+        # 利用已经筛选好的brid_list进行处理
+        for BRid in brid_list:
+            # 获取key和value
+            brand = self.sproduct.get_brand_by_brid(BRid)
+            BRkey, BRvalue = brand.BRkey, brand.BRvalue
+            # 如果key属于设定的key且value不存在于要返回的list中，那么将value添加进该list
+            if BRkey == key and BRvalue not in control_key:
+                control_key.append(BRvalue)
+            # 否则循环寻找父节点，重复判断逻辑，直到找到对应的key
+            else:
+                while BRid != "0":
+                    brand_parent = self.sproduct.get_brand_by_brid(BRid)
+                    BRid, BRkey, BRvalue = brand_parent.BRfromid, brand_parent.BRkey, brand_parent.BRvalue
+                    if BRvalue not in control_key and BRkey == key:
+                        control_key.append(BRvalue)
+
+        return control_key
