@@ -14,15 +14,17 @@ DB_PARAMS = "{0}://{1}:{2}@{3}/{4}?charset={5}".format(
 mysql_engine = create_engine(DB_PARAMS, echo=False)
 Base = declarative_base()
 
+
 class Users(Base):
     __tablename__ = "Users"
     USid = Column(String(64), primary_key=True)
-    UStelphone = Column(String(14), nullable=False) # 用户联系方式
-    USpassword = Column(String(32), nullable=False) # 用户密码
-    USname = Column(String(64))  # 用户昵称
-    USsex = Column(Integer)  # 用户性别 {101男， 102女}
-    UScoin = Column(Float)  # 用户积分，根据用户购买商品生成
-    USinvate = Column(String(64))   # 用户邀请码，算法生成待设计
+    UStelphone = Column(String(14), nullable=False)  # 用户联系方式
+    USpassword = Column(String(32), nullable=False)  # 用户密码
+    USname = Column(String(64))                      # 用户昵称
+    USsex = Column(Integer)                          # 用户性别 {101男， 102女}
+    UScoin = Column(Float)                           # 用户积分，根据用户购买商品生成
+    USinvate = Column(String(64))                    # 用户邀请码，算法生成待设计
+
 
 class Locations(Base):
     __tablename__ = "Locations"
@@ -42,59 +44,63 @@ class Products(Base):
     __tablename__ = "Products"
     PRid = Column(String(64), primary_key=True)  # 商品id
     PRname = Column(String(64), nullable=False)  # 商品名称
+    PRvideo = Column(Text, nullable=False)       # 宣传视频
+    PRimage = Column(Text, nullable=False)       # 商品图片存放地址
+    PRaboimage = Column(Text)                    # 商品详情图存放地址
+    PRinfo = Column(Text)                        # 商品介绍
+    PRtype = Column(Integer, nullable=False)     # 营销类型 {501自营， 502非自营}
+    PRbrand = Column(Integer, nullable=False)    # 类目 {601美妆类， 602 3C类}
+    PRvideostart = Column(String(64))            # 商品视频未启动图片
     # PRprice = Column(Float, nullable=False)  # 商品价格
     # PRunit = Column(Integer, nullable=False) # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
-    PRvideo = Column(Text, nullable=False)  # 宣传视频
     # PRstatus = Column(Integer, default=1)  # 商品状态 {201:在售状态 202:下架状态}
-    PRimage = Column(Text, nullable=False)  # 商品图片存放地址
-    PRaboimage = Column(Text)  # 商品详情图存放地址
-    PRinfo = Column(Text)  # 商品介绍
     # PRsalesvolume = Column(Integer, nullable=False)  # 商品销量
     # PRscore = Column(Float, nullable=True)  # 商品评分
     # PRno = Column(String(8), nullable=False)  # 版本号
     # PRcolor = Column(Text) # 颜色，一对多
-    PRtype = Column(Integer, nullable=False) # 营销类型 {501自营， 502非自营}
-    PRbrand = Column(Integer, nullable=False) # 类目 {601美妆类， 602 3C类}
     # PRquality = Column(String(64)) # 商品属性，包含类目、颜色等等，以json进行保存
-    PRvideostart = Column(String(64))
+
 
 class ProductsBrands(Base):
     __tablename__ = "ProductsBrands"
     PBid = Column(String(64), primary_key=True)
-    PRid = Column(String(64), nullable=False)  # 商品id
-    BRid = Column(String(64), nullable=False)  # 叶子类目id
-    PBprice = Column(Float, nullable=Float) # 商品价格
-    PBunit = Column(Integer, nullable=False) # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
-    PBstatus = Column(Integer, default=201) # 商品状态 {201:在售状态 202:下架状态}
+    PRid = Column(String(64), nullable=False)        # 商品id
+    BRid = Column(String(64), nullable=False)        # 叶子类目id
+    PBprice = Column(Float, nullable=Float)          # 商品价格
+    PBunit = Column(Integer, nullable=False)         # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
+    PBstatus = Column(Integer, default=201)          # 商品状态 {201:在售状态 202:下架状态}
     PBsalesvolume = Column(Integer, nullable=False)  # 商品销量
-    PBscore = Column(Float, nullable=True)  # 商品评分
-    PBimage = Column(Text, nullable=False)  # 商品图片存放地址
+    PBscore = Column(Float, nullable=True)           # 商品评分
+    PBimage = Column(Text, nullable=False)           # 商品图片存放地址
+
 
 class Brands(Base):
     __tablename__ = "Brands"
     BRid = Column(String(64), primary_key=True)
-    BRfromid = Column(String(64), nullable=False) # 父节点id，如果没有父节点则为0
-    BRvalue = Column(String(128), nullable=False) # 属性值
-    BRkey = Column(String(128), nullable=False) # 属性类型
+    BRfromid = Column(String(64), nullable=False)  # 父节点id，如果没有父节点则为0
+    BRvalue = Column(String(128), nullable=False)  # 属性值
+    BRkey = Column(String(128), nullable=False)    # 属性类型
+
 
 class Review(Base):
     __tablename__ = "Review"
     REid = Column(String(64), primary_key=True)  # 评论id
-    PRid = Column(String(64), nullable=False)  # 对应的评论对象，根据REtype判断
-    USid = Column(String(64), nullable=False)  # 用户id
-    REtime = Column(String(14), nullable=False) # 评论时间
-    USRid = Column(String(64)) # 被评论人
-    REcontent = Column(Text, nullable=True)  # 评价内容
-    REtype = Column(Integer, default=1)  # 对应的评论对象类型 {701:商品评价 702:帖子评价}
+    PRid = Column(String(64), nullable=False)    # 对应的评论对象，根据REtype判断
+    USid = Column(String(64), nullable=False)    # 用户id
+    REtime = Column(String(14), nullable=False)  # 评论时间
+    USRid = Column(String(64))                   # 被评论人
+    REcontent = Column(Text, nullable=True)      # 评价内容
+    REtype = Column(Integer, default=1)          # 对应的评论对象类型 {701:商品评价 702:帖子评价}
 
 
 class Shops(Base):
     __tablename__ = "Shops"
     SHid = Column(String(64), primary_key=True)
     SHname = Column(String(64), nullable=False)  # 供应商名称
-    SHtype = Column(Integer, nullable=True)  # 供应商类型
-    SHdetail = Column(Text, nullable=True)   # 供应商详细信息
-    Stel = Column(String(14))  # 供应商联系方式
+    SHtype = Column(Integer, nullable=True)      # 供应商类型
+    SHdetail = Column(Text, nullable=True)       # 供应商详细信息
+    Stel = Column(String(14))                    # 供应商联系方式
+
 
 class OrderMain(Base):
     __tablename__ = "OrderMain"
@@ -105,9 +111,11 @@ class OrderMain(Base):
     OMprice = Column(Float)                             # 订单总额
     USid = Column(String(64))                           # 用户id
     LOid = Column(String(64))                           # 配送地址id
+    OMlogisticsName = Column(Text, default="顺丰速运")           # 物流公司
     OMabo = Column(Text)                                # 订单备注
-    OMcointype = Column(Integer, nullable=False)  # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
-    COid = Column(String(64))  # 优惠券id
+    OMcointype = Column(Integer, nullable=False)        # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
+    COid = Column(String(64))                           # 优惠券id
+
 
 class Orderpart(Base):
     __tablename__ = "OrderPart"
@@ -116,13 +124,15 @@ class Orderpart(Base):
     PBid = Column(String(64), nullable=False)    # 商品id
     PRnumber = Column(Integer, nullable=False)   # 商品数量
 
+
 class Cart(Base):
     __tablename__ = "Cart"
     CAid = Column(String(64), primary_key=True)  # 购物车id
-    USid = Column(String(64), nullable=False)  # 用户id
-    PBid = Column(String(64), nullable=False)  # 产品id
-    CAnumber = Column(Integer)  # 商品在购物车中的数量
-    CAstatus = Column(Integer, default=1)  # 商品在购物车状态，1 在购物车， 2 已从购物车移除 目前直接从数据库中移除
+    USid = Column(String(64), nullable=False)    # 用户id
+    PBid = Column(String(64), nullable=False)    # 产品id
+    CAnumber = Column(Integer)                   # 商品在购物车中的数量
+    CAstatus = Column(Integer, default=1)        # 商品在购物车状态，1 在购物车， 2 已从购物车移除 目前直接从数据库中移除
+
 
 class Coupons(Base):
     __tablename__ = "Coupon"
@@ -136,6 +146,7 @@ class Coupons(Base):
     COutype = Column(Integer)     # 优惠券限制的使用人群，用于后期扩展会员
     COtype = Column(Integer)      # 优惠券类型 {801 满减， 802 满折， 803 商品类目限制， 804 无限制， 805 用户类型限制}
 
+
 class Cardpackage(Base):
     __tablename__ = "Cardpackage"
     CAid = Column(String(64), primary_key=True)
@@ -143,18 +154,21 @@ class Cardpackage(Base):
     CAstatus = Column(Integer, default=1)  # 卡包中优惠券的状态 {1:可使用，2: 不可使用}
     COid = Column(String(64), nullable=False)
 
+
 class IdentifyingCode(Base):
     __tablename__ = "IdentifyingCode"
     ICid = Column(String(64), primary_key=True)
     ICtelphone = Column(String(14), nullable=False)  # 获取验证码的手机号
-    ICcode = Column(String(8), nullable=False)    # 获取到的验证码
-    ICtime = Column(String(14), nullable=False)    # 获取的时间，格式为20180503100322
+    ICcode = Column(String(8), nullable=False)       # 获取到的验证码
+    ICtime = Column(String(14), nullable=False)      # 获取的时间，格式为20180503100322
+
 
 class BlackUsers(Base):
     __tablename__ = "BlackUsers"
     BUid = Column(String(64), primary_key=True)
     BUtelphone = Column(String(14), nullable=False)   # 黑名单电话
     BUreason = Column(Text)   # 加入黑名单的原因
+
 
 if __name__ == "__main__":
     '''

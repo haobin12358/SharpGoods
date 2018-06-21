@@ -351,6 +351,12 @@ class AOther(Resource):
             response["paySign"] = s.hexdigest().upper()
             return response
 
+        if other == "logistics":
+            from config.logistics import LIST_LOGISTICS
+            data = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
+            data["data"] = LIST_LOGISTICS
+            return data
+
     def post(self, other):
         if other == "getdata":
             print("=======================api===================")

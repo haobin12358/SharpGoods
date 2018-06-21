@@ -56,7 +56,7 @@ class SOrders(SBase):
         return self.session.query(
             OrderMain.OMid, OrderMain.LOid, OrderMain.COid,
             OrderMain.OMabo, OrderMain.OMcointype, OrderMain.OMstatus,
-            OrderMain.OMtime, OrderMain.OMprice
+            OrderMain.OMtime, OrderMain.OMprice, OrderMain.OMlogisticsName
         ).filter(OrderMain.USid == usid).all()
 
     @close_session
@@ -64,7 +64,7 @@ class SOrders(SBase):
         return self.session.query(
             OrderMain.OMid, OrderMain.LOid, OrderMain.COid,
             OrderMain.OMabo, OrderMain.OMcointype, OrderMain.OMstatus,
-            OrderMain.OMtime, OrderMain.OMprice
+            OrderMain.OMtime, OrderMain.OMprice, OrderMain.OMlogisticsName
         ).filter(OrderMain.OMid == omid).first()
 
     @close_session
