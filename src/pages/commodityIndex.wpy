@@ -159,7 +159,7 @@ export  default class commodityIndex extends wepy.page {
             timingFunction: "linear",
             delay: 0
         })
-        this.animation = animation.export();
+        this.animation = animation;
     }
     onReady(){
         this.videoContext = wx.createVideoContext('intro-video')
