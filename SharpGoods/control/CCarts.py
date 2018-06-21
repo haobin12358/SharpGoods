@@ -8,7 +8,7 @@ import uuid
 from common.lovebreakfast_error import dberror
 from common.TransformToList import add_model
 from common.import_status import import_status
-from config.response import SYSTEM_ERROR, PARAMS_MISS
+from config.response import SYSTEM_ERROR, PARAMS_MISS, TOKEN_ERROR
 
 class CCarts():
     def __init__(self):
@@ -16,6 +16,8 @@ class CCarts():
         self.scarts = SCarts()
         from service.SProduct import SProduct
         self.sproduct = SProduct()
+        from service.SUsers import SUsers
+        self.suser = SUsers()
 
     def del_cart(self):
         args = request.args.to_dict()
@@ -29,6 +31,10 @@ class CCarts():
         if "token" not in args:
             return PARAMS_MISS
         uid = args.get("token")
+        user = self.suser.get_usname_by_usid(get_str(args, "token"))
+        if not user:
+            return TOKEN_ERROR
+
         pbid = data.get("PBid")
         try:
             cart = self.scarts.get_cart_by_uid_pid(uid, pbid)
