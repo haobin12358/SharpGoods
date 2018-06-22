@@ -53,19 +53,19 @@ page{
         "list": [{
           "pagePath": "pages/index",
           "text": "首页",
-          "iconPath": "images/index.png",
-          "selectedIconPath": "images/index_selected.png"
+          "iconPath": "image/tabbar_home.jpg",
+          "selectedIconPath": "image/tabbar_home_active.jpg"
         }, {
           "pagePath": "pages/car",
           "text": "购物车",
-          "iconPath": "images/shop.png",
-          "selectedIconPath": "images/shop_selected.png"
+          "iconPath": "image/tabbar_shop_cart.jpg",
+          "selectedIconPath": "image/tabbar_shop_cart_active.jpg"
         },
           {
             "pagePath": "pages/personal",
             "text": "我的",
-            "iconPath": "images/mine.png",
-            "selectedIconPath": "images/mine_selected.png"
+            "iconPath": "image/tabbar_person.jpg",
+            "selectedIconPath": "image/tabbar_person_active.jpg"
           }]
       }
     }
