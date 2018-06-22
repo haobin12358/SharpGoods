@@ -18,6 +18,7 @@ from common.get_str import get_str
 from common.get_model_return_list import get_model_return_list, get_model_return_dict
 from common.timeformate import get_db_time_str, get_web_time_str
 
+
 class COrders():
     def __init__(self):
         self.sorder = SOrders()
@@ -103,6 +104,10 @@ class COrders():
             print(self.title.format("update location success"))
             import uuid
             omid = str(uuid.uuid4())
+            OMlogisticsName = get_str(data, "OMlogisticsName")
+            from config.logistics import LIST_LOGISTICS
+            if OMlogisticsName not in LIST_LOGISTICS:
+                OMlogisticsName = LIST_LOGISTICS[0]
             order_main = {
                 "OMid": omid,
                 "LOid": loid,
@@ -112,6 +117,7 @@ class COrders():
                 "COid": get_str(data, "CAid"),
                 "OMprice": float(get_str(data, "OMprice")),
                 "OMtime": get_db_time_str(),
+                "OMlogisticsName": OMlogisticsName,
                 "OMstatus": cvs.conversion_OMstatus_reverse.get(get_str(data, "OMstatus"))
             }
             self.sorder.add_model("OrderMain", **order_main)
