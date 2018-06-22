@@ -70,7 +70,6 @@
   import api from '../api/api';
   import tip from '../utils/tip';
 
-
   export default class Index extends wepy.page {
     config = {
       navigationBarTitleText: 'mine商城'
@@ -95,27 +94,18 @@
     }
 
     async getProductList() {
-      let that = this;
-      tip.loading();
+        let that = this;
         let res = await api.getProductAll()
-        console.log(res);
-        if(res.data.status == '200'){
+
+        if (res.data.status == '200') {
             that.commodity = res.data.data;
             that.$apply()
-            tip.loaded()
-        }else{
+        } else {
             tip.error(res.data.message)
         }
     }
     async onLoad(){
         this.getProductList();
-
-        let sysInfo = await wepy.getSystemInfo();
-        // console.log('sysinfo',sysInfo.windowHeight, 50rpx);
-
-        let bottom = sysInfo.windowHeight * 50 / 456;
-
-        console.log('bottom',bottom);
     }
     methods = {
     }
