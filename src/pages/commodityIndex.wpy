@@ -1,72 +1,29 @@
 <template>
-<view class="container">
-    <view class="m-commodity">
-        <swiper class="swiper" autoplay="true" circular="true" interval="5000" duration="500" indicator-dots="false" autoplay="false" indicator-active-color="rgba(255, 196, 82, .5)" indicator-color="rgba(233,233,233,0.5)">
-            <block wx:for="{{commodity.PBimage}}" key="item" item="item" wx:key="key">
-                <swiper-item>
-                    <image class="slider-img" mode="widthFix" src="{{ item }}" data-src="{{item}}"></image>
-                </swiper-item>
-            </block>
-        </swiper>
-        <view class="m-commodity-info">
-            <view class="m-commodity-title"> {{commodity.PRinfo}} </view>
-            <view class="m-commodity-content">
-                <view class="m-commodity-price">￥{{commodity.PRprice}}</view>
-                <view class="m-commodity-num">已售{{commodity.PRsalevolume}}</view>
-            </view>
-        </view>
-        <view class="m-commodity-intro">
-            <view class="m-commodity-video">
-                <video  wx:if="{{onPlay}}" id="intro-video" src="{{ commodity.PRvideo }}" show-center-play-btn="true" controls="true" show-fullscreen-btn="true" binderror="videoErrorCallback"></video>
-                <image  wx:else src="{{ commodity.PRvideostart}}" @tap="videoPlay"></image>
-            </view>
-            <view class="m-commodity-video m-img-box">
-                <view wx:for="{{ commodity.PRaboimage }}" wx:key="item" class="m-img">
-                    <image  src="{{item}}" mode="widthFix"></image>
-                </view>
-                <!--<image  src="{{ commodity.PRaboimage }}" mode="widthFix"></image>-->
-            </view>
-            <!--</block>-->
-        </view>
-        <view style="width: 100%; " ></view>
-        <foot class="m-footer">
-            <button class="m-addToCart" @tap="addToCart">加入购物车</button>
-        </foot>
-        <view class="over_model" hidden="{{hidden}}"></view>
-        <view class="panel_model" hidden="{{hidden}}" animation="{{animationData}}">
-            <view class="model_content">
-                <view class="head_box">
-                    <view class="img_wrap">
-                        <image class="goods_img" src="{{commodity.PRimage}}" />
-                    </view>
-                    <view class="product_wrap">
-                        <view class="product_name">{{commodity.PRinfo}}</view>
-                        <view class="price">￥ {{commodity.PRprice}}</view>
-                    </view>
-                </view>
-                <scroll-view scroll-y="true" style="height:750rpx">
-                    <view class="opt-box" wx:for="{{pick}}" wx:key="key" wx:for-index="ex" data-id="item.id">
-                        <view class="title">{{item.name}}</view>
-                        <view class="items">
-                            <view class="item {{ option.its == selected[ex] ? 'active' :'' }} {{ option.able ? '': 'disabled'}} " wx:for="{{item.choice}}" wx:for-item="option" @tap.stop="setProperty" data-data="{{option}}" data-id="{{item.id}}" data-able="{{option.able}}" data-a="{{option.its}}" data-b="{{selected[ex]}}">{{option.its}}
-                            </view>
-                        </view>
-                    </view>
-                    <view class="count-box">
-                        <view class="title">数量</view>
-                        <view class="m-purchase-count">
-                            <view class="m-minus {{item.number==1? 'disabled' : ''}}" catchtap="minusTap" data-index="{{index}}">-</view>
-                            <view class="m-commodity-count">{{count}}</view>
-                            <view class="m-plus" catchtap="plusTap" data-index="{{index}}">+</view>
-                        </view>
-                    </view>
-                </scroll-view>
-                <view class="colse_model" @tap="closeModel"><image src="../images/close.png" class="m-icon"></image></view>
-            </view>
-            <view class="confirm_btn" @tap.stop="confirmPurchase">确定</view>
-        </view>
+    <view class="head-img">
+
     </view>
-</view>
+    <view class="bd-info">
+        info
+    </view>
+    <view class="ft-buttons">
+        <button>加入购物车</button>
+        <button>购物车</button>
+    </view>
+    <!--<view class="m-commodity">-->
+
+        <!--<view class="m-commodity-info">-->
+            <!--<view class="m-commodity-title"> {{commodity.PRinfo}} </view>-->
+            <!--<view class="m-commodity-content">-->
+                <!--<view class="m-commodity-price">￥{{commodity.PRprice}}</view>-->
+                <!--<view class="m-commodity-num">已售{{commodity.PRsalevolume}}</view>-->
+            <!--</view>-->
+        <!--</view>-->
+
+        <!--<foot class="m-footer">-->
+            <!--<button class="m-addToCart" @tap="addToCart">加入购物车</button>-->
+        <!--</foot>-->
+    <!--</view>-->
+
 </template>
 <script>
 import wepy from 'wepy';
@@ -87,61 +44,29 @@ export  default class commodityIndex extends wepy.page {
             PRaboimage: [],
             PRid: ''
         },
-        num: 0,
-        count: 1,
-        selectVersion: '',
-        selectColor: '',
-        hidden: true,
-        animation: '',
-        animationData: '',
+
         winHeight: "100%",
-        version: '',
-        color: '',
-        pick: [{name: '版本选择'}, {choice: [{its:1.0, able: true}, {its:2.0, able: true}]},{name: '颜色选择', choice: [ {its: '红' , able: true},{its: '蓝', able: true},{its: '白', able: true} ]} ],
-        selected: ['','', '', '', ''],
-        selectable: [[], [], [], [], []],
         onPlay: false,
         detailImg: []
     }
     async setable(){
 
     }
-    /**
-     * 获取商品数据  调整数据格式
-     *   PRquality: {BRno: {name: "版本选择", choice: ["1.0", "2.0"]}, {name: "版本选择", choice: ["1.0", "2.0"]}}
-     *   pick: [{name: '版本选择'}, {choice: [{its:1.0, able: true}, {its:2.0, able: true}]},{name: '颜色选择', choice: [ {its: '红' , able: true},{its: '蓝', able: true},{its: '白', able: true} ]} ],
-     */
-    async getProductInfo(params){
-        let that = this;
-        let res = await api.getProductInfo({query: {PRid: params}})
-                if(res.data.status == '200'){
-                    that.commodity = res.data.data
-                    let loop = res.data.data.PRquality
-                    let result = []
-                    let j = 0
 
-                for(let i in loop){
-                    loop[i].id = j;
-                    loop[i].query = i;    //loop : {i : {id: , query: '', name: '', choice: []}}
-                    result[j] = loop[i];  //result : [query: '', id: , choice: [  {able: true, its: },   ]
+    async getProductInfo(pdId){
+        let res = await api.getProductInfo({query: {PRid: pdId}});
 
-                    let len2 = loop[i].choice.length
-                    let temp = '';
-                    for( let x = 0; x<len2; x++ ){
-                        temp = result[j].choice[x]
-                        result[j].choice[x] = {}
-                        result[j].choice[x].able = true;
-                        result[j].choice[x].its = temp;
-                    }
-                    j++;
-                }
-                this.pick = result;
-                this.$apply();
-                }else {
-                    tip.error("服务器开小差啦")
-                }
+        if(res.data.status == '200'){
+            this.commodity = res.data.data;
+
+        }else {
+            tip.error("服务器开小差啦")
+        }
     }
+
     onLoad(params){
+        let prId ='040a78f0-2c50-402e-969c-d26072659ae3';
+
         this.hidden = true;
         this.winHeight = "100%";
         this.selectVersion = '';
@@ -150,216 +75,65 @@ export  default class commodityIndex extends wepy.page {
         this.count = 1;
         this.selected = ['','', '', '', ''] ;
         this.$apply();
+        // console.log('prId',prId);
         this.getProductInfo(params.PRid)
     }
     onShow(){
-        let animation = wx.createAnimation({
-            transformOrigin: "50% 50%",
-            duration: 200,
-            timingFunction: "linear",
-            delay: 0
-        })
-        this.animation = animation;
+
     }
     onReady(){
-        this.videoContext = wx.createVideoContext('intro-video')
     }
 
-    async showConfirmData() {
-        this.animation.height('783rpx').step();
-        this.setData({
-            animationData: this.animation.export()
-        })
-        setTimeout(() => {
-            this.hidden = false;
-            this.$apply();
-        }, 100)
-    }
+
     async getPBid(token, query){
-
         let PRid = this.commodity.PRid
         let res = await api.getPBid({token: token, PRid: PRid, query: query, method: 'POST'})
         return res.data.data.PBid
 
     }
-    async getLeft(token, query){
-        let PRid = this.commodity.PRid
-        let res = await api.getLeft({query: query, token: token, method: 'POST', PRid: PRid})
-        let data = res.data.data;
-        return data;
-    }
-    async doPurchase (token, query) {
-        let that = this;
-        let res = await api.operateCart({token: token, method: 'POST', query: query})
-        if(res.data.status == 200 ) tip.success('加入购物车成功')
 
-        this.methods.closeModel.call(this);
-        this.selected = ['','', '', '', ''] ;
-        this.setTrue(true);
-        this.count = 1;
-    }
-    setTrue(query){
-        let x, z ;
-        let len = this.pick.length
-        for(x = 0; x<len; x++ ){
-            let len2 = this.pick[x].choice.length
-            for(z=0; z<len2; z++)
-                this.pick[x].choice[z].able = query;
-        }
-    }
+
+
     methods = {
-        videoPlay(e) {
-//            this.setData({
-//                curr_id: e.currentTarget.dataset.id,
-//            })
-            this.onPlay = true
-            this.$apply()
-            this.videoContext.play()
-        },
-        closeModel() {
-            this.winHeight = "100%";
-            this.animation.height(0).step();
-            this.setData({
-                animationData: this.animation.export()
-            })
-            setTimeout(() => {
-                this.hidden = true;
-                this.$apply();
-            }, 100)
-        },
-//        previewImage(e) {
-//            let current = e.target.dataset.src;
-//            let imageArray = [];
-//            let obj = this.commodity.List;
-//            Object.keys(obj).forEach((item) => {
-//                imageArray.push(obj[item])
-//            });
-//            wx.previewImage({
-//                current: current,
-//                urls: imageArray,/////////////需要https
-//            })
-//        },
-        videoErrorCallback (e) {
-            console.log(e.detail.errMsg, 'videoErr')
-        },
-        addToCart() {
-            let token =  wepy.getStorageSync('token')
-            if(token){
-                this.onPlay = false
-                this.showConfirmData();
-            }else{
-                wx.navigateTo({
-                    url: '/pages/login'
-                })
-            }
-        },
-        plusTap(){
-            this.count ++;
-            this.$apply();
-        },
-        minusTap(){
-            let count = this.count
-            if(count>1){
-                this.count --;
-                this.$apply();
-            }
-        },
-        bindKeyInput(e){
-            //输入
-        },
-        async setProperty(e) {
-            let that = this;
-            let len = this.pick.length
-            let token =  wepy.getStorageSync('token')
-            //设置已选
-            let data = e.currentTarget.dataset.data;
-            let id = e.currentTarget.dataset.id;
-            let able = e.currentTarget.dataset.able; //可选
 
 
-            if(able){
-                if(that.selected[id] == data.its) that.selected[id] = ''
-                else that.selected[id] = data.its;
-            }
-            this.$apply();
-
-            let query = {}
-            let get = true;
-
-            for(let i = 0; i<len; i++){
-                if(this.selected[i] != ''){
-                    let key = that.pick[i].query;
-                    let position = that.selected[i]
-                    query[key] = position
-                    get = false
-                }
-            }
-            if(!get){
-                let loop = await this.getLeft(token, query);
-                let x, y, z ;
-
-                x=0;
-                this.setTrue(false)
-                for(let i in loop){
-                    let len2 = loop[i].length
-                    let len3 = that.pick[x].choice.length
-                    for(y = 0; y<len2; y++ ){
-                        for(z=0;z<len3;z++)
-                            if(that.pick[x].choice[z].its == loop[i][y])
-                                that.pick[x].choice[z].able = true
-                    }
-                    x++;
-                }
-                that.$apply()
-
-            }
-            else {
-                this.setTrue(true)
-                that.$apply()
-            }
-//pick: [{name: '版本选择',choice: [{its:1.0, able: true}],{name: '颜色选择', choice: [ {its: '红' , able: true},{its: '蓝', able: true},{its: '白', able: true} ]} ],
-        },
-        async confirmPurchase(){
-            let token =  wepy.getStorageSync('token')
-            let len = this.pick.length;
-            let mess = '';
-            let query = {};
-            let temp;
-            for(let i = len-1; i>-1; i--){
-                if(this.selected[i] == ''){
-                    mess = this.pick[i].name
-                }
-                temp = this.pick[i].query
-                query[temp] = this.selected[i];
-            }
-            if(mess!=''){ tip.alert(mess) }
-            else{
-                let num = this.count
-                let PBid = await this.getPBid(token, query)
-                this.doPurchase(token, {PBid: PBid, CAnumber: num})
-            }
-        }
     }
         }
 </script>
 
 <style lang="less">
     @import "../styles/common";
-    .container {
-        height: auto;
-        width: 100%;
+
+
+    .head-img{
+        height: 650rpx;
+        background-color: #4c4c4c;
     }
+    .bd-info{
+        margin: 29rpx 64rpx 174rpx 37rpx;
+        background-color: #5fc16c;
+        height: 99rpx;
+    }
+    .ft-buttons{
+
+        margin: auto 151rpx;
+
+        button:first-child{
+            margin-bottom: 22rpx;
+        }
+        button{
+            border-radius: 40rpx;
+            border: 1px solid rgb(231,50,80);
+            background-color: #FFFFFF;
+            width: 450rpx;
+            height: 80rpx;
+        }
+    }
+
     .m-commodity{
         margin-bottom: 120rpx;
     }
-    .swiper {
-        height: 240px;
-        margin: 40rpx;
-    }
-    .swiper-img{
-        width: 100%;
-        height: 100%;
-    }
+
     .m-commodity-info{
         margin : 30rpx;
         padding: 30rpx;
@@ -402,16 +176,7 @@ export  default class commodityIndex extends wepy.page {
             color: #ffffff;
         }
     }
-    .over_model {
-        position: fixed;
-        overflow: hidden;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-    }
+
     .head_box {
         display: flex;
         align-items: center;
@@ -446,131 +211,8 @@ export  default class commodityIndex extends wepy.page {
         flex-direction: column;
     }
 
-    .opt-box {
-        border-bottom: 1px solid #efefef;
-        padding-bottom: 26rpx;
-        .title {
-            color: #4c4c4c;
-            font-size: 32rpx;
-            margin-top: 10rpx;
-        }
-        .items {
-            display: flex;
-            flex-wrap: wrap;
-            margin-top: 5rpx;
-            margin-left: -20rpx;
-        }
-        .item {
-            padding: 15rpx 28rpx;
-            background: #e6e6e6;
-            color: #000;
-            margin-left: 20rpx;
-            margin-top: 10rpx;
-            border-radius: 10rpx;
-        }
-        .active {
-            background: #ed394a;
-            color: #fff;
-        }
-        .disabled {
-            background: #f5f5f5;
-            color: #cecece;
-        }
-    }
 
-    .count-box {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15rpx 0rpx;
-        height: 100px;
-        .title {
-            color: #4c4c4c;
-            font-size: 32rpx;
-        }
-        .m-purchase-count {
-            width: 170 rpx;
-            height: 48 rpx;
-            line-height: 48 rpx;
-            display: flex;
-            font-size: 24 rpx;
-            text-align: center;
-            padding: 30rpx;
-            //background-color: #e5473c;
-            .m-minus {
-                width: 48 rpx;
-                height: 100%;
-                border-left: 1 rpx solid #ccc;
-                border-bottom: 1 rpx solid #ccc;
-                border-top: 1 rpx solid #ccc;
-                border-bottom-left-radius: 6 rpx;
-                border-top-left-radius: 6 rpx;
-                margin-right: 20rpx;
-                font-size: 40rpx;
-            }
-            .m-minus.disabled {
-                background-color: #f5f5f9;
-                border-left: 1 rpx solid #eee;
-                border-bottom: 1 rpx solid #eee;
-                border-top: 1 rpx solid #eee;
-                color: #ccc;
-            }
-            .m-plus {
-                width: 48 rpx;
-                height: 100%;
-                border-right: 1 rpx solid #ccc;
-                border-bottom: 1 rpx solid #ccc;
-                border-top: 1 rpx solid #ccc;
-                border-bottom-right-radius: 6 rpx;
-                border-top-right-radius: 6 rpx;
-                font-size: 40rpx;
-                margin-left: 20rpx;
-            }
-            .m-commodity-count {
-                //background-color: #e0e0e0;
-                width: 68rpx;
-                //height: 48rpx;
-                font-size: 40rpx;
 
-            }
-        }
-    }
-    .panel_model {
-        z-index: 1002;
-        height: 0rpx;
-        width: 100%;
-        background: #fff;
-    }
-    .model_content {
-        width: 95%;
-        background-color: #fff;
-        padding: 20rpx;
-        bottom: 100rpx;
-        z-index: 1002;
-        position: fixed;
-        left: 0;
-    }
-    .colse_model {
-        position: absolute;
-        right: 20rpx;
-        top: 20rpx;
-    }
-    .m-icon {
-        width: 40rpx;
-        height: 40rpx;
-    }
-    .confirm_btn {
-        height: 100rpx;
-        line-height: 100rpx;
-        width: 100%;
-        background: #ff6e30;
-        text-align: center;
-        color: #fff;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        z-index: 1003;
-    }
     .m-img-box{
         display: flex;
         flex-flow: column;
