@@ -20,7 +20,8 @@ class AUsers(Resource):
             "login":"self.control_user.login()",
             "update_info":"self.control_user.update_info()",
             "update_pwd":"self.control_user.update_pwd()",
-            "get_inforcode":"self.control_user.get_inforcode()"
+            "get_inforcode":"self.control_user.get_inforcode()",
+            "forget_pwd":"self.control_user.forget_pwd()"
         }
 
         if users not in apis:

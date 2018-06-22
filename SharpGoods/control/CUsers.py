@@ -173,6 +173,52 @@ class CUsers():
         response_of_update_users = import_status("SUCCESS_MESSAGE_UPDATE_PASSWORD", "OK")
         return response_of_update_users
 
+    def forget_pwd(self):
+        data = request.data
+        data = json.loads(data)
+        print "=================data================="
+        print data
+        print "=================data================="
+        if "USpasswordnew" not in data or "USpasswordnewrepeat" not in data or "UStelphone" not in data or "Uscode" not in data:
+            return SYSTEM_ERROR
+
+        Utel = data["UStelphone"]
+        list_utel = self.susers.get_all_user_tel()
+        print "=================list_utel================="
+        print list_utel
+        print "=================list_utel================="
+        if list_utel == False:
+            return SYSTEM_ERROR
+
+        if Utel not in list_utel:
+            return import_status("ERROR_MESSAGE_NONE_TELPHONE", "SHARPGOODS_ERROR", "ERROR_NONE_TELPHONE")
+
+        code_in_db = self.susers.get_code_by_utel(data["UStelphone"])
+        print "=================code_in_db================="
+        print code_in_db
+        print "=================code_in_db================="
+        if not code_in_db:
+            return import_status("ERROR_MESSAGE_WRONG_TELCODE", "SHARPGOODS_ERROR", "ERROR_WRONG_TELCODE")
+        if code_in_db.ICcode != data["UScode"]:
+            return import_status("ERROR_MESSAGE_WRONG_TELCODE", "SHARPGOODS_ERROR", "ERROR_WRONG_TELCODE")
+
+        if data["USpasswordnew"] != data["USpasswordnewrepeat"]:
+            return import_status("ERROR_MESSAGE_WRONG_REPEAT_PASSWORD", "SHARPGOODS_ERROR", "ERROR_CODE_WRONG_REPEAT_PASSWORD")
+
+        users = {}
+        Upwd = data["USpasswordnew"]
+        users["USpassword"] = Upwd
+        Uid = self.susers.get_uid_by_utel(Utel)
+        update_info = self.susers.update_users_by_uid(Uid, users)
+        print "=================update_info================="
+        print update_info
+        print "=================update_info================="
+        if not update_info:
+            return SYSTEM_ERROR
+
+        response_of_update_users = import_status("SUCCESS_MESSAGE_UPDATE_PASSWORD", "OK")
+        return response_of_update_users
+
     def get_inforcode(self):
         data = request.data
         data = json.loads(data)
