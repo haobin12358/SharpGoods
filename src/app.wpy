@@ -23,23 +23,23 @@
 
   export default class extends wepy.app {
     config = {
-      pages: [
-          'pages/commodityIndex',
-
-          'pages/index',
-        'pages/login',
-        'pages/register',
-        'pages/myOrder',
-        'pages/oneOrder',
-        'pages/personal',
-        'pages/placeAnOrder',
-        'pages/commodityDetails',
-        'pages/commodityEvaluation',
-        'pages/car',
-        'pages/baseInfo',
-        'pages/setUp',
-        'pages/address'
-      ],
+        pages: [
+            'pages/index',
+            'pages/login',
+            'pages/register',
+            'pages/myOrder',
+            'pages/oneOrder',
+            'pages/personal',
+            'pages/placeAnOrder',
+            'pages/commodityIndex',
+            'pages/commodityDetails',
+            'pages/commodityEvaluation',
+            'pages/car',
+            'pages/baseInfo',
+            'pages/setUp',
+            'pages/address',
+            'pages/shopCart',
+        ],
       window: {
         backgroundTextStyle: 'light',
         navigationBarBackgroundColor: '#e5473c',

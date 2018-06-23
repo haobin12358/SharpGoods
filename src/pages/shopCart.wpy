@@ -1,36 +1,37 @@
 <template>
-    <view class="over_model" hidden="{{hidden}}"></view>
-    <view class="panel_model" hidden="{{hidden}}" animation="{{animationData}}">
-        <view class="model_content">
-            <view class="head_box">
-                <view class="img_wrap">
-                    <image class="goods_img" src="{{commodity.PRimage}}" />
-                </view>
-                <view class="product_wrap">
-                    <view class="product_name">{{commodity.PRinfo}}</view>
-                    <view class="price">￥ {{commodity.PRprice}}</view>
+    <view class="page_hd">
+        <view class="goods-img">
+            <image src="{{commodity.PRimage}}"></image>
+        </view>
+        <view class="goods-detail">
+            <view>{{commodity.PRinfo}}</view>
+            <view>{{commodity.PRprice}}</view>
+        </view>
+        <view class="selected-goods-price">
+            ￥27
+        </view>
+    </view>
+    <view class="page_bd">
+        <scroll-view scroll-y="true" style="height:542rpx">
+            <view class="opt-box" wx:for="{{pick}}" wx:key="key" wx:for-index="ex" data-id="item.id">
+                <view class="title">{{item.name}}</view>
+                <view class="items">
+                    <view class="item {{ option.its == selected[ex] ? 'active' :'' }} {{ option.able ? '': 'disabled'}} " wx:for="{{item.choice}}" wx:for-item="option" @tap.stop="setProperty" data-data="{{option}}" data-id="{{item.id}}" data-able="{{option.able}}" data-a="{{option.its}}" data-b="{{selected[ex]}}">{{option.its}}
+                    </view>
                 </view>
             </view>
-            <scroll-view scroll-y="true" style="height:750rpx">
-                <view class="opt-box" wx:for="{{pick}}" wx:key="key" wx:for-index="ex" data-id="item.id">
-                    <view class="title">{{item.name}}</view>
-                    <view class="items">
-                        <view class="item {{ option.its == selected[ex] ? 'active' :'' }} {{ option.able ? '': 'disabled'}} " wx:for="{{item.choice}}" wx:for-item="option" @tap.stop="setProperty" data-data="{{option}}" data-id="{{item.id}}" data-able="{{option.able}}" data-a="{{option.its}}" data-b="{{selected[ex]}}">{{option.its}}
-                        </view>
-                    </view>
+            <view class="count-box">
+                <view class="title">数量</view>
+                <view class="m-purchase-count">
+                    <view class="m-minus {{item.number==1? 'disabled' : ''}}" catchtap="minusTap" data-index="{{index}}">-</view>
+                    <view class="m-commodity-count">{{count}}</view>
+                    <view class="m-plus" catchtap="plusTap" data-index="{{index}}">+</view>
                 </view>
-                <view class="count-box">
-                    <view class="title">数量</view>
-                    <view class="m-purchase-count">
-                        <view class="m-minus {{item.number==1? 'disabled' : ''}}" catchtap="minusTap" data-index="{{index}}">-</view>
-                        <view class="m-commodity-count">{{count}}</view>
-                        <view class="m-plus" catchtap="plusTap" data-index="{{index}}">+</view>
-                    </view>
-                </view>
-            </scroll-view>
-            <view class="colse_model" @tap="closeModel"><image src="../images/close.png" class="m-icon"></image></view>
+            </view>
+        </scroll-view>
+        <view class="confirm-button">
+            <button>确定</button>
         </view>
-        <view class="confirm_btn" @tap.stop="confirmPurchase">确定</view>
     </view>
 </template>
 
@@ -38,9 +39,10 @@
     import wepy from 'wepy'
     import tip from '../utils/tip'
     import api from '../api/api';
-
     export default class ShopCart extends wepy.page {
-        config = {}
+        config={
+            navigationBarTitleText: '商品详情'
+        }
 
         data = {
             version: '',
@@ -231,12 +233,41 @@
         events = {}
 
         onLoad() {
+            let prId ='040a78f0-2c50-402e-969c-d26072659ae3';
 
+            this.getProductInfo(prId);
         }
     }
+
+
 </script>
 
 <style lang="less">
+    @import "../styles/common.less";
+    .page_hd{
+        height: 177rpx;
+        border-top:  1px solid @border-color;
+        border-bottom:  1px solid @border-color;
+        padding: 28rpx 37rpx 13rpx 52rpx;
+        display: flex;
+        .goods-img{
+            width: 150rpx;
+            height: 150rpx;
+            background-color: #5fc16c;
+
+            image{
+                width: 100%;
+                height: 100%;
+            }
+        }
+        .goods-detail{
+            flex: 1;
+            padding-left: 34rpx;
+        }
+        .selected-goods-price{
+
+        }
+    }
     .over_model {
         position: fixed;
         overflow: hidden;

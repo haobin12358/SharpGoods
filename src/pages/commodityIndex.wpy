@@ -1,12 +1,22 @@
 <template>
-    <view class="head-img">
-
+    <view class="hd-img">
+        <image src="../image/test_good1.png"></image>
     </view>
-    <view class="bd-info">
-        info
+    <view class="bd-detail">
+        <view class="detail-name">
+            美妆镜
+        </view>
+        <view class="detail-bd">
+            <view class="price">
+                ￥38.0-168.0
+            </view>
+            <view class="sale_num">
+                已售420
+            </view>
+        </view>
     </view>
     <view class="ft-buttons">
-        <button>加入购物车</button>
+        <button class="add_shop_cart" @tap="tapAddShopCart">加入购物车</button>
         <button>购物车</button>
     </view>
     <!--<view class="m-commodity">-->
@@ -76,7 +86,7 @@ export  default class commodityIndex extends wepy.page {
         this.selected = ['','', '', '', ''] ;
         this.$apply();
         // console.log('prId',prId);
-        this.getProductInfo(params.PRid)
+        this.getProductInfo(prId)
     }
     onShow(){
 
@@ -93,26 +103,52 @@ export  default class commodityIndex extends wepy.page {
     }
 
 
-
     methods = {
-
-
-    }
+        tapAddShopCart() {
+            this.$navigate('shopCart')
         }
+    }
+}
 </script>
 
 <style lang="less">
     @import "../styles/common";
 
+    @normalColor: rgb(102,102,102);
 
-    .head-img{
+    .hd-img{
         height: 650rpx;
         background-color: #4c4c4c;
+
+        image{
+            width: 100%;
+            height: 100%;
+        }
     }
-    .bd-info{
+    .bd-detail{
         margin: 29rpx 64rpx 174rpx 37rpx;
-        background-color: #5fc16c;
         height: 99rpx;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        .detail-name{
+            color: @normalColor;
+            font-size: 36rpx;
+        }
+
+        .detail-bd{
+            display: flex;
+
+            .price{
+                flex: 1;
+                color: @main-color;
+                font-size: 27rpx;
+            }
+            .sale_num{
+                color: @normalColor;
+                font-size: 26rpx;
+            }
+        }
     }
     .ft-buttons{
 
@@ -123,10 +159,16 @@ export  default class commodityIndex extends wepy.page {
         }
         button{
             border-radius: 40rpx;
-            border: 1px solid rgb(231,50,80);
+            border: 1px solid @main-color;
+            color: @main-color;
             background-color: #FFFFFF;
             width: 450rpx;
             height: 80rpx;
+            line-height: 80rpx;
+        }
+        .add_shop_cart{
+            color: #FFFFFF;
+            background-color: @main-color;
         }
     }
 
