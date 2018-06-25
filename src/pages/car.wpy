@@ -2,22 +2,25 @@
   <view class="m-business-content">
     <view class="m-all-products">
       <repeat for="{{list_data}}" key="index" index="index" item="item">
-        <List :list.sync="item" page="car" @refresh.user="refresh"></List>
+        <List :list.sync="item" :i.sync="index" page="car" @refresh.user="refresh" @radioTap.user="radioTap"></List>
       </repeat>
       <view style="height: 100rpx;"></view>
       <view wx:if="{{list_data.length <=0}}" class="m-no">暂无商品</view>
     </view>
     <foot class="m-foot">
+      <image src="/image/radio.jpg" style="width: 37rpx;height: 40rpx;" wx:if="{{!allR}}" @tap="allRadio"></image>
+      <image src="/image/radio_check.jpg" style="width: 37rpx;height: 40rpx;" wx:if="{{allR}}" @tap="allRadio"></image>
       <view class="m-car">
         <view>合计：<text class="m-price">￥{{total_money}}</text></view>
+        <view class="m-btn m-active" @tap="placeAnOrder">下单</view>
       </view>
-      <view class="m-btn m-active" @tap="placeAnOrder">下单</view>
+
     </foot>
   </view>
 </template>
 <script >
   import wepy from 'wepy';
-  import List from '../components/common/list'
+  import List from '../components/common/shoppingcart'
   import tip from '../utils/tip'
   import api from '../api/api'
   export default class Business extends wepy.page{
@@ -34,7 +37,8 @@
         selected: [0,1,2],
         count: 0,
         num: 0,
-        token: ''
+        token: '',
+        allR:false
 
     }
     async getAllCart(params) {
@@ -44,6 +48,9 @@
         let total = 0
         if(res.data.status == '200'){
             that.list_data = res.data.data;
+            for(let j = 0;j<that.list_data.length;j++){
+                that.list_data[j].radio = false;
+            }
             for(let i=0;i< that.list_data.length;i++){
               total += Number(that.list_data[i].CAnumber * that.list_data[i].PBprice)
             }
@@ -76,13 +83,52 @@
 //          })
 //        },
         placeAnOrder(){
-          wx.navigateTo({
-            url: '/pages/placeAnOrder?list=' + this.list_data
-          })
+            let all_data = [];
+            for(let i =0;i<this.list_data.length;i++){
+                if(this.list_data[i].radio){
+                    all_data.push(this.list_data[i].PBid);
+                }
+            }
+            if(all_data.length == 0){
+                wx.showToast({
+                    title: '请选择购买的商品',
+                    icon: 'none',
+                    duration: 800
+                })
+            }else{
+                wx.navigateTo({
+                    url: '/pages/placeAnOrder?list=' + all_data
+                })
+            }
+
         },
         refresh(){
             let that = this
             this.getAllCart(that.token)
+        },
+        radioTap(v){
+            this.list_data[v].radio = !this.list_data[v].radio;
+            let all = 0;
+            for (let i =0;i<this.list_data.length;i++){
+                if(this.list_data[i].radio == false){
+                   all = all + 1
+                }
+            }
+            if(all == this.list_data.length){
+                this.allR = false;
+            }else if(all == 0){
+                this.allR = true;
+            }else{
+                this.allR = false;
+            }
+            this.$apply();
+        },
+        allRadio(){
+            this.allR = !this.allR;
+            for (let i =0;i<this.list_data.length;i++){
+                this.list_data[i].radio = this.allR;
+            }
+            this.$apply();
         }
     }
   }
@@ -111,7 +157,10 @@
     z-index: 100;
     /*background-color: rgba(0,0,0,0.5);*/
     .m-car{
-      position: relative;
+     display: flex;
+      flex-flow: row;
+      align-items: center;
+
       .m-num{
         position: absolute;
         right: -5rpx;
@@ -128,10 +177,10 @@
     }
     .m-btn{
       z-index: 999;
-      width: 150rpx;
-      height: 80rpx;
-      line-height: 80rpx;
-      margin-right: 40rpx;
+      width: 200rpx;
+      height: 70rpx;
+      line-height: 70rpx;
+      margin: 0 30rpx;
       border: 1px solid @border-color;
       border-radius: 20px;
       text-align: center;

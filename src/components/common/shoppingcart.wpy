@@ -1,0 +1,212 @@
+<template>
+    <view class="m-list" @tap = "bindTap({{list.PBid}})" >
+        <image src="/image/radio.jpg" style="width: 37rpx;height: 40rpx;" wx:if="{{!list.radio && page == 'car'}}" catchtap="radioTap({{i}})"/>
+        <image src="/image/radio_check.jpg" style="width: 37rpx;height: 40rpx;" wx:if="{{list.radio && page == 'car'}}" catchtap="radioTap({{i}})"/>
+        <image class="m-business-img" src="{{list.PBimage}}"  style="width: 120rpx;height: 120rpx; margin: 20rpx;" mode="aspectFill"/>
+        <view class="m-business-info">
+            <view class="m-first">
+                <view class="m-first-left">
+                    <view class="m-name">{{list.PRname}}</view>
+                </view>
+                <view class="m-price">￥{{list.PBprice}}</view>
+            </view>
+            <view class="m-business-loc" >
+                <view class="m-option">
+                    <view wx:for="{{list.PRquality}}" wx:for-item="option"> {{option.choice }}</view>
+                </view>
+                <view class="m-add-cut" wx:if="{{page == 'car'}}">
+                    <view class="m-operate-button">
+                        <text class="m-cut m-btn" data-PBid="{{list.PBid}}" data-CAnumber="{{list.CAnumber}}" @tap.stop="cutTap">-</text>
+                        <!--<image src="/images/cut.png" style="width: 48rpx;height: 48rpx;" data-PBid="{{list.PBid}}" data-CAnumber="{{list.CAnumber}}" @tap.stop="cutTap"/>-->
+                    </view>
+                    <input type="number" value="{{list.CAnumber}}" bindblur="bindKeyInput" />
+                    <view class="m-operate-button">
+                        <!--<image src="/images/add.png" style="width: 48rpx;height: 48rpx;" @tap.stop="addTap({{list.PBid}})"/>-->
+                        <text class="m-add m-btn" @tap.stop="addTap({{list.PBid}})">+</text>
+                    </view>
+                </view>
+                <view class="m-num" wx:if="{{page != 'car'}}">X{{list.CAnumber}}</view>
+            </view>
+        </view>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy';
+    import api from '../../api/api'
+    import tip from '../../utils/tip'
+    export default class List extends wepy.component{
+        props = {
+            list:Object,
+            page:String,
+            i:Number
+        }
+        data = {
+            number: null,
+            token:''
+        }
+        async operateCart(params) {
+            tip.loading();
+            let res = await api.operateCart({query: params, token: this.token, method: 'POST'})
+            if(res.data.status == '200'){
+                this.$apply();
+                wx.showToast({
+                    title: '修改成功',
+                    icon: 'success',
+                    duration: 800
+                })
+                this.$emit('refresh')
+            }
+        }
+        onLoad(){
+            let token =  wepy.getStorageSync('token')
+            this.token = token
+            this.$apply()
+        }
+
+        methods = {
+            bindTap(v){
+                this.$emit('listTap',v)
+            },
+            cutTap(v){
+                let CAnumber = v.target.dataset.canumber
+                let PBid = v.target.dataset.pbid
+                console.log(v, 'aaaaaaaaaa')
+                if(CAnumber == 1){
+                    let _that = this;
+                    wx.showModal({
+                        title:'提示',
+                        content:'确定要删除该商品吗？',
+                        success:function (res) {
+                            if(res.confirm){
+                                let param = {
+                                    PBid: PBid,
+                                    CAnumber: -1
+                                }
+                                _that.operateCart(param)
+
+                            }else if(res.cancel){
+                            }
+                        }
+                    })
+                }else{
+                    let param = {
+                        PBid: PBid,
+                        CAnumber: -1
+                    }
+                    this.operateCart(param)
+                }
+            },
+            bindKeyInput(e){
+            },
+
+            addTap(v){
+                console.log(v, 'aaaaaa')
+                let param = {
+                    PBid: v,
+                    CAnumber: +1
+                }
+                this.operateCart(param)
+            },
+            radioTap(v){
+                this.$emit('radioTap',v);
+            }
+        }
+    }
+</script>
+<style scoped lang="less" rel="stylesheet/less">
+    @import "../../styles/common";
+    .m-list{
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        margin-top: 20rpx;
+        padding: @margin-interval 20rpx 40rpx 20rpx;
+        border-bottom: 1px solid @border-color;
+        .m-business-img{
+            background-color: #bfbfbf;
+            margin-right: @margin-interval;
+        }
+        .m-business-info{
+            font-size: 32rpx;
+            line-height: 60rpx;
+            width: 80%;
+            .m-first{
+                margin-bottom: 40rpx;
+                width: 100%;
+                display: flex;
+                flex-flow: row;
+                justify-content: space-between;
+                align-items: center;
+                .m-first-left{
+                    width: 70%;
+                    .m-name{
+                        font-size: 32rpx;
+                        line-height: 32rpx;
+                    }
+                    .m-time{
+                        font-size: 26rpx;
+                        line-height: 26rpx;
+                    }
+                }
+                .m-first-right{
+                    font-size: 28rpx;
+                    &.m-recommend{
+                        color: #f4690c;
+                        border: 1px solid #f4690c;
+                        padding: 0 20rpx;
+                        border-radius: 20px;
+                    }
+                    &.m-distribution{
+                        color: red;
+                    }
+                    &.m-completed{
+                        color: #5fc16c;
+                    }
+                }
+
+            }
+            .m-purchase-info{
+                background-color: #e5473c;
+                width: 500rpx;
+                display: inline;
+                font-size: 15rpx;
+            }
+        }
+        .m-business-loc{
+            width: 100%;
+            font-size: 28rpx;
+            color: @grey-font;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            .m-option {
+                display: flex;
+                flex-direction: row;
+            }
+        }
+        .m-add-cut{
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            border: 1px solid @border-color;
+            border-radius: 5px;
+            .m-operate-button {
+                width: 60rpx;
+                height: 40rpx;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            input{
+                width: 80rpx;
+                height: 30rpx;
+                border: 1px solid @border-color;
+                border-top: none;
+                border-bottom: none;
+                color: @common-color;
+                text-align: center;
+            }
+        }
+    }
+</style>

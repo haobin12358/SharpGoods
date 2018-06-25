@@ -78,8 +78,7 @@ export  default class commodityIndex extends wepy.page {
 
     methods = {
         tapAddShopCart() {
-            let token =  wepy.getStorageSync('token')
-
+            let token =  wepy.getStorageSync('token');
             if(token){
                 wx.navigateTo({
                     url: '/pages/shopCart'
