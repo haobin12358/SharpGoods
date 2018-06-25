@@ -5,7 +5,7 @@
         </view>
         <view class="goods-detail">
             <view class="name">{{commodity.PRname}}</view>
-            <view class="price">{{commodity.PRprice}}</view>
+            <view class="price">￥{{commodity.PRprice}}</view>
         </view>
         <view class="selected-goods-price">
             ￥选中价格
@@ -16,7 +16,11 @@
             <view class="opt-box" wx:for="{{pick}}" wx:key="key" wx:for-index="ex" data-id="item.id">
                 <view class="title">{{item.name}}</view>
                 <view class="items">
-                    <view class="item {{ option.its == selected[ex] ? 'active' :'' }} {{ option.able ? '': 'disabled'}} " wx:for="{{item.choice}}"  wx:for-item="option" @tap.stop="setProperty" data-data="{{option}}" data-id="{{item.id}}" data-able="{{option.able}}" data-a="{{option.its}}" data-b="{{selected[ex]}}">{{option.its}}
+                    <view class="item {{ option.its == selected[ex] ? 'active' :'' }} {{ option.able ? '': 'disabled'}}"
+                          wx:for="{{item.choice}}" wx:for-item="option" @tap.stop="setProperty" data-data="{{option}}"
+                          data-id="{{item.id}}" data-able="{{option.able}}" data-a="{{option.its}}"
+                          data-b="{{selected[ex]}}">
+                        {{option.its}}
                     </view>
                 </view>
             </view>
@@ -37,6 +41,7 @@
     import wepy from 'wepy'
     import tip from '../utils/tip'
     import api from '../api/api';
+
     export default class ShopCart extends wepy.page {
         config={
             navigationBarTitleText: '商品详情'
@@ -51,7 +56,7 @@
             version: '',
             color: '',
             pick: [{name: '版本选择'}, {choice: [{its:1.0, able: true}, {its:2.0, able: true}]},{name: '颜色选择', choice: [ {its: '红' , able: true},{its: '蓝', able: true},{its: '白', able: true} ]} ],
-            selected: ['','', '', '', ''],
+            selected: ['','', '', '', ''],  //  记录每个类别选中项
             selectable: [[], [], [], [], []],
             num: 0,
             count: 1,
@@ -61,20 +66,20 @@
         computed = {}
 
         /**
-         * 获取商品数据  调整数据格式
+         *   获取商品数据  调整数据格式
          *   PRquality: {BRno: {name: "版本选择", choice: ["1.0", "2.0"]}, {name: "版本选择", choice: ["1.0", "2.0"]}}
          *   pick: [{name: '版本选择'}, {choice: [{its:1.0, able: true}, {its:2.0, able: true}]},{name: '颜色选择', choice: [ {its: '红' , able: true},{its: '蓝', able: true},{its: '白', able: true} ]} ],
          */
         async getProductInfo(params){
             let that = this;
             let res = await api.getProductInfo({query: {PRid: params}})
+
             if(res.data.status == '200'){
-                that.commodity = res.data.data;
-                console.log(that.commodity);
                 let loop = res.data.data.PRquality;
                 let result = []
                 let j = 0
 
+                that.commodity = res.data.data;
                 for(let i in loop){
                     loop[i].id = j;
                     loop[i].query = i;    //loop : {i : {id: , query: '', name: '', choice: []}}
@@ -97,10 +102,19 @@
             }
         }
 
+        async getPBid(token, query){
+            let PRid = this.commodity.PRid
+            let res = await api.getPBid({token: token, PRid: PRid, query: query, method: 'POST'})
+
+            return res.data.data.PBid
+        }
+
+        //  获得可选项
         async getLeft(token, query){
             let PRid = this.commodity.PRid
             let res = await api.getLeft({query: query, token: token, method: 'POST', PRid: PRid})
             let data = res.data.data;
+
             return data;
         }
 
@@ -113,57 +127,49 @@
         async doPurchase (token, query) {
             let that = this;
             let res = await api.operateCart({token: token, method: 'POST', query: query})
+
             if(res.data.status == 200 ){
                 wepy.navigateBack({
                     delta: 1
                 });
 
-                tip.success('加入购物车成功')
+                tip.success('加入购物车成功');
+            }else{
+                tip.error('添加购物车失败,请重试!');
             }
-
-
-            // this.methods.closeModel.call(this);
-            // this.selected = ['','', '', '', ''] ;
-            // this.setTrue(true);
-            // this.count = 1;
         }
 
+        //  将所有选项重置为query(bool)
         setTrue(query){
             let x, z ;
             let len = this.pick.length
+
             for(x = 0; x<len; x++ ){
                 let len2 = this.pick[x].choice.length
+
                 for(z=0; z<len2; z++)
                     this.pick[x].choice[z].able = query;
             }
         }
 
         methods = {
-
+            // 点击数量+
             plusTap(){
                 this.count ++;
-                this.$apply();
             },
+
+            //  点击数量-
             minusTap(){
                 let count = this.count
                 if(count>1){
                     this.count --;
-                    this.$apply();
                 }
             },
-            bindKeyInput(e){
-                //输入
-            },
 
-            async getLeft(token, query){
-                let PRid = this.commodity.PRid
-                let res = await api.getLeft({query: query, token: token, method: 'POST', PRid: PRid})
-                let data = res.data.data;
-                return data;
-            },
-
+            //  选中类别
             async setProperty(e) {
                 let that = this;
+                //  类别数
                 let len = this.pick.length
                 let token =  wepy.getStorageSync('token')
                 //设置已选
@@ -171,33 +177,45 @@
                 let id = e.currentTarget.dataset.id;
                 let able = e.currentTarget.dataset.able; //可选
 
-
-                if(able){
-                    if(that.selected[id] == data.its) that.selected[id] = ''
-                    else that.selected[id] = data.its;
-                }
                 this.$apply();
+                if(able){
+                    //  取消选中
+                    if (that.selected[id] == data.its) {
+                        that.selected[id] = ''
+                    }
+                    else{//  选中
+                        that.selected[id] = data.its;
+                    }
+                }
 
                 let query = {}
                 let get = true;
 
+                //  循环所有类别  对已选中的进行过滤
                 for(let i = 0; i<len; i++){
                     if(this.selected[i] != ''){
                         let key = that.pick[i].query;
                         let position = that.selected[i]
+
+                        //  组成查询参数
                         query[key] = position
+                        //  需要进行查询
                         get = false
                     }
                 }
+
                 if(!get){
+                    //  获得可选项
                     let loop = await this.getLeft(token, query);
                     let x, y, z ;
 
                     x=0;
+                    //  先重置后将可选项显示出来
                     this.setTrue(false)
                     for(let i in loop){
                         let len2 = loop[i].length
                         let len3 = that.pick[x].choice.length
+
                         for(y = 0; y<len2; y++ ){
                             for(z=0;z<len3;z++)
                                 if(that.pick[x].choice[z].its == loop[i][y])
@@ -206,42 +224,44 @@
                         x++;
                     }
                     that.$apply()
-
-                }
-                else {
+                } else {
+                    //  未选中时重置为全部可选
                     this.setTrue(true)
                     that.$apply()
                 }
             },
+
+            //  确认添加购物车
             async confirmPurchase(){
                 let token =  wepy.getStorageSync('token')
                 let len = this.pick.length;
                 let mess = '';
                 let query = {};
                 let temp;
-                for(let i = len-1; i>-1; i--){
-                    if(this.selected[i] == ''){
-                        mess = this.pick[i].name
+
+                //  从最后一项进行检查
+                for (let i = len - 1; i > -1; i--) {
+                    if (this.selected[i] == '') {
+                        mess = this.pick[i].name ? this.pick[i].name : '某项';
+                        break;
                     }
+
                     temp = this.pick[i].query
                     query[temp] = this.selected[i];
                 }
-                if(mess!=''){ tip.alert(mess) }
-                else{
+
+                if (mess != '') {
+                    tip.alert('请对'+mess)
+                } else {
+                    //  添加购物车
                     let num = this.count
                     let PBid = await this.getPBid(token, query)
+
                     this.doPurchase(token, {PBid: PBid, CAnumber: num})
                 }
             }
         }
 
-        async getPBid(token, query){
-
-            let PRid = this.commodity.PRid
-            let res = await api.getPBid({token: token, PRid: PRid, query: query, method: 'POST'})
-            return res.data.data.PBid
-
-        }
 
         events = {}
 
