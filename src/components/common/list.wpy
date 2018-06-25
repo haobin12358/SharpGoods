@@ -9,7 +9,7 @@
         <view class="m-price">￥{{list.PBprice}}</view>
       </view>
       <view class="m-business-loc">
-        <view class="score-grey" wx:if="{{list.PBsalesvolume && list.PBscore}}">月销{{list.PBsalesvolume}}</view>
+        <view class="score-grey" wx:if="{{page !='car' && list.PBsalesvolume && list.PBscore}}">月销{{list.PBsalesvolume}}</view>
         <view class="m-price"></view>
       </view>
       <view class="m-business-loc" >

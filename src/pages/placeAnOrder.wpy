@@ -23,10 +23,10 @@
     </view>
     <view class="m-content">
       <repeat for="{{all_order}}" key="index" index="index" item="item">
-        <Order :order.sync="item" :page.sync="test"></Order>
+        <Order :list.sync="item" :i.sync="index"  ></Order>
       </repeat>
       <view class="m-li-m" catchtap="showModal">
-        <view class="m-label">优惠券</view>
+        <image src="/image/coupon.jpg" style="width: 74rpx;height: 40rpx;"/>
         <view class="m-coupon" wx:if="{{choose_ticket.COcut }}">折扣：{{choose_ticket.COcut }}</view>
         <view class="m-coupon" wx:if="{{choose_ticket.COuse }}">{{choose_ticket.COuse}}</view>
         <view wx:if="{{!choose_ticket}}">选择优惠券</view>
@@ -38,6 +38,13 @@
         <picker bindchange="PickerChangeWay" value="{{payment_method.index}}" range="{{payment_method.array}}">
           <view class="picker">
             支付方式：<image src="/images/icon-more.png" style="width: 42rpx;height: 36rpx;float: right"></image><i class="m-select">{{payment_method.array[payment_method.index]}}</i>
+          </view>
+        </picker>
+      </view>
+      <view class="m-li">
+        <picker bindchange="PickerChangeWay" value="{{payment_method.index}}" range="{{payment_method.array}}">
+          <view class="picker">
+            物流方式：<image src="/images/icon-more.png" style="width: 42rpx;height: 36rpx;float: right"></image><i class="m-select">{{payment_method.array[payment_method.index]}}</i>
           </view>
         </picker>
       </view>
@@ -80,7 +87,7 @@
   import wepy from 'wepy';
 //  import Pick from '../components/common/picker'
   import AddressPicker from '../components/common/addressPicker'
-  import Order from '../components/common/order'
+  import Order from '../components/common/shoppingcart'
   import tip from '../utils/tip'
   import api from '../api/api'
   import Card from '../components/common/card'
@@ -192,6 +199,7 @@
       return _arr;
     }
     onLoad(option){
+        console.log(option)
         let that = this
         let token =  wepy.getStorageSync('token')
         this.token = token;
@@ -232,7 +240,6 @@
           }
           let param = {};
           let params = {};
-
           param = {
               "productlist" :[],
           }
@@ -345,7 +352,6 @@
   @import "../styles/common";
   .m-place-order{
     width: 100%;
-    background-color: #f8f8f8;
     .address {
       border-top: 1px solid #efefef;
       background: #fff;
@@ -353,7 +359,9 @@
       .address_info {
         display: flex;
         justify-content: space-between;
-        height: 103rpx;
+        height: 63rpx;
+        font-size: 24rpx;
+        background-color: #e6e6e6;
         align-items: center;
         padding: 0rpx 35rpx;
         .title {
@@ -379,18 +387,19 @@
       }
     }
     .m-content{
-      margin: 40rpx 40rpx 40rpx 40rpx;
+      /*margin: 40rpx 40rpx 40rpx 40rpx;*/
       background-color: #fff;
       border: 1px solid #f8f8f8;
       .m-li-more{
         font-size: 30rpx;
-        margin: 0 20rpx;
+        /*margin: 0 20rpx;*/
         padding: 20rpx;
         text-align: right;
+        margin-bottom: 40rpx;
       }
       .m-li-m{
-        margin: 0 20rpx;
-        padding: 20rpx  0;
+        /*margin: 0 20rpx;*/
+        padding: 20rpx  44rpx;
         font-size: 30rpx;
         border-bottom: 1px solid @border-color;
         display: flex;
@@ -413,13 +422,14 @@
       }
     }
     .m-remark{
-      margin: 0 40rpx 140rpx 40rpx;
+      /*margin: 0 40rpx 140rpx 40rpx;*/
       background-color: #fff;
       border: 1px solid #f8f8f8;
-      padding: 0 20rpx;
+      border-top: 1px solid #dfdfdf;
+      /*padding: 0 20rpx;*/
       .m-li{
         font-size: 30rpx;
-        padding: 30rpx 0;
+        padding: 30rpx 20rpx;
         border-bottom: 1px solid #dfdfdf;
         /*&:last-child{*/
         /*border-bottom: none;*/
@@ -479,9 +489,9 @@
         }
       }
       .m-btn{
-        width: 150rpx;
-        height: 80rpx;
-        line-height: 80rpx;
+        width: 180rpx;
+        height: 65rpx;
+        line-height: 65rpx;
         margin-right: 40rpx;
         border: 1px solid @border-color;
         border-radius: 20px;
