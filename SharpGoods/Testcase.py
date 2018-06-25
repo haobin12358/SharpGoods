@@ -151,6 +151,50 @@ def test_product_get_abo():
         print(title.format("message"))
         return False
 
+def test_product_get_other_brand():
+    try:
+        prid = "040a78f0-2c50-402e-969c-d26072659ae3"
+        api_login = "/sharp/goods/product/get_control_brand?token=123&PRid={0}".format(prid)
+        url_login = "{0}://{1}{2}".format(HTTP_SERVER, HTTP_HOST, api_login)
+        data = "{\n\t\"BRcolor\":\"玫瑰金\"\n}"
+        req = urllib2.Request(url_login, headers=HTTP_HEADER, data=data)
+        response = urllib2.urlopen(req)
+        strResult = response.read()
+        jsonResult = json.loads(strResult)
+        if "status" not in jsonResult:
+            return False
+        status = jsonResult["status"]
+        if status != 200:
+            return False
+        return True
+    except Exception as e:
+        print(title.format("message"))
+        print(e.message)
+        print(title.format("message"))
+        return False
+
+def test_product_get_pbid():
+    try:
+        prid = "040a78f0-2c50-402e-969c-d26072659ae3"
+        api_login = "/sharp/goods/product/get_pbid_by_all_brand?token=123&PRid={0}".format(prid)
+        url_login = "{0}://{1}{2}".format(HTTP_SERVER, HTTP_HOST, api_login)
+        data = "{\n\t\"BRno\":\"进阶版\",\n\t\"BRcolor\":\"玫瑰金\"\n}"
+        req = urllib2.Request(url_login, headers=HTTP_HEADER, data=data)
+        response = urllib2.urlopen(req)
+        strResult = response.read()
+        jsonResult = json.loads(strResult)
+        if "status" not in jsonResult:
+            return False
+        status = jsonResult["status"]
+        if status != 200:
+            return False
+        return True
+    except Exception as e:
+        print(title.format("message"))
+        print(e.message)
+        print(title.format("message"))
+        return False
+
 if __name__ == '__main__':
     if not test_user_login():
         ERROR_CODE = ERROR_CODE + 1
@@ -168,6 +212,12 @@ if __name__ == '__main__':
         ERROR_CODE = ERROR_CODE + 1
     print(ERROR_CODE)
     if not test_product_get_all():
+        ERROR_CODE = ERROR_CODE + 1
+    print(ERROR_CODE)
+    if not test_product_get_abo():
+        ERROR_CODE = ERROR_CODE + 1
+    print(ERROR_CODE)
+    if not test_product_get_other_brand():
         ERROR_CODE = ERROR_CODE + 1
     print(ERROR_CODE)
 

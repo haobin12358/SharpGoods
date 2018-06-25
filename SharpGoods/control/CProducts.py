@@ -274,6 +274,7 @@ class CProducts():
                     print "=================BRid_list_remove================="
                     print BRid_list
                     print "=================BRid_list_remove================="
+                    break
             i = i - 1
         print "=================BRid_list================="
         print BRid_list
@@ -295,8 +296,15 @@ class CProducts():
                             back_data[key].append(BRvalue)
 
         key_list_control = data.keys()
-        for key in key_list_control:
-            back_data[key] = self.get_m_by_n(key, key_list_control, data, brid_list)
+        i = len(key_list_control)
+        j = 0
+        control = []
+        while i > 0:
+            control.append(self.get_m_by_n(key_list_control[i - 1], key_list_control, data, brid_list, i - 1))
+            back_data[key_list_control[i - 1]] = control[j]
+            #print key_list_control[i - 1]
+            i = i - 1
+            j = j + 1
 
         response = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         response["data"] = back_data
@@ -389,13 +397,10 @@ class CProducts():
         else:
             return "未知类目"
 
-    def get_m_by_n(self, key, key_list, brands, brid_list):
-        # key=BRcolor key_list=[] brands={"BRcolor":"钻石银"} brid_list=[1234]
+    def get_m_by_n(self, key, key_list, brands, brid_list, index):
         # 首先移除需要判断的key
-        key_list.remove(key)
-        print "!!!!!!!!!!brid_list"
-        print brid_list
-        print "!!!!!!!!!!brid_list"
+        #key_list.remove(key)
+        key_list[index] = 0
         len_brid_list = len(brid_list)
         # 倒序循环，移除不合适的，放跳位
         while len_brid_list > 0:
@@ -440,5 +445,6 @@ class CProducts():
                     BRid, BRkey, BRvalue = brand_parent.BRfromid, brand_parent.BRkey, brand_parent.BRvalue
                     if BRvalue not in control_key and BRkey == key:
                         control_key.append(BRvalue)
+        key_list[index] = key
 
         return control_key
