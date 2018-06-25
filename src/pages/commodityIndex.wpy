@@ -1,6 +1,14 @@
 <template>
-    <view class="hd-img">
-        <image src="{{commodity.PRimage}}"></image>
+    <view class="hd-swiper">
+        <swiper class="swiper" autoplay="true" circular="true" interval="5000" duration="500"
+                indicator-dots="true" autoplay="false" indicator-active-color="#ffc452" indicator-color="#efefef">
+            <block wx:for="{{commodity.PBimage}}" wx:key="key" key="item" item="item">
+                <swiper-item>
+                    <image class="swiper-img" src="{{ item }}" data-src="{{item}}"></image>
+                </swiper-item>
+            </block>
+            <view class="slogan"></view>
+        </swiper>
     </view>
     <view class="bd-detail">
         <view class="detail-name">
@@ -17,7 +25,20 @@
     </view>
     <view class="ft-buttons">
         <button class="add_shop_cart" @tap="tapAddShopCart">加入购物车</button>
-        <button>购物车</button>
+        <button @tap="tapToShopCart">购物车</button>
+    </view>
+    <view class="m-commodity-intro">
+        <view class="m-commodity-video">
+            <video id="intro-video" src="{{ commodity.PRvideo }}" show-center-play-btn="true"
+                   controls="true" show-fullscreen-btn="true" binderror="videoErrorCallback"
+                   objectFit="fill" poster="{{ commodity.PRvideostart}}"></video>
+            <!--<image wx:else src="{{ commodity.PRvideostart}}" @tap="videoPlay"></image>-->
+        </view>
+        <view class="m-img-box">
+            <view wx:for="{{ commodity.PRaboimage }}" wx:key="item" class="m-img">
+                <image src="{{item}}" mode="widthFix"></image>
+            </view>
+        </view>
     </view>
 </template>
 <script>
@@ -37,8 +58,7 @@ export  default class commodityIndex extends wepy.page {
             PRname: '化妆镜',
             PRid: ''
         },
-
-        winHeight: "100%",
+        onPlay: false
     }
     async setable(){
 
@@ -56,10 +76,9 @@ export  default class commodityIndex extends wepy.page {
         }
     }
 
-    onLoad(params){
-        let prId ='040a78f0-2c50-402e-969c-d26072659ae3';
-
-        this.getProductInfo(prId)
+    onLoad(param){
+        this.videoContext = wx.createVideoContext('intro-video');
+        this.getProductInfo(param.prId);
     }
     onShow(){
 
@@ -81,15 +100,27 @@ export  default class commodityIndex extends wepy.page {
             let token =  wepy.getStorageSync('token')
 
             if(token){
-                wx.navigateTo({
-                    url: '/pages/shopCart'
-                })
+                this.$navigate('/pages/shopCart',{prId: this.commodity.PRid});
             }else{
-                wx.navigateTo({
-                    url: '/pages/login'
-                })
+                this.$navigate('/pages/login');
             }
-        }
+        },
+
+        tapToShopCart(){
+            let token =  wepy.getStorageSync('token')
+
+            if(token){
+                this.$switch('/pages/car');
+            }else{
+                this.$navigate('/pages/login');
+            }
+        },
+
+        videoPlay(e) {
+            this.onPlay = true
+            this.$apply()
+            this.videoContext.play()
+        },
     }
 }
 </script>
@@ -99,13 +130,18 @@ export  default class commodityIndex extends wepy.page {
 
     @normalColor: rgb(102,102,102);
 
-    .hd-img{
+    .hd-swiper{
         height: 650rpx;
         background-color: #4c4c4c;
 
-        image{
+        swiper{
             width: 100%;
             height: 100%;
+
+            image{
+                width: 100%;
+                height: 100%;
+            }
         }
     }
     .bd-detail{
@@ -134,8 +170,8 @@ export  default class commodityIndex extends wepy.page {
         }
     }
     .ft-buttons{
+        margin: auto 151rpx 116rpx;
 
-        margin: auto 151rpx;
 
         button:first-child{
             margin-bottom: 22rpx;
@@ -155,103 +191,36 @@ export  default class commodityIndex extends wepy.page {
         }
     }
 
-    .m-commodity{
-        margin-bottom: 120rpx;
-    }
-
-    .m-commodity-info{
-        margin : 30rpx;
-        padding: 30rpx;
-        height: auto;
-        font-size: 30rpx;
-        border-bottom: 2rpx solid @border-color;
-    }
-    .m-commodity-content{
-        margin-top: 30rpx;
-        display: flex;
-        justify-content: space-between;
-        flex-direction: row;
-    }
-    .m-commodity-price{
-        color: @common-color;
-        font-size: 40rpx;
-    }
-    .m-commodity-video{
-        display: flex;
-        justify-content: center;
-        padding: 40rpx;
-        .intro-pic {
-            width: 100%;
-            height: 100%;
-            text-align: center;
-        }
-    }
-    .m-footer{
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        text-align: center;
-        z-index: 999;
-        padding-bottom: 20rpx;
-        background-color: #fff;
-        .m-addToCart {
-            width: 90%;
-            background-color: @common-color;
-            color: #ffffff;
-        }
-    }
-
-    .head_box {
-        display: flex;
-        align-items: center;
-        border-bottom: 1px solid #efefef;
-        padding-bottom: 26rpx;
-        .img_wrap {
-            height: 200rpx;
-            width: 200rpx;
-            background: #000;
-        }
-        .goods_img {
-            height: 200rpx;
-            width: 200rpx;
-            background: #000;
-        }
-        .product_wrap {
-            padding: 20rpx;
-        }
-        .product_name {
-            color: #666;
-        }
-        .price {
-            color: #e11500;
-            font-size: 36rpx;
-            padding-top: 32rpx;
-        }
-    }
     .m-commodity-intro {
         display: flex;
-        justify-content: center;
-        text-align: center;
         flex-direction: column;
+        align-items: center;
+
+        .m-commodity-video{
+            margin-bottom: 50rpx;
+        }
+
+        .m-img-box{
+            display: flex;
+            flex-flow: column;
+            flex-wrap: wrap;
+
+            .m-img{
+                box-sizing: content-box;
+                padding: 0;
+                margin: 0;
+                border: none;
+
+                image{
+                    margin: 0;
+                    padding: 0;
+                    border: none;
+                }
+            }
+        }
+
+
     }
 
 
-
-    .m-img-box{
-        display: flex;
-        flex-flow: column;
-        flex-wrap: wrap;
-    }
-    .m-img{
-        box-sizing: content-box;
-        padding: 0;
-        margin: 0;
-        border: none;
-    }
-    .m-img image{
-        margin: 0;
-        padding: 0;
-        border: none;
-    }
 </style>

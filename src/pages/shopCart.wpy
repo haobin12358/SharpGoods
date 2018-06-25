@@ -245,10 +245,8 @@
 
         events = {}
 
-        onLoad() {
-            let prId ='040a78f0-2c50-402e-969c-d26072659ae3';
-
-            this.getProductInfo(prId);
+        onLoad(param) {
+            this.getProductInfo(param.prId);
         }
     }
 

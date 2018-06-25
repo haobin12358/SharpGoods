@@ -1,113 +1,62 @@
 <style scoped lang="less" rel="stylesheet/less">
   @import "../styles/common";
 
+  .swiper{
+    width: 100%;
+    height: 100%;
 
-  .m-index{
-    width: 100%;
-    background-color: #f8f8f8;
-    height: 100%;
-  }
-  .m-intro{
-    width: 100%;
-    background-color: #e5473c;
-    height: 100%;
-  }
-  .m-intro-img{
-    width: 100%;
-    height: 100%;
-    /*position: absolute;*/
-  }
-  .m-label{
-    font-size: 50rpx;
-    color: #FFFFFF;
-    text-align: center;
-    width: 100%;
-    height: auto;
-    position: absolute;
-    bottom: 15%;
-    &:hover{
-      color: #fabdca;
+    .swiper-img{
+      width: 100%;
+      height: 100%;
     }
   }
-
-  .m-detail {
-    width: 100%;
-    height: auto;
-    position: absolute;
-    bottom: 6%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .m-navi{
-    /*margin-top: 40rpx;*/
-    text-align: center;
-    font-size: 50rpx;
-    color: #FFFFFF;
-    &:hover{
-      color: @common-color;
-    }
-  }
-
-
-
 </style>
 <template>
-  <view class="m-index">
-    <view class="m-intro" wx:for="{{commodity}}" wx:key="{{item}}">
-      <image class="m-intro-img" src="{{item.PRimage}}" mode="aspectFill"></image>
-      <view class="m-label">{{item.PRinfo}}</view>
-      <view class="m-detail">
-        <navigator class="m-navi" url="/pages/commodityIndex?PRid={{item.PRid}}">立 即 抢 购!</navigator>
-      </view>
-    </view>
-  </view>
+  <swiper class="swiper"   autoplay="true" circular="true" interval="5000" duration="500"
+          indicator-dots="true" autoplay="false" indicator-active-color="#cdcdcd"
+          indicator-color="#f2f2f2">
+    <block wx:for="{{list}}" wx:key="key" key="item" item="item">
+      <swiper-item>
+        <image class="swiper-img" src="{{ item.PRimage }}" @tap="tapToProductDetail({{item.PRid}})"></image>
+      </swiper-item>
+    </block>
+  </swiper>
 </template>
 
 <script >
-  import wepy from 'wepy';
-  import api from '../api/api';
-  import tip from '../utils/tip';
+    import wepy from 'wepy';
+    import api from '../api/api';
+    import tip from '../utils/tip';
 
-  export default class Index extends wepy.page {
-    config = {
-      navigationBarTitleText: 'mine商城'
-    }
-    data = {
-        commodity: [
-            {
-                PRimage: "",
-                PRinfo: "",
-                Pid: ""
-            },
-            {
-                PRimage: "",
-                PRinfo: "",
-                pid: ""
+    export default class Index extends wepy.page {
+        data = {
+            list: []
+        }
+
+        computed = {
+
+        }
+
+        async getProductList() {
+            let that = this;
+            let res = await api.getProductAll()
+
+            if (res.data.status == '200') {
+                that.list = res.data.data;
+
+                that.$apply()
+            } else {
+                tip.error(res.data.message)
             }
-        ]
-    }
-
-    computed = {
-
-    }
-
-    async getProductList() {
-        let that = this;
-        let res = await api.getProductAll()
-
-        if (res.data.status == '200') {
-            that.commodity = res.data.data;
-            that.$apply()
-        } else {
-            tip.error(res.data.message)
+        }
+        async onLoad(param){
+            console.log(param);
+            this.getProductList();
+        }
+        methods = {
+            tapToProductDetail(prId){
+                this.$navigate('commodityIndex',{prId});
+            }
         }
     }
-    async onLoad(){
-        this.getProductList();
-    }
-    methods = {
-    }
-  }
 </script>

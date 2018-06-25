@@ -42,9 +42,9 @@
         ],
       window: {
         backgroundTextStyle: 'light',
-        navigationBarBackgroundColor: '#e5473c',
-        navigationBarTitleText: 'WeChat',
-        navigationBarTextStyle: 'white'
+        navigationBarBackgroundColor: '#ffffff',
+        navigationBarTitleText: 'Beslam官方商城',
+        navigationBarTextStyle: 'black'
       },
       "tabBar": {
         "color": "#bfbfbf",
