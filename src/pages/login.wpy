@@ -3,18 +3,20 @@
   .container{
   height: 100%;
   box-sizing: border-box;
+    background-color: #fff;
  }
   .m-top{
-    height: 100%;
+    /*height: 100%;*/
+    margin-top: 248rpx;
   }
     .m-section {
-      margin: 80rpx 40rpx;
       display: flex;
       align-items: center;
-      padding: 20rpx 30rpx;
+      padding: 40rpx 72rpx;
       border-bottom: 1px solid #dbdbdb;
       background: #fff;
-      width: 550rpx;
+      width: 678rpx;
+      color: #515151;
       .m-icon {
         width: 50rpx;
         height: 50rpx;
@@ -27,14 +29,28 @@
         font-size: 30rpx;
       }
     }
+    .m-forget{
+      font-size: 24rpx;
+      padding-right: 50rpx;
+      text-align: right;
+      line-height: 40rpx;
+      color: rgb(179,179,179);
+    }
     .m-btn_confirm {
-      margin-top: 64rpx;
+      margin-top: 112rpx;
       padding: 0 24rpx;
-      border-radius: 100px;
     }
       .m-button {
+        width: 680rpx;
         background-color: @common-color;
         color: #ffffff;
+        border-radius: 40px;
+        &.m-btn-reg{
+          background-color: #fff;
+          border: 1px solid rgb(179,179,179);
+          color: rgb(179,179,179);
+          margin-top: 24rpx;
+        }
       }
     .m-btn {
       border: 1px solid @common-color;
@@ -46,28 +62,44 @@
       color: @common-color;
       border-radius:25rpx;
     }
+    .m-others{
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+      margin-bottom: 95rpx;
+    }
+  .m-wei{
+    font-size: 24rpx;
+    color: rgb(179,179,179);
+  }
 </style>
 <template>
   <view class="container">
     <view class="m-top">
       <form bindsubmit="formSubmit">
         <view class="m-section">
-          <image class="m-icon" src='/images/phone.png'></image>
-          <input class="m-phone" name="phone" type="number" bindinput="phoneInput" placeholder="手机号" maxlength="11" focus="true" />
+          <image class="m-icon" src='../../image/phone.jpg'></image>
+          <text>手机号：</text>
+          <input class="m-phone" name="phone" type="number" bindinput="phoneInput" placeholder="请输入手机号" maxlength="11" focus="true" />
         </view>
         <view class="m-section">
-          <image class="m-icon" src='/images/pass.png'></image>
-          <input class="m-code" password name="code" type="number" placeholder="密码" />
+          <image class="m-icon" src='../../image/person_change_pwd.jpg'></image>
+          <text>密码：</text>
+          <input class="m-code" password name="code" type="number" placeholder="请输入密码" />
         </view>
+        <view class="m-forget">忘记密码？</view>
         <view class="m-btn_confirm">
           <button class="m-button" formType="submit">登录</button>
+          <button class="m-button m-btn-reg" @tap="registerTap">注册</button>
         </view>
       </form>
     </view>
-    <view class="m-others">
-      <button class="m-btn register" @tap="registerTap">注册</button>
-      <button class="m-btn authorize" @tap="authorizeTap">微信授权</button>
-    </view>
+    <!--<view class="m-others">-->
+      <!--&lt;!&ndash;<view class="">&ndash;&gt;-->
+        <!--<image src="../../image/wechat.jpg" style="width: 60rpx;height:50rpx;margin-left:20rpx;"/>-->
+        <!--<view class="m-wei" @tap="registerTap">微信登陆</view>-->
+      <!--&lt;!&ndash;</view>&ndash;&gt;-->
+    <!--</view>-->
   </view>
 </template>
 <script >
@@ -86,9 +118,9 @@
           let res = await api.login({query: {UStelphone: phone, USpassword: pass}, method: 'POST'})
           console.log(res,'fuck?')
           if(res.data.status == 200){
-              wepy.setStorageSync('token', res.data.data.token)
-              wepy.navigateBack()
-              that.$apply()
+              wepy.setStorageSync('token', res.data.data.token);
+              wepy.navigateBack();
+              that.$apply();
           }else{
               tip.error(res.data.message)
           }
