@@ -4,24 +4,24 @@
             <image src="{{commodity.PRimage}}"></image>
         </view>
         <view class="goods-detail">
-            <view>{{commodity.PRinfo}}</view>
-            <view>{{commodity.PRprice}}</view>
+            <view class="name">{{commodity.PRname}}</view>
+            <view class="price">{{commodity.PRprice}}</view>
         </view>
         <view class="selected-goods-price">
-            ￥27
+            ￥选中价格
         </view>
     </view>
     <view class="page_bd">
-        <scroll-view scroll-y="true" style="height:542rpx">
+        <scroll-view scroll-y="true" class="scroll-area" >
             <view class="opt-box" wx:for="{{pick}}" wx:key="key" wx:for-index="ex" data-id="item.id">
                 <view class="title">{{item.name}}</view>
                 <view class="items">
-                    <view class="item {{ option.its == selected[ex] ? 'active' :'' }} {{ option.able ? '': 'disabled'}} " wx:for="{{item.choice}}" wx:for-item="option" @tap.stop="setProperty" data-data="{{option}}" data-id="{{item.id}}" data-able="{{option.able}}" data-a="{{option.its}}" data-b="{{selected[ex]}}">{{option.its}}
+                    <view class="item {{ option.its == selected[ex] ? 'active' :'' }} {{ option.able ? '': 'disabled'}} " wx:for="{{item.choice}}"  wx:for-item="option" @tap.stop="setProperty" data-data="{{option}}" data-id="{{item.id}}" data-able="{{option.able}}" data-a="{{option.its}}" data-b="{{selected[ex]}}">{{option.its}}
                     </view>
                 </view>
             </view>
             <view class="count-box">
-                <view class="title">数量</view>
+                <view class="title">购买数量</view>
                 <view class="m-purchase-count">
                     <view class="m-minus {{item.number==1? 'disabled' : ''}}" catchtap="minusTap" data-index="{{index}}">-</view>
                     <view class="m-commodity-count">{{count}}</view>
@@ -29,9 +29,7 @@
                 </view>
             </view>
         </scroll-view>
-        <view class="confirm-button">
-            <button>确定</button>
-        </view>
+        <view class="confirm_btn" @tap.stop="confirmPurchase">确定</view>
     </view>
 </template>
 
@@ -45,12 +43,16 @@
         }
 
         data = {
+            commodity: {
+                PRimage: '',
+                PRprice: 100,
+                PRname: '化妆镜',
+            },
             version: '',
             color: '',
             pick: [{name: '版本选择'}, {choice: [{its:1.0, able: true}, {its:2.0, able: true}]},{name: '颜色选择', choice: [ {its: '红' , able: true},{its: '蓝', able: true},{its: '白', able: true} ]} ],
             selected: ['','', '', '', ''],
             selectable: [[], [], [], [], []],
-
             num: 0,
             count: 1,
             selectVersion: '',
@@ -67,8 +69,9 @@
             let that = this;
             let res = await api.getProductInfo({query: {PRid: params}})
             if(res.data.status == '200'){
-                that.commodity = res.data.data
-                let loop = res.data.data.PRquality
+                that.commodity = res.data.data;
+                console.log(that.commodity);
+                let loop = res.data.data.PRquality;
                 let result = []
                 let j = 0
 
@@ -101,6 +104,12 @@
             return data;
         }
 
+        /**
+         * 加入购物车
+         * @param token
+         * @param query
+         * @returns {Promise<void>}
+         */
         async doPurchase (token, query) {
             let that = this;
             let res = await api.operateCart({token: token, method: 'POST', query: query})
@@ -123,17 +132,7 @@
         }
 
         methods = {
-            addToCart() {
-                let token =  wepy.getStorageSync('token')
-                if(token){
-                    this.onPlay = false
-                    this.showConfirmData();
-                }else{
-                    wx.navigateTo({
-                        url: '/pages/login'
-                    })
-                }
-            },
+
             plusTap(){
                 this.count ++;
                 this.$apply();
@@ -253,7 +252,6 @@
         .goods-img{
             width: 150rpx;
             height: 150rpx;
-            background-color: #5fc16c;
 
             image{
                 width: 100%;
@@ -263,146 +261,141 @@
         .goods-detail{
             flex: 1;
             padding-left: 34rpx;
+            color: #666666;
+
+            .name{
+                margin-bottom: 26rpx;
+               .fz28();
+            }
+
+            .price{
+                .fz24();
+            }
         }
         .selected-goods-price{
-
+            color: @main-color;
+            .fz24();
         }
     }
-    .over_model {
-        position: fixed;
-        overflow: hidden;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-    }
 
-    .panel_model {
-        z-index: 1002;
-        height: 0rpx;
-        width: 100%;
-        background: #fff;
-    }
-    .model_content {
-        width: 95%;
-        background-color: #fff;
-        padding: 20rpx;
-        bottom: 100rpx;
-        z-index: 1002;
-        position: fixed;
-        left: 0;
-    }
-    .colse_model {
-        position: absolute;
-        right: 20rpx;
-        top: 20rpx;
-    }
-    .m-icon {
-        width: 40rpx;
-        height: 40rpx;
-    }
-    .confirm_btn {
-        height: 100rpx;
-        line-height: 100rpx;
-        width: 100%;
-        background: #ff6e30;
-        text-align: center;
-        color: #fff;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        z-index: 1003;
-    }
+    .page_bd{
+        .scroll-area{
+            height: 542rpx;
+            padding-top: 32rpx;
+            padding-left: 52rpx;
 
-    .count-box {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15rpx 0rpx;
-        height: 100px;
-        .title {
-            color: #4c4c4c;
-            font-size: 32rpx;
+            /*选择列表*/
+            .opt-box {
+                padding-bottom: 26rpx;
+                .title {
+                    .fz28();
+                    color: #4c4c4c;
+                    margin-top: 10rpx;
+                }
+                .items {
+                    display: flex;
+                    flex-wrap: wrap;
+                    margin-top: 5rpx;
+                    padding-top: 10rpx;
+
+                }
+                .item {
+                    .fz24();
+                    width: 125rpx;
+                    height: 44rpx;
+                    line-height: 44rpx;
+                    background: #e6e6e6;
+                    text-align: center;
+                    color: #000;
+                    margin-right: 20rpx;
+                    border-radius: 10rpx;
+                }
+                .active {
+                    background: @main-color;
+                    color: #fff;
+                }
+                .disabled {
+                    background: #f5f5f5;
+                    color: #cecece;
+                }
+            }
+
+            /*数量*/
+            .count-box {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15rpx 0rpx;
+                height: 100px;
+
+                .title {
+                    color: #4c4c4c;
+                    font-size: 32rpx;
+                }
+
+                .m-purchase-count {
+                    width: 170 rpx;
+                    height: 48 rpx;
+                    line-height: 48 rpx;
+                    display: flex;
+                    font-size: 24 rpx;
+                    text-align: center;
+                    padding: 30rpx;
+                    //background-color: #e5473c;
+                    .m-minus {
+                        width: 48 rpx;
+                        height: 100%;
+                        border-left: 1 rpx solid #ccc;
+                        border-bottom: 1 rpx solid #ccc;
+                        border-top: 1 rpx solid #ccc;
+                        border-bottom-left-radius: 6 rpx;
+                        border-top-left-radius: 6 rpx;
+                        margin-right: 20rpx;
+                        font-size: 40rpx;
+                    }
+                    .m-minus.disabled {
+                        background-color: #f5f5f9;
+                        border-left: 1 rpx solid #eee;
+                        border-bottom: 1 rpx solid #eee;
+                        border-top: 1 rpx solid #eee;
+                        color: #ccc;
+                    }
+                    .m-plus {
+                        width: 48 rpx;
+                        height: 100%;
+                        border-right: 1 rpx solid #ccc;
+                        border-bottom: 1 rpx solid #ccc;
+                        border-top: 1 rpx solid #ccc;
+                        border-bottom-right-radius: 6 rpx;
+                        border-top-right-radius: 6 rpx;
+                        font-size: 40rpx;
+                        margin-left: 20rpx;
+                    }
+                    .m-commodity-count {
+                        //background-color: #e0e0e0;
+                        width: 68rpx;
+                        //height: 48rpx;
+                        font-size: 40rpx;
+
+                    }
+                }
+            }
         }
-        .m-purchase-count {
-            width: 170 rpx;
-            height: 48 rpx;
-            line-height: 48 rpx;
-            display: flex;
-            font-size: 24 rpx;
+
+
+        /*确定按钮*/
+        .confirm_btn {
+            margin: 236rpx auto auto;
+            width: 450rpx;
+            height: 80rpx;
+            line-height: 80rpx;
+            background: @main-color;
             text-align: center;
-            padding: 30rpx;
-            //background-color: #e5473c;
-            .m-minus {
-                width: 48 rpx;
-                height: 100%;
-                border-left: 1 rpx solid #ccc;
-                border-bottom: 1 rpx solid #ccc;
-                border-top: 1 rpx solid #ccc;
-                border-bottom-left-radius: 6 rpx;
-                border-top-left-radius: 6 rpx;
-                margin-right: 20rpx;
-                font-size: 40rpx;
-            }
-            .m-minus.disabled {
-                background-color: #f5f5f9;
-                border-left: 1 rpx solid #eee;
-                border-bottom: 1 rpx solid #eee;
-                border-top: 1 rpx solid #eee;
-                color: #ccc;
-            }
-            .m-plus {
-                width: 48 rpx;
-                height: 100%;
-                border-right: 1 rpx solid #ccc;
-                border-bottom: 1 rpx solid #ccc;
-                border-top: 1 rpx solid #ccc;
-                border-bottom-right-radius: 6 rpx;
-                border-top-right-radius: 6 rpx;
-                font-size: 40rpx;
-                margin-left: 20rpx;
-            }
-            .m-commodity-count {
-                //background-color: #e0e0e0;
-                width: 68rpx;
-                //height: 48rpx;
-                font-size: 40rpx;
-
-            }
-        }
-    }
-
-    .opt-box {
-        border-bottom: 1px solid #efefef;
-        padding-bottom: 26rpx;
-        .title {
-            color: #4c4c4c;
-            font-size: 32rpx;
-            margin-top: 10rpx;
-        }
-        .items {
-            display: flex;
-            flex-wrap: wrap;
-            margin-top: 5rpx;
-            margin-left: -20rpx;
-        }
-        .item {
-            padding: 15rpx 28rpx;
-            background: #e6e6e6;
-            color: #000;
-            margin-left: 20rpx;
-            margin-top: 10rpx;
-            border-radius: 10rpx;
-        }
-        .active {
-            background: #ed394a;
             color: #fff;
-        }
-        .disabled {
-            background: #f5f5f5;
-            color: #cecece;
+            border-radius: 40rpx;
+
         }
     }
+
+
 </style>

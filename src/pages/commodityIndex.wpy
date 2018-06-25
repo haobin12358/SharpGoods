@@ -1,17 +1,17 @@
 <template>
     <view class="hd-img">
-        <image src="../image/test_good1.png"></image>
+        <image src="{{commodity.PRimage}}"></image>
     </view>
     <view class="bd-detail">
         <view class="detail-name">
-            美妆镜
+            {{commodity.PRname}}
         </view>
         <view class="detail-bd">
             <view class="price">
-                ￥38.0-168.0
+                ￥{{commodity.PRprice}}
             </view>
             <view class="sale_num">
-                已售420
+                已售{{commodity.PRsalevolume}}
             </view>
         </view>
     </view>
@@ -19,21 +19,6 @@
         <button class="add_shop_cart" @tap="tapAddShopCart">加入购物车</button>
         <button>购物车</button>
     </view>
-    <!--<view class="m-commodity">-->
-
-        <!--<view class="m-commodity-info">-->
-            <!--<view class="m-commodity-title"> {{commodity.PRinfo}} </view>-->
-            <!--<view class="m-commodity-content">-->
-                <!--<view class="m-commodity-price">￥{{commodity.PRprice}}</view>-->
-                <!--<view class="m-commodity-num">已售{{commodity.PRsalevolume}}</view>-->
-            <!--</view>-->
-        <!--</view>-->
-
-        <!--<foot class="m-footer">-->
-            <!--<button class="m-addToCart" @tap="addToCart">加入购物车</button>-->
-        <!--</foot>-->
-    <!--</view>-->
-
 </template>
 <script>
 import wepy from 'wepy';
@@ -46,18 +31,14 @@ export  default class commodityIndex extends wepy.page {
     }
     data = {
         commodity: {
-            PBimage: [],
+            PRimage: '',
             PRprice: 100,
             PRsalevolume: 10,
-            PRinfo: '化妆镜',
-            PRvideo: '',
-            PRaboimage: [],
+            PRname: '化妆镜',
             PRid: ''
         },
 
         winHeight: "100%",
-        onPlay: false,
-        detailImg: []
     }
     async setable(){
 
@@ -68,6 +49,7 @@ export  default class commodityIndex extends wepy.page {
 
         if(res.data.status == '200'){
             this.commodity = res.data.data;
+            this.$apply();
 
         }else {
             tip.error("服务器开小差啦")
@@ -77,15 +59,6 @@ export  default class commodityIndex extends wepy.page {
     onLoad(params){
         let prId ='040a78f0-2c50-402e-969c-d26072659ae3';
 
-        this.hidden = true;
-        this.winHeight = "100%";
-        this.selectVersion = '';
-        this.selectColor = '';
-        this.commodity = {};
-        this.count = 1;
-        this.selected = ['','', '', '', ''] ;
-        this.$apply();
-        // console.log('prId',prId);
         this.getProductInfo(prId)
     }
     onShow(){
@@ -105,7 +78,17 @@ export  default class commodityIndex extends wepy.page {
 
     methods = {
         tapAddShopCart() {
-            this.$navigate('shopCart')
+            let token =  wepy.getStorageSync('token')
+
+            if(token){
+                wx.navigateTo({
+                    url: '/pages/shopCart'
+                })
+            }else{
+                wx.navigateTo({
+                    url: '/pages/login'
+                })
+            }
         }
     }
 }
