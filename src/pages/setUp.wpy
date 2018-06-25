@@ -3,40 +3,68 @@
   .m-bar{
     width: 100%;
     font-size: 30rpx;
-    float: left;
     border-bottom: 1rpx solid @border-color;
-    padding: 30rpx 0;
-    margin: 20rpx 0;
+    padding: 40rpx 0;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-around;
+    align-items: center;
+    &.m-top-border{
+      border-top: 1rpx solid @border-color;
+    }
+    &.m-bottom{
+      margin-bottom: 320rpx;
+    }
     .m-info-prefix{
-      float: left;
       margin: 0 40rpx;
     }
     .m-info-content{
-      float: right;
-      text-align: right;
+      text-align: left;
+      width: 400rpx;
       margin: 0 40rpx;
       color: @grey-font;
     }
   }
   .m-info-button {
     border: 1px solid #fff;
-    width: 400rpx;
-    height: 100rpx;
-    font-size: 35rpx;
+    width: 450rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+    font-size: 38rpx;
+    border-radius: 20px;
     background-color: @common-color;
     color: #ffffff;
+  }
+  .m-head{
+    margin: 20rpx 0 140rpx;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-around;
+    .m-avatar {
+      width: 150rpx;
+      height: 150rpx;
+      border-radius: 100px;
+    }
   }
 </style>
 <template>
   <form bindsubmit="formSubmit">
     <view class="m-setup">
-      <view class="m-bar">
-        <view class="m-info-prefix">旧密码</view>
-        <input class="m-info-content" password bindinput="bindInput" name="old"  focus="true" />
+      <view class="m-head">
+        <image wx:if="{{sex == '男' }}" class="m-avatar" src="../images/test2.png"></image>
+        <image wx:else class="m-avatar" src="../images/test.png"></image>
       </view>
-      <view class="m-bar">
+      <view class="m-bar m-top-border">
+        <view class="m-info-prefix">旧密码</view>
+        <input class="m-info-content" password="{{!openPwdOne}}" bindinput="bindInput" name="old"  focus="true" />
+        <image src="/image/open_eye.jpg" wx:if="{{openPwdOne}}" style="width: 30rpx;height: 30rpx;" @tap="openPwdOneChange"></image>
+        <image src="/image/close_eye.jpg" wx:else style="width: 30rpx;height: 30rpx;" @tap="openPwdOneChange"></image>
+      </view>
+      <view class="m-bar m-bottom">
         <view class="m-info-prefix">新密码</view>
-        <input class="m-info-content" password bindinput="bindInput" name="new"/>
+        <input class="m-info-content" password="{{!openPwdTwo}}"  bindinput="bindInput" name="new"/>
+        <image src="/image/open_eye.jpg" wx:if="{{openPwdTwo}}" style="width: 30rpx;height: 30rpx;" @tap="openPwdTwoChange"></image>
+        <image src="/image/close_eye.jpg" wx:else style="width: 30rpx;height: 30rpx;" @tap="openPwdTwoChange"></image>
       </view>
       <button class="m-info-button"  password formType="submit"> 确认提交 </button>
     </view>
@@ -53,11 +81,14 @@
     }
     data = {
         tel: '',
-        token: ''
+        token: '',
+        openPwdOne:false,
+        openPwdTwo:false
     }
     onLoad(params) {
         this.tel = params.tel;
-        let token =  wepy.getStorageSync('token')
+        this.sex = params.USsex;
+        let token =  wepy.getStorageSync('token');
         this.token = token
     }
       async updatePass(params) {
@@ -76,6 +107,15 @@
         }
         this.updatePass(params)
     }
-
+    methods = {
+        openPwdOneChange(){
+            this.openPwdOne = !this.openPwdOne;
+            this.$apply();
+        },
+        openPwdTwoChange(){
+            this.openPwdTwo = !this.openPwdTwo;
+            this.$apply();
+        }
+    }
   }
 </script>

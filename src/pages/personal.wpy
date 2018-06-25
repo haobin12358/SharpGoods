@@ -31,18 +31,18 @@
     }
     .m-info_block-list {
         margin-top: 10rpx;
-        padding: 0rpx 60rpx;
+        /*padding: 0rpx 60rpx;*/
         width: 100%;
         font-size: 30rpx;
         box-sizing: border-box;
         .m-item {
             border-top: 2rpx solid #dbdbdb;
             background: #fff;
-            padding: 34rpx 0rpx;
+            padding: 34rpx 60rpx;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            width: 100%;
+            width: 630rpx;
         }
         .m-item:last-child {
             border-bottom: 2rpx solid #dbdbdb;
@@ -52,8 +52,8 @@
             align-items: center;
             justify-content: space-between;
             .m-item_img {
-                width: 42rpx;
-                height: 42rpx;
+                width: 40rpx;
+                height: 40rpx;
             }
             .m-text {
                 margin-left: 30rpx;
@@ -81,35 +81,36 @@
     <view class="m-info_block-list">
         <navigator class="m-item" url="/pages/baseInfo?name={{userInfo.USname}}&sex={{userInfo.USsex}}">
             <view class="m-item_content">
-                <image class="m-item_img" src="../images/edit.png"></image>
+                <image class="m-item_img" src="../image/person_basic_info.jpg"></image>
                 <view class="m-text">基本信息</view>
+            </view>
+            <image class="m-arrow" src="../images/more.png"></image>
+        </navigator>
+        <navigator class="m-item" url="/pages/setUp?tel={{userInfo.UStelphone}}&sex={{userInfo.USsex}}">
+            <view class="m-item_content">
+                <image class="m-item_img" src="../image/person_change_pwd.jpg"></image>
+                <view class="m-text">修改密码</view>
             </view>
             <image class="m-arrow" src="../images/more.png"></image>
         </navigator>
         <navigator class="m-item" url="/pages/myOrder">
             <view class="m-item_content">
-                <image class="m-item_img" src="../images/order.png"></image>
-                <view class="m-text">全部订单</view>
+                <image class="m-item_img" src="../image/person_my_order.jpg"></image>
+                <view class="m-text">我的订单</view>
             </view>
             <image class="m-arrow" src="../images/more.png"></image>
         </navigator>
-        <navigator class="m-item" url="/pages/setUp?tel={{userInfo.UStelphone}}">
-            <view class="m-item_content">
-                <image class="m-item_img" src="../images/set.png"></image>
-                <view class="m-text">设置</view>
-            </view>
-            <image class="m-arrow" src="../images/more.png"></image>
-        </navigator>
+
         <view class="m-item">
             <view class="m-item_content">
-                <image class="m-item_img" src="../images/order.png"></image>
+                <image class="m-item_img" src="../image/person_marks.jpg"></image>
                 <view class="m-text">积分</view>
             </view>
             <view class="m-item-info">{{ userInfo.UScoin }}</view>
         </view>
         <view class="m-item">
             <view class="m-item_content">
-                <image class="m-item_img" src="../images/invite.png"></image>
+                <image class="m-item_img" src="../image/person_yqm.jpg"></image>
                 <view class="m-text">专属邀请码</view>
             </view>
             <view class="m-item-info">{{ userInfo.USinvate }}</view>

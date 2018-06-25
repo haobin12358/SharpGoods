@@ -9,6 +9,13 @@
       border-bottom: 1rpx solid @border-color;
       padding: 30rpx 0;
       margin: 20rpx 0;
+      display: flex;
+      flex-flow: row;
+      align-items: center;
+      justify-content: space-between;
+      &.m-bottom{
+        margin-bottom: 260rpx;
+      }
       .m-info-prefix{
         float: left;
         margin: 0 40rpx;
@@ -23,27 +30,59 @@
   }
   .m-info-button {
     border: 1px solid #fff;
-    width: 400rpx;
-    height: 100rpx;
-    font-size: 35rpx;
+    width: 450rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+    font-size: 38rpx;
     background-color: @common-color;
     color: #ffffff;
+    border-radius: 20px;
   }
+  .m-avatar {
+    width: 150rpx;
+    height: 150rpx;
+    border-radius: 50%;
+  }
+  .m-sex-box{
+    .m-sex{
+      width: 100rpx;
+      height: 70rpx;
+    }
+  }
+
 </style>
 <template>
 <view class="m-info-form">
   <form bindsubmit="formSubmit">
     <view class="m-bar">
+      <view class="m-info-prefix">头像</view>
+      <image wx:if="{{index == 0 }}" class="m-avatar" src="../images/test2.png"></image>
+      <image wx:else class="m-avatar" src="../images/test.png"></image>
+    </view>
+    <view class="m-bar">
       <view class="m-info-prefix">昵称</view>
       <input class="m-info-content" value="{{name}}" name="name"  focus="true"/>
     </view>
     <view class="m-bar">
-      <view class="m-info-prefix">性别</view>
-      <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
-        <view class="m-info-content">{{array[index]}}</view>
-      </picker>
+      <view class="m-info-prefix">手机</view>
+      <text class="m-info-content">{{userInfo.UStelphone}}</text>
     </view>
-    <button class="m-info-button" formType="submit">修改</button>
+    <view class="m-bar m-bottom">
+      <view class="m-info-prefix">性别</view>
+      <view class="m-sex-box">
+        <image wx:if="{{index == 0}}" src="/image/woman.jpg" class="m-sex" @tap="sexTap('1')"/>
+        <image wx:if="{{index == 1}}" src="/image/woman_active.jpg" class="m-sex" />
+        <image wx:if="{{index == 1}}" src="/image/man.jpg" class="m-sex" @tap="sexTap('0')"/>
+        <image wx:if="{{index == 0}}" src="/image/man_active.jpg" class="m-sex"/>
+      </view>
+      <!--<picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">-->
+        <!--<view class="m-info-content">{{array[index]}}</view>-->
+      <!--</picker>-->
+    </view>
+    <view class="m-btn-box">
+      <button class="m-info-button" formType="submit">修改</button>
+    </view>
+
   </form>
 </view>
 </template>
@@ -60,12 +99,26 @@
       data = {
           token: '',
           name: '',
+          tel:'',
           array: ['男', '女'],
-          index: 0
+          index: 0,
+          userInfo:{}
       }
       bindPickerChange(e){
           this.index = e.detail.value
       }
+      async getPersonInfo(token) {
+          let that = this;
+          tip.loading();
+          let res = await api.getUserInfo({query: {token: token}})
+          if (res.data.status == '200') {
+              that.userInfo = res.data.data;
+              tip.loaded();
+              that.$apply();
+          }
+          else tip.error("加载失败")
+      }
+
       async updateUserInfo(params){
           let that = this;
           tip.loading();
@@ -87,10 +140,12 @@
 
       }
       onLoad(params) {
-          let that = this
+          let that = this;
           this.name = params.name;
-          let token =  wepy.getStorageSync('token')
-          this.token = token
+          this.sex = params.sex;
+          let token =  wepy.getStorageSync('token');
+          this.token = token;
+          this.getPersonInfo(token);
           for(let i=0; i<2; i++){
               if(params.sex == that.array[i])
                   that.index = i;
@@ -98,6 +153,9 @@
       }
 
       methods = {
+          sexTap(v){
+             this.index = v
+           }
       };
   }
 </script>
