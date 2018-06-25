@@ -124,8 +124,7 @@ class CProducts():
                     product_info["PRquality"].keys().append(BRkey)
                     product_info["PRquality"][BRkey] = {}
                     product_info["PRquality"][BRkey]["name"] = self.choose_key(BRkey)
-                    product_info["PRquality"][BRkey]["choice"] = []
-                    product_info["PRquality"][BRkey]["choice"].append(BRvalue)
+                    product_info["PRquality"][BRkey]["choice"] = [BRvalue]
         response_of_product = import_status("SUCCESS_MESSAGE_GET_PRODUCT", "OK")
         response_of_product["data"] = product_info
         return response_of_product

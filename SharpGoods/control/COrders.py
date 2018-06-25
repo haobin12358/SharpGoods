@@ -134,7 +134,7 @@ class COrders():
         for order_part_info in order_part_list:
             try:
                 order_part = {
-                    "OPid": str( uuid.uuid4()),
+                    "OPid": str(uuid.uuid4()),
                     "OMid": omid,
                     "PBid": get_str(order_part_info, "PBid"),
                     "PRnumber": int(get_str(order_part_info, "PRnumber"))

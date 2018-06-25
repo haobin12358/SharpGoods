@@ -5,6 +5,7 @@ sys.path.append(os.path.dirname(os.getcwd()))
 from flask_restful import Resource
 from control.CCarts import CCarts
 
+
 class ACarts(Resource):
     def __init__(self):
         self.ccarts = CCarts()
@@ -15,7 +16,8 @@ class ACarts(Resource):
         print("=======================api===================")
         apis = {
             "delete_product": "self.ccarts.del_cart()",
-            "update": "self.ccarts.add_or_update_cart()"
+            "update": "self.ccarts.add_or_update_cart()",
+            "get_select_product": "self.ccarts.get_carts_by_uid_caid()"
         }
 
         if cart not in apis:

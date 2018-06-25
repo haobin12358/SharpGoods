@@ -10,6 +10,7 @@ from common.TransformToList import add_model
 from common.import_status import import_status
 from config.response import SYSTEM_ERROR, PARAMS_MISS, TOKEN_ERROR
 
+
 class CCarts():
     def __init__(self):
         from service.SCarts import SCarts
@@ -136,6 +137,94 @@ class CCarts():
             cart_info["PRquality"] = {}
             quality_list = self.sproduct.get_all_brand_by_brid_last(BRid)
             #cart_info["PRquality"] = self.sproduct.get_all_brand_by_brid_last(BRid)
+            for key in quality_list.keys():
+                cart_info["PRquality"][key] = {}
+                cart_info["PRquality"][key]["name"] = self.choose_key(key)
+                cart_info["PRquality"][key]["choice"] = []
+                cart_info["PRquality"][key]["choice"].append(quality_list[key])
+            cart_info["PBid"] = cart.PBid
+            cart_info["PBimage"] = cart_service_info.PBimage
+            cart_info["PBsalesvolume"] = cart_service_info.PBsalesvolume
+            cart_info["PBprice"] = cart_service_info.PBprice
+            cart_info["CAid"] = cart.CAid
+            PBunit = cart_service_info.PBunit
+            if PBunit == 401:
+                cart_info["PBunit"] = "$"
+            elif PBunit == 402:
+                cart_info["PBunit"] = "￥"
+            elif PBunit == 403:
+                cart_info["PBunit"] = "欧元"
+            elif PBunit == 404:
+                cart_info["PBunit"] = "英镑"
+            else:
+                cart_info["PBunit"] = "其他币种"
+            cart_info["PBscore"] = cart_service_info.PBscore
+            cart_info["CAnumber"] = cart.CAnumber
+            cart_info["PRname"] = product.PRname
+            cart_info["PRinfo"] = product.PRinfo
+            PRbrand = product.PRbrand
+            if PRbrand == 601:
+                cart_info["PRbrand"] = "美妆类"
+            elif PRbrand == 602:
+                cart_info["PRbrand"] = "3C类"
+            else:
+                cart_info["PRbrand"] = "其他"
+            cart_info["PRvideo"] = product.PRvideo
+            PRtype = product.PRtype
+            if PRtype == 501:
+                cart_info["PRtype"] = "自营"
+            elif PRtype == 502:
+                cart_info["PRtype"] = "非自营"
+            else:
+                cart_info["PRtype"] = "未知商品"
+            cart_info_list.append(cart_info)
+        res_get_all = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
+        res_get_all["data"] = cart_info_list
+        return res_get_all
+
+    def get_carts_by_uid_caid(self):
+        args = request.args.to_dict()
+        print "=================args================="
+        print args
+        print "=================args================="
+        if "token" not in args:
+            return PARAMS_MISS
+
+        data = json.loads(request.data, encoding="utf8")
+        caidlist = data.get("CAid")
+
+        # todo uid 验证未实现
+        uid = args["token"]
+        # res_get_all = {}
+
+        cart_info_list = []
+        cart_list = self.scarts.get_carts_by_Uid(uid)
+        print "=================cart_list================="
+        print cart_list
+        print "=================cart_list================="
+        for cart in cart_list:
+            if cart.CAstatus != 1:
+                continue
+            if caidlist and cart.CAid not in caidlist:
+                continue
+            cart_service_info = self.sproduct.get_product_by_pbid(cart.PBid)
+            print "=================cart_service_info================="
+            print cart_service_info
+            print "=================cart_service_info================="
+            if not cart_service_info:
+                return SYSTEM_ERROR
+            PRid = cart_service_info.PRid
+            BRid = cart_service_info.BRid
+            product = self.sproduct.get_product_by_prid(PRid)
+            print "=================product================="
+            print product
+            print "=================product================="
+            if not product:
+                return SYSTEM_ERROR
+            cart_info = {}
+            cart_info["PRquality"] = {}
+            quality_list = self.sproduct.get_all_brand_by_brid_last(BRid)
+
             for key in quality_list.keys():
                 cart_info["PRquality"][key] = {}
                 cart_info["PRquality"][key]["name"] = self.choose_key(key)
