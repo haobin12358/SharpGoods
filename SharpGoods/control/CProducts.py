@@ -6,6 +6,8 @@ from flask import request
 import json
 from config.response import SYSTEM_ERROR, PARAMS_MISS
 from common.import_status import import_status
+from config.imageconfig import PRSWINGIMAGE, PRABOIMAGE
+
 
 class CProducts():
     def __init__(self):
@@ -26,7 +28,7 @@ class CProducts():
         print "=================product================="
         if not product:
             return SYSTEM_ERROR
-        product_price = [9999999,-1]
+        product_price = [9999999, -1]
         product_volue = 0
         product_price_list = self.sproduct.get_pbprice_by_prid(PRid)
         print "=================product_price_list================="
@@ -49,41 +51,14 @@ class CProducts():
             product_volue = product_volue + row
         product_info = {}
         product_info["PRid"] = PRid
-        product_info["PRprice"] = str(product_price[0]) +  "-" + str(product_price[1])
+        product_info["PRprice"] = str(product_price[0]) + "-" + str(product_price[1])
         product_info["PRsalevolume"] = product_volue
         product_info["PRname"] = product.PRname
         product_info["PRvideo"] = product.PRvideo
         product_info["PRinfo"] = product.PRinfo
         product_info["PRvideostart"] = product.PRvideostart
         product_info["PRimage"] = product.PRimage
-        product_info["PRaboimage"] = [
-            "https://h878.cn/imgs/img_abo_01.png",
-            "https://h878.cn/imgs/img_abo_02.png",
-            "https://h878.cn/imgs/img_abo_03.png",
-            "https://h878.cn/imgs/img_abo_04.png",
-            "https://h878.cn/imgs/img_abo_05.png",
-            "https://h878.cn/imgs/img_abo_06.png",
-            "https://h878.cn/imgs/img_abo_07.png",
-            "https://h878.cn/imgs/img_abo_08.png",
-            "https://h878.cn/imgs/img_abo_09.png",
-            "https://h878.cn/imgs/img_abo_10.png",
-            "https://h878.cn/imgs/img_abo_11.png",
-            "https://h878.cn/imgs/img_abo_12.png",
-            "https://h878.cn/imgs/img_abo_13.png",
-            "https://h878.cn/imgs/img_abo_14.png",
-            "https://h878.cn/imgs/img_abo_15.png",
-            "https://h878.cn/imgs/img_abo_16.png",
-            "https://h878.cn/imgs/img_abo_17.png",
-            "https://h878.cn/imgs/img_abo_18.png",
-            "https://h878.cn/imgs/img_abo_19.png",
-            "https://h878.cn/imgs/img_abo_20.png",
-            "https://h878.cn/imgs/img_abo_21.png",
-            "https://h878.cn/imgs/img_abo_22.png",
-            "https://h878.cn/imgs/img_abo_23.png",
-            "https://h878.cn/imgs/img_abo_24.png",
-            "https://h878.cn/imgs/img_abo_25.png",
-            "https://h878.cn/imgs/img_abo_26.png"
-        ]
+        product_info["PRaboimage"] = list(PRABOIMAGE.get(PRid))
         PRbrand = product.PRbrand
         PRtype = product.PRtype
         if PRbrand == 601:
@@ -98,13 +73,14 @@ class CProducts():
             product_info["PRtype"] = "非自营"
         else:
             product_info["PRtype"] = "未知商品"
-        PBimage = self.sproduct.get_pbimg_by_prid(PRid)
-        print "=================PBimage================="
-        print PBimage
-        print "=================PBimage================="
-        product_info["PBimage"] = []
-        for img in PBimage:
-            product_info["PBimage"].append(img)
+        # PBimage = self.sproduct.get_pbimg_by_prid(PRid)
+        # print "=================PBimage================="
+        # print PBimage
+        # print "=================PBimage================="
+        # product_info["PBimage"] = []
+        # for img in PBimage:
+        #     product_info["PBimage"].append(img)
+        product_info["PBimage"] = list(PRSWINGIMAGE.get(PRid))
         product_info["PRquality"] = {}
         BRid = self.sproduct.get_brid_by_prid(PRid)
         print "=================BRid================="

@@ -5,7 +5,7 @@ sys.path.append(os.path.dirname(os.getcwd()))
 from flask import request
 from config.response import SYSTEM_ERROR, PARAMS_MISS
 from common.get_model_return_list import get_model_return_list
-from common.timeformate import get_db_time_str, get_web_time_str
+from common.timeformate import get_web_time_str, format_forweb_no_HMS
 from common.import_status import import_status
 import json
 
@@ -47,32 +47,32 @@ class CCoupons():
                     cart["COuse"] = "满{0}元可用".format(COfilter)
                     cart["COcut"] = coupon.COamount
                     COstart = coupon.COstart
-                    cart["COstart"] = get_web_time_str(COstart)
+                    cart["COstart"] = get_web_time_str(COstart, format_forweb_no_HMS)
                     COend = coupon.COend
-                    cart["COend"] = get_web_time_str(COend)
+                    cart["COend"] = get_web_time_str(COend, format_forweb_no_HMS)
                 elif COtype == 802:
                     COfilter = coupon.COfilter
                     cart["COuse"] = "满{0}元可用".format(COfilter)
                     cart["COcut"] = str(coupon.COdiscount * 100) + "%"
                     COstart = coupon.COstart
-                    cart["COstart"] = get_web_time_str(COstart)
+                    cart["COstart"] = get_web_time_str(COstart, format_forweb_no_HMS)
                     COend = coupon.COend
-                    cart["COend"] = get_web_time_str(COend)
+                    cart["COend"] = get_web_time_str(COend, format_forweb_no_HMS)
                 elif COtype == 803:
                     CObrand = coupon.CObrand.encode("utf8")
                     cart["COuse"] = "限{0}商品可用".format(str(CObrand))
                     cart["COcut"] = coupon.COamount
                     COstart = coupon.COstart
-                    cart["COstart"] = get_web_time_str(COstart)
+                    cart["COstart"] = get_web_time_str(COstart, format_forweb_no_HMS)
                     COend = coupon.COend
-                    cart["COend"] = get_web_time_str(COend)
+                    cart["COend"] = get_web_time_str(COend, format_forweb_no_HMS)
                 elif COtype == 804:
                     cart["COuse"] = "无限制"
                     cart["COcut"] = coupon.COamount
                     COstart = coupon.COstart
-                    cart["COstart"] = get_web_time_str(COstart)
+                    cart["COstart"] = get_web_time_str(COstart, format_forweb_no_HMS)
                     COend = coupon.COend
-                    cart["COend"] = get_web_time_str(COend)
+                    cart["COend"] = get_web_time_str(COend, format_forweb_no_HMS)
                 else:
                     return
                 cart_list.append(cart)
@@ -117,23 +117,23 @@ class CCoupons():
                 if COtype == 801:
                     cart["COuse"] = "满{0}元可用".format(coupon.COfilter)
                     cart["COcut"] = coupon.COamount
-                    cart["COstart"] = get_web_time_str(coupon.COstart)
-                    cart["COend"] = get_web_time_str(coupon.COend)
+                    cart["COstart"] = get_web_time_str(coupon.COstart, format_forweb_no_HMS)
+                    cart["COend"] = get_web_time_str(coupon.COend, format_forweb_no_HMS)
                 elif COtype == 802:
                     cart["COuse"] = "满{0}元可用".format(coupon.COfilter)
                     cart["COcut"] = str(coupon.COdiscount * 100) + "%"
-                    cart["COstart"] = get_web_time_str(coupon.COstart)
-                    cart["COend"] = get_web_time_str(coupon.COend)
+                    cart["COstart"] = get_web_time_str(coupon.COstart, format_forweb_no_HMS)
+                    cart["COend"] = get_web_time_str(coupon.COend, format_forweb_no_HMS)
                 elif COtype == 803:
                     cart["COuse"] = "限{0}商品可用".format(coupon.CObrand)
                     cart["COcut"] = coupon.COamount
-                    cart["COstart"] = get_web_time_str(coupon.COstart)
-                    cart["COend"] = get_web_time_str(coupon.COend)
+                    cart["COstart"] = get_web_time_str(coupon.COstart, format_forweb_no_HMS)
+                    cart["COend"] = get_web_time_str(coupon.COend, format_forweb_no_HMS)
                 elif COtype == 804:
                     cart["COuse"] = "无限制"
                     cart["COcut"] = coupon.COamount
-                    cart["COstart"] = get_web_time_str(coupon.COstart)
-                    cart["COend"] = get_web_time_str(coupon.COend)
+                    cart["COstart"] = get_web_time_str(coupon.COstart, format_forweb_no_HMS)
+                    cart["COend"] = get_web_time_str(coupon.COend, format_forweb_no_HMS)
                 cart_list.append(cart_pkg)
         except Exception as e:
             print("ERROR: " + e.message)

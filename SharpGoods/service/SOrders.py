@@ -57,7 +57,7 @@ class SOrders(SBase):
             OrderMain.OMid, OrderMain.LOid, OrderMain.COid,
             OrderMain.OMabo, OrderMain.OMcointype, OrderMain.OMstatus,
             OrderMain.OMtime, OrderMain.OMprice, OrderMain.OMlogisticsName
-        ).filter(OrderMain.USid == usid).all()
+        ).filter(OrderMain.USid == usid).order_by(OrderMain.OMtime.desc()).all()
 
     @close_session
     def get_order_main_by_om_id(self, omid):

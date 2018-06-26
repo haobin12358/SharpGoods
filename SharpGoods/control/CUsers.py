@@ -179,7 +179,7 @@ class CUsers():
         print "=================data================="
         print data
         print "=================data================="
-        if "USpasswordnew" not in data or "USpasswordnewrepeat" not in data or "UStelphone" not in data or "Uscode" not in data:
+        if "USpasswordnew" not in data or "USpasswordnewrepeat" not in data or "UStelphone" not in data or "UScode" not in data:
             return SYSTEM_ERROR
 
         Utel = data["UStelphone"]
@@ -243,12 +243,12 @@ class CUsers():
         time_time = datetime.datetime.now()
         time_str = datetime.datetime.strftime(time_time, "%Y%m%d%H%M%S")
         # 根据电话号码获取时间
-        utel_list = self.susers.get_all_user_tel()
-        print("=====================utel_list=================")
-        print utel_list
-        print("=====================utel_list=================")
-        if Utel in utel_list:
-            return import_status("ERROR_MESSAGE_REGISTED_TELPHONE", "SHARPGOODS_ERROR", "ERROR_REGISTED_TELPHONE")
+        # utel_list = self.susers.get_all_user_tel()
+        # print("=====================utel_list=================")
+        # print utel_list
+        # print("=====================utel_list=================")
+        # if Utel in utel_list:
+        #     return import_status("ERROR_MESSAGE_REGISTED_TELPHONE", "SHARPGOODS_ERROR", "ERROR_REGISTED_TELPHONE")
         time_up = self.susers.get_uptime_by_utel(Utel)
         print("=====================time_up=================")
         print time_up
