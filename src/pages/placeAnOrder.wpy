@@ -50,7 +50,7 @@
       </view>
       <view class="m-li">
         <view class="m-input-box">
-          备注：<input class="m-input" value="{{Oabo}}" bindinput="bindKeyInput"  maxlength="200" placeholder="备注信息" />
+          <text class="my-t">备注：</text><input class="m-input" value="{{Oabo}}" bindinput="bindKeyInput"  maxlength="200" placeholder="备注信息" />
         </view>
       </view>
     </view>
@@ -502,6 +502,9 @@
           display: flex;
           flex-flow: row;
           align-items: center;
+          .my-t{
+            width: 110rpx;
+          }
           .m-input{
 
           }
