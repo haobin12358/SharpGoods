@@ -27,104 +27,111 @@
         <button class="add_shop_cart" @tap="tapAddShopCart">加入购物车</button>
         <button @tap="tapToShopCart">购物车</button>
     </view>
-    <view class="m-commodity-intro">
-        <view class="m-commodity-video">
+    <view class="commodity-intro">
+        <view class="commodity-video" @tap="changVideoPlayState">
             <video id="intro-video" src="{{ commodity.PRvideo }}" show-center-play-btn="true"
                    controls="true" show-fullscreen-btn="true" binderror="videoErrorCallback"
-                   objectFit="fill" poster="{{ commodity.PRvideostart}}"></video>
-            <!--<image wx:else src="{{ commodity.PRvideostart}}" @tap="videoPlay"></image>-->
+                   objectFit="fill"></video>
         </view>
-        <view class="m-img-box">
-            <view wx:for="{{ commodity.PRaboimage }}" wx:key="item" class="m-img">
+        <view class="imgs-box">
+            <view wx:for="{{ commodity.PRaboimage }}" wx:key="item" class="img" @tap="previewImages({{item}})">
                 <image src="{{item}}" mode="widthFix"></image>
             </view>
         </view>
     </view>
 </template>
 <script>
-import wepy from 'wepy';
-import tip from '../utils/tip'
-import api from '../api/api';
+    import wepy from 'wepy';
+    import tip from '../utils/tip'
+    import api from '../api/api';
 
-export  default class commodityIndex extends wepy.page {
-    config={
-        navigationBarTitleText: '商品详情'
-    }
-    data = {
-        commodity: {
-            PRimage: '',
-            PRprice: 100,
-            PRsalevolume: 10,
-            PRname: '化妆镜',
-            PRid: ''
-        },
-        onPlay: false
-    }
-    async setable(){
+    export  default class commodityIndex extends wepy.page {
+        config={
+            navigationBarTitleText: '商品详情'
+        }
+        data = {
+            commodity: {
+                PRimage: '',
+                PRprice: 100,
+                PRsalevolume: 10,
+                PRname: '化妆镜',
+                PRid: ''
+            },
+            videoIsPlay: false
+        }
 
-    }
+        async getProductInfo(pdId){
+            let res = await api.getProductInfo({query: {PRid: pdId}});
 
-    async getProductInfo(pdId){
-        let res = await api.getProductInfo({query: {PRid: pdId}});
+            if(res.data.status == '200'){
+                this.commodity = res.data.data;
+                this.$apply();
 
-        if(res.data.status == '200'){
-            this.commodity = res.data.data;
-            this.$apply();
+            }else {
+                tip.error("服务器开小差啦")
+            }
+        }
 
-        }else {
-            tip.error("服务器开小差啦")
+        onLoad(param){
+            this.videoContext = wx.createVideoContext('intro-video');
+            this.getProductInfo(param.prId);
+        }
+
+        //  获取版本详情
+        async getPBid(token, query){
+            let PRid = this.commodity.PRid
+            let res = await api.getPBid({token: token, PRid: PRid, query: query, method: 'POST'})
+
+            return res.data.data.PBid
+        }
+
+
+        methods = {
+            //  跳转至添加购物车页
+            tapAddShopCart() {
+                let token =  wepy.getStorageSync('token')
+
+                this.videoIsPlay = false;
+                this.videoContext.pause();
+                if(token){
+                    this.$navigate('/pages/addToCart',{prId: this.commodity.PRid});
+                }else{
+                    this.$navigate('/pages/login');
+                }
+            },
+
+            //  跳转至购物车页
+            tapToShopCart(){
+                let token =  wepy.getStorageSync('token')
+
+                this.videoIsPlay = false;
+                this.videoContext.pause();
+                if(token){
+                    this.$switch('/pages/car');
+                }else{
+                    this.$navigate('/pages/login');
+                }
+            },
+
+            //  点击video任意一处 暂停播放
+            changVideoPlayState(){
+                if (this.videoIsPlay){
+                    this.videoIsPlay = false;
+                    this.videoContext.pause();
+                }else{
+                    this.videoIsPlay = true;
+                    this.videoContext.play();
+                }
+            },
+
+            previewImages(currentImg){
+                wepy.previewImage({
+                    current: currentImg,
+                    urls: this.commodity.PRaboimage
+                })
+            }
         }
     }
-
-    onLoad(param){
-        this.videoContext = wx.createVideoContext('intro-video');
-        this.getProductInfo(param.prId);
-    }
-    onShow(){
-
-    }
-    onReady(){
-    }
-
-
-    async getPBid(token, query){
-        let PRid = this.commodity.PRid
-        let res = await api.getPBid({token: token, PRid: PRid, query: query, method: 'POST'})
-        return res.data.data.PBid
-
-    }
-
-
-    methods = {
-        tapAddShopCart() {
-            let token =  wepy.getStorageSync('token');
-
-            this.videoIsPlay = false;
-            this.videoContext.pause();
-            if(token){
-                this.$navigate('/pages/addToCart',{prId: this.commodity.PRid});
-            }else{
-                this.$navigate('/pages/login');
-            }
-        },
-
-        tapToShopCart(){
-            let token =  wepy.getStorageSync('token')
-
-            if(token){
-                this.$switch('/pages/car');
-            }else{
-                this.$navigate('/pages/login');
-            }
-        },
-
-        videoPlay(e) {
-            this.onPlay = true
-            this.$apply()
-            this.videoContext.play()
-        },
-    }
-}
 </script>
 
 <style lang="less">
@@ -192,31 +199,38 @@ export  default class commodityIndex extends wepy.page {
             background-color: @main-color;
         }
     }
+    /*商品详情*/
+    .commodity-intro {
+        padding-left: 61rpx;
+        padding-right: 58rpx;
 
-    .m-commodity-intro {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        .m-commodity-video{
+        .commodity-video{
             margin-bottom: 50rpx;
+
+            video{
+                width: 100%;
+            }
+            view{
+                width: 698rpx;
+                height: 450rpx;
+                z-index: 10;
+                background-color: #5fc16c;
+            }
         }
 
-        .m-img-box{
-            display: flex;
-            flex-flow: column;
-            flex-wrap: wrap;
-
-            .m-img{
+        .imgs-box{
+            .img{
                 box-sizing: content-box;
                 padding: 0;
                 margin: 0;
                 border: none;
+                width: 100%;
 
                 image{
                     margin: 0;
                     padding: 0;
                     border: none;
+                    width: 100%;
                 }
             }
         }
