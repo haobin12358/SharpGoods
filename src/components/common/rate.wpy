@@ -1,30 +1,28 @@
 <template>
-<view class="container">
-    <form bindsubmit="formSubmit">
+<view>
+    <form class="form" bindsubmit="formSubmit">
         <view wx:for="{{info.order_abo}}" key="index" wx:for-index="idx" >
             <view class="block">
                 <view class="m-goods-info">
                     <image src="{{item.PBimage}}"></image>
                     <view class="m-goods-name">{{item.PRname}}</view>
+                    <view class="m-goods-specification">({{item.BRcolor}})</view>
                 </view>
-                <view class="item-block">
-                    <view class="title">评分:</view>
-                    <view class="content">
-                        <repeat wx:for="{{stars}}" wx:key="item.id">
-                            <image wx:if="{{readonly}}" class="star-image-read" style="left: {{item}}rpx" src="{{keys[idx] > item ?(keys-item == 0.5?halfSrc:selectedSrc) : normalSrc}}">
-                            </image>
-                            <image wx:else class="star-image" style="left: {{item*10}}rpx" src="{{keys[idx] > item ?(keys[idx]-item == 0.5?halfSrc:selectedSrc) : normalSrc}}">
-                                <view class="item" style="left:0rpx" data-key="{{item+0.5}}" data-index="{{idx}}" @tap="selectLeft"></view>
-                                <view class="item" style="left:25rpx" data-key="{{item+1}}" data-index="{{idx}}" @tap="selectRight"></view>
-                            </image>
-                        </repeat>
-                    </view>
+                <view class="item-block" style="padding-right: 40rpx">
+                    <block wx:for="{{stars}}" wx:key="item.id">
+                        <image wx:if="{{readonly}}" class="star-image-read" style="left: {{item}}rpx" src="{{keys[idx] > item ?(keys-item == 0.5?halfSrc:selectedSrc) : normalSrc}}">
+                        </image>
+                        <image wx:else class="star-image" style="left: {{item*10}}rpx" src="{{keys[idx] > item ?(keys[idx]-item == 0.5?halfSrc:selectedSrc) : normalSrc}}">
+                            <view class="item" style="left:0rpx" data-key="{{item+0.5}}" data-index="{{idx}}" @tap="selectLeft"></view>
+                            <view class="item" style="left:25rpx" data-key="{{item+1}}" data-index="{{idx}}" @tap="selectRight"></view>
+                        </image>
+                    </block>
                 </view>
                 <view class="item-block">
                     <block wx:if="{{readonly}}" class="content">
                         这是一条评论
                     </block>
-                    <block wx:else class="content">
+                    <block wx:else>
                         <textarea @input="bindText" data-index="{{idx}}" style="height: 6em; margin-top: 20rpx" placeholder="  你对宝贝有什么想说的呢"  maxlength="140"/>
                     </block>
                 </view>
@@ -46,9 +44,9 @@
         }
         data = {
             stars: [0, 1, 2, 3, 4],
-            normalSrc: '../images/normal.png',
-            selectedSrc: '../images/selected.png',
-            halfSrc: '../images/half.png',
+            normalSrc: '../image/star.jpg',
+            selectedSrc: '../image/star_check.jpg',
+            halfSrc: '../image/star_half.png',
             keys: [],
 //            selectedKeys: [],
             len: 0,
@@ -101,53 +99,94 @@
 </script>
 <style lang="less">
     @import "../../styles/common";
-    .container {
-        width: 100%;
-    }
-    .m-goods-info{
-        width: 100%;
+
+    .form{
         display: flex;
-        justify-content: center;
         flex-direction: column;
-        .m-goods-name {
-            margin-top: 20rpx;
-            text-align: center;
-            font-size: 36rpx;
-        }
-    }
-    .item-block {
-        display: flex;
-        justify-content: center;
         align-items: center;
-        .title {
-            margin-top: 20rpx;
+
+        .block{
+            margin-bottom: 39rpx;
+
+            .m-goods-info{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                width: 100%;
+
+                image{
+                    width: 750rpx;
+                    height: 650rpx;
+                }
+                .m-goods-name {
+                    margin-top: 38rpx;
+                    text-align: center;
+                    color: #666666;
+
+                    .fz28();
+                }
+                .m-goods-specification {
+                    margin-top: 24rpx;
+                    margin-bottom: 24rpx;
+                    text-align: center;
+                    color: #e3e3e3;
+
+                    .fz24();
+                }
+            }
+
+            .item-block {
+                display: flex;
+                justify-content: center;
+
+                .star-image {
+                    position: relative;
+                    width: 50rpx;
+                    height: 50rpx;
+                    src: "../image/star.jpg";
+
+                    .item {
+                        position: absolute;
+                        width: 25rpx;
+                        top: 0;
+                        height: 50rpx;
+                    }
+                }
+
+                .star-image-read {
+                    position: relative;
+                    width: 30rpx;
+                    height: 30rpx;
+                    src: "../image/star.jpg";
+                }
+
+                textarea{
+                    border: 1px solid #cdcdcd ;
+                    border-radius: 30rpx;
+                    width: 660rpx;
+                    height: 145rpx;
+                    color: #666666;
+                    padding: 30rpx;
+                    box-sizing: border-box;;
+                }
+            }
         }
-        .content {
-            margin-top: 20rpx;
-            margin-left: 60rpx;
+
+        .button {
+            background-color: @common-color;
+            color: #fff;
+            width: 450rpx;
+            height: 80rpx;
+            border-radius: 40rpx;
+            margin-bottom: 89rpx;
         }
     }
-    .star-image {
-        position: relative;
-        width: 50rpx;
-        height: 50rpx;
-        src: "../images/normal.png";
-        .item {
-            position: absolute;
-            width: 25rpx;
-            top: 0;
-            height: 50rpx;
-        }
-    }
-    .star-image-read {
-        position: relative;
-        width: 30rpx;
-        height: 30rpx;
-        src: "../images/normal.png";
-    }
-    .button {
-        background-color: @common-color;
-        color: #fff;
-    }
+
+
+
+
+
+
+
 
 </style>

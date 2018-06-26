@@ -8,9 +8,9 @@
   <view class="m-business-content">
     <view class="m-all-products">
       <repeat for="{{list_data}}" key="index" index="index" item="item">
-        <List :list="item" page="myOrder" @listTap.user="productTap" @evalTap.user="evalTap"
+        <list :list="item" page="myOrder" @listTap.user="productTap" @evalTap.user="evalTap"
               @evalookTap.user="evalookTap" @payTap.user="ToPay" @confirmTap.user="confirmGet"
-              @cancelTap.user="cancelOrder"></List>
+              @cancelTap.user="cancelOrder"></list>
       </repeat>
       <view wx:if="{{list_data.length <=0}}" class="m-no">暂无订单</view>
     </view>
@@ -28,7 +28,7 @@
             navigationBarTitleText: '我的订单'
         }
         components = {
-            List: List
+            list: List
         }
         data = {
             list_data: [],
