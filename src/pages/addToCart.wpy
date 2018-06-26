@@ -1,14 +1,14 @@
 <template>
     <view class="page_hd">
         <view class="goods-img">
-            <image src="{{commodity.PRimage}}"></image>
+            <image src="{{selectSpec.PBimage ? selectSpec.PBimage : commodity.PRimage}}  "></image>
         </view>
         <view class="goods-detail">
             <view class="name">{{commodity.PRname}}</view>
             <view class="price">￥{{commodity.PRprice}}</view>
         </view>
-        <view class="selected-goods-price">
-            ￥选中价格
+        <view wx:if="{{selectSpec.PBprice}}" class="selected-goods-price">
+            {{selectSpec.PBunit}}{{selectSpec.PBprice}}
         </view>
     </view>
     <view class="page_bd">
@@ -118,7 +118,8 @@
             let PRid = this.commodity.PRid;
             let res = await api.getPBid({token: token, PRid: PRid, query: query, method: 'POST'})
 
-            return res.data.data.PBid
+            console.log('getPBid',res);
+            return res.data.data
         }
 
         //  获得可选项
@@ -200,7 +201,8 @@
                         let key = that.pick[id].query;
                         let query = {}
                         query[key] = data.its
-                        that.selectSpec = that.getPBid(token,query);
+                        that.selectSpec =await that.getPBid(token,query);
+                        console.log(that.selectSpec);
                         this.$apply();
                     }
                 }
@@ -287,13 +289,11 @@
 
             let res = await api.getPBid({token: token, PRid: PRid, query: query, method: 'POST'})
 
-            return res.data.data.PBid
+            return res.data.data;
         }
 
         async onLoad(param) {
             let prId = param.prId;
-
-            // api.getPBid({PRid: prId,token: token,query:{BRcolor: "玫瑰金"}, method: 'POST'})
 
             this.getProductInfo(param.prId);
         }
