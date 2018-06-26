@@ -116,7 +116,7 @@
 
                 image{
                     width: 750rpx;
-                    height: 650rpx;
+                    height: 750rpx;
                 }
                 .m-goods-name {
                     margin-top: 38rpx;
