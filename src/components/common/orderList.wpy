@@ -7,7 +7,7 @@
 
   .list{
     .fz24();
-    color: #666666;
+    color: @common-color;
 
     .m-bar {
       height: 44rpx;
