@@ -74,7 +74,20 @@
                 url: '/pages/login'
             })
         }
+        let all = 0;
+        for (let i =0;i<this.list_data.length;i++){
+            if(this.list_data[i].radio == false){
+                all = all + 1
+            }
         }
+        if(all == this.list_data.length){
+            this.allR = false;
+        }else if(all == 0){
+            this.allR = true;
+        }else{
+            this.allR = false;
+        }
+    }
     methods = {
 //        productTap(v){
 //            console.log(v, 'vvv')
