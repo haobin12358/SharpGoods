@@ -102,8 +102,6 @@
       }
 
       .m-puchase-button {
-        font-size: 28rpx;
-        padding: 2rpx 20rpx;
         background-color: @common-color;
         border-color: @common-color;
         color: #fff;

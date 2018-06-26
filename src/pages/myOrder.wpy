@@ -38,6 +38,7 @@
         async updateOrderStatus(params) {
             let that = this
             let res = await api.updateOrderStatus({token: this.token, query: params, method: 'POST'})
+
             if (res.data.status == '200') {
                 tip.success("操作成功")
                 that.getAllOrder(that.token)
@@ -47,26 +48,23 @@
 
         async getAllOrder(params) {
             let that = this;
-            tip.loading();
             let res = await api.getOrderList({query: {token: params}});
+
             if (res.data.status == '200') {
                 that.list_data = res.data.data;
                 that.$apply()
-                tip.loaded()
             }
-            console.log(res, 'res from order')
         }
 
         async onLoad() {
             let token = wepy.getStorageSync('token')
+
             this.token = token;
             this.$apply()
-            this.getAllOrder(token)
         }
 
         onShow() {
-            let that = this
-            this.getAllOrder(that.token)
+            this.getAllOrder(this.token);
         }
 
         async pay(param) {

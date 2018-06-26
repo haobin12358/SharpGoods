@@ -180,7 +180,6 @@
 
             //  选中类别
             async setProperty(e) {
-                let that = this;
                 //  类别数
                 let len = this.pick.length
                 let token = wepy.getStorageSync('token')
@@ -192,16 +191,11 @@
                 this.$apply();
                 if (able) {
                     //  取消选中
-                    if (that.selected[id] == data.its) {
-                        that.selected[id] = '';
-                        that.selectSpec = {};
+                    if (this.selected[id] == data.its) {
+                        this.selected[id] = '';
                     }
                     else {//  选中
-                        that.selected[id] = data.its;
-                        let key2 = that.pick[id].query;
-                        let query2 = {}
-                        query2[key2] = data.its
-                        that.selectSpec =await that.getPBInfo(token,query2);
+                        this.selected[id] = data.its;
 
                         this.$apply();
                     }
@@ -213,11 +207,12 @@
                 //  循环所有类别  对已选中的进行过滤
                 for (let i = 0; i < len; i++) {
                     if (this.selected[i] != '') {
-                        let key = that.pick[i].query;
-                        let position = that.selected[i]
+                        let key = this.pick[i].query;
+                        let position = this.selected[i]
 
                         //  组成查询参数
                         query[key] = position
+
                         //  需要进行查询
                         get = false
                     }
@@ -228,25 +223,28 @@
                     let loop = await this.getLeft(token, query);
                     let x, y, z;
 
+                    this.selectSpec =await this.getPBInfo(token,query);
                     x = 0;
                     //  先重置后将可选项显示出来
                     this.setTrue(false)
                     for (let i in loop) {
                         let len2 = loop[i].length
-                        let len3 = that.pick[x].choice.length
+                        let len3 = this.pick[x].choice.length
 
                         for (y = 0; y < len2; y++) {
                             for (z = 0; z < len3; z++)
-                                if (that.pick[x].choice[z].its == loop[i][y])
-                                    that.pick[x].choice[z].able = true
+                                if (this.pick[x].choice[z].its == loop[i][y])
+                                    this.pick[x].choice[z].able = true
                         }
                         x++;
                     }
-                    that.$apply()
+                    this.$apply()
                 } else {
                     //  未选中时重置为全部可选
                     this.setTrue(true)
-                    that.$apply()
+                    this.selectSpec = {};
+
+                    this.$apply()
                 }
             },
 
