@@ -6,22 +6,41 @@
     .list_item {
         display: flex;
         align-items: center;
-        border-top: 1px solid #efefef;
-        padding: 35rpx 20rpx;
+        border-bottom: 1px solid #efefef;
+        padding: 0 54rpx 0 41rpx;
         .title {
-            margin-right: 20rpx;
+            font-size: 24rpx;
+            margin: 0 20rpx 0 57rpx;
         }
         .input {
             flex: 1;
-            input {
-                color: #333;
-            }
+            color: #B3B3B3;
+            font-size: 24rpx;
         }
     }
 
     .btn_box {
-        margin-top: 64rpx;
-        padding: 0 24rpx;
+        .submit {
+            margin-top: 390rpx;
+            background-color: #E82F4F;
+            color: #fff;
+            border-radius: 50rpx;
+            line-height: 80rpx;
+            height: 80rpx;
+            width: 500rpx;
+            /*letter-spacing: 40rpx;*/
+            font-size: 38rpx;
+        }
+        .delete {
+            border-radius: 50rpx;
+            line-height: 80rpx;
+            height: 80rpx;
+            width: 500rpx;
+            color: #E82F4F;
+            border-style: solid;
+            border-width: 1px;
+            border-color: #E82F4F;
+        }
     }
 
 </style>
@@ -37,7 +56,7 @@
             <view class="list_item">
                 <view class="title">联系电话:</view>
                 <view class="input">
-                    <input type="text" name="mobile" value="{{editInfo.LOtelphone}}">
+                    <input type="number" name="mobile" value="{{editInfo.LOtelphone}}">
                 </view>
             </view>
             <view class="list_item">
@@ -61,11 +80,12 @@
             <!--</view>-->
         </view>
         <view class="btn_box">
-            <button class="button type_red" formType="submit">修改</button>
+            <button class="submit" formType="submit">修改</button>
         </view>
     </form>
     <view class="btn_box">
-        <button class="button " @tap="deleteAddress({{editInfo.LOid}})">删除</button>
+        <button class="delete" @tap="deleteAddress('{{editInfo.LOid}}')">删除</button>
+        <!--<button class="delete" @tap="deleteAddress( {query: {LOid: editInfo.LOid} })">删除</button>-->
     </view>
 </template>
 <script>
@@ -125,7 +145,6 @@
                 if (mobile == "") {
                     tip.alert("输入联系电话");
                     return false;
-
                 }
                 if (addressDetail == "") {
                     tip.alert("输入详细地址");
@@ -181,7 +200,7 @@
                 if(res.data.status == '200')
                     tip.success("删除成功")
                 else{
-                    tip.error("删除失败")
+                    tip.error(res.data.message)
                 }
             }
         }

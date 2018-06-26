@@ -11,12 +11,12 @@
         padding: 35rpx 20rpx;
         .title {
             margin-right: 20rpx;
+            font-size: 24rpx;
         }
         .input {
             flex: 1;
-            input {
-                color: #333;
-            }
+            color: #B3B3B3;
+            font-size: 24rpx;
         }
     }
 
@@ -24,7 +24,13 @@
         margin-top: 64rpx;
         padding: 0 24rpx;
         .button{
-            background-color: @common-color;
+            margin-top: 501rpx;
+            font-size:38rpx;
+            background-color: #E82F4F;
+            width: 500rpx;
+            height: 80rpx;
+            line-height: 80rpx;
+            border-radius: 50rpx;
             color: #ffffff;
     }
     }
@@ -42,7 +48,7 @@
             <view class="list_item">
                 <view class="title">联系电话:</view>
                 <view class="input">
-                    <input type="text" name="mobile">
+                    <input type="number" name="mobile">
                 </view>
             </view>
             <view class="list_item">
