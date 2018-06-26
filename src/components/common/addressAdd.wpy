@@ -7,8 +7,11 @@
     .list_item {
         display: flex;
         align-items: center;
-        border-top: 1px solid #efefef;
+        /*border-top: 1px solid #efefef;*/
         padding: 35rpx 20rpx;
+        &.my-top-list{
+            border-top: 1px solid #efefef;
+        }
         .title {
             margin-right: 20rpx;
             font-size: 24rpx;
@@ -39,7 +42,7 @@
 <template>
     <form bindsubmit="formSubmit">
         <view class="block">
-            <view class="list_item">
+            <view class="list_item my-top-list">
                 <view class="title">收货人姓名:</view>
                 <view class="input">
                     <input type="text" name="receiverName" value="">

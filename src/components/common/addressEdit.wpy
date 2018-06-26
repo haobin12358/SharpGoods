@@ -8,6 +8,9 @@
         align-items: center;
         border-bottom: 1px solid #efefef;
         padding: 0 54rpx 0 41rpx;
+        &.my-top-list{
+            border-top: 1px solid #efefef;
+        }
         .title {
             font-size: 24rpx;
             margin: 0 20rpx 0 57rpx;
@@ -47,7 +50,7 @@
 <template>
     <form bindsubmit="formSubmit">
         <view class="block">
-            <view class="list_item">
+            <view class="list_item my-top-list">
                 <view class="title">收货人姓名:</view>
                 <view class="input">
                     <input type="text" name="receiverName" value="{{editInfo.LOname}}">
