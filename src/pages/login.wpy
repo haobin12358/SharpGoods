@@ -111,7 +111,6 @@
       navigationBarTitleText: '登录'
     }
     data = {
-
     }
       async Login(phone, pass){
           let that = this

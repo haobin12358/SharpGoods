@@ -42,9 +42,9 @@
         </picker>
       </view>
       <view class="m-li">
-        <picker bindchange="PickerChangeWay" value="{{payment_method.index}}" range="{{payment_method.array}}">
+        <picker bindchange="PickerChangeWay" value="{{logistics_data.index}}" range="{{logistics_data.array}}">
           <view class="picker">
-            物流方式：<image src="/images/icon-more.png" style="width: 42rpx;height: 36rpx;float: right"></image><i class="m-select">{{payment_method.array[payment_method.index]}}</i>
+            物流方式：<image src="/images/icon-more.png" style="width: 42rpx;height: 36rpx;float: right"></image><i class="m-select">{{logistics_data.array[logistics_data.index]}}</i>
           </view>
         </picker>
       </view>
@@ -70,8 +70,11 @@
       <view class="m-scroll">
         <scroll-view class="m-modal-content" scroll-y="true" catchtouchmove="modalTouch">
 
-          <view class="m-modal-title" wx:if="{{tickets.length > 0}}">可用的优惠卷</view>
-          <view class="m-no" wx:if="{{tickets.length <= 0}}">无可使用优惠券</view>
+          <view class="m-modal-title" wx:if="{{tickets.length > 0}}">可用的优惠券</view>
+          <view class="m-no" wx:if="{{tickets.length <= 0}}">
+            <image src="/image/empty_box.jpg" style="width: 140rpx;height: 110rpx;"/>
+            <view>无可用优惠券</view>
+          </view>
           <view class="m-card-box">
             <repeat for="{{tickets}}" key="index" index="index" item="item">
               <Card :list.sync="item" :caid.sync="choose_ticket" @cardTap.user="cardTap"></Card>
@@ -101,6 +104,7 @@
         addressPicke: AddressPicker
     }
     data = {
+
         exist_address: false,
         address: {
             LOname: '',
@@ -122,6 +126,11 @@
             array: ['微信支付'],
             index:0,
           },
+        logistics_data:{
+            sort:'物流方式',
+            array: ['顺丰'],
+            index:0,
+        },
         total_money:0,
         show_modal:false,
         tickets:[],
@@ -148,11 +157,10 @@
       }
     events = {
     }
-    async getAllCar(token) {
-
+    async getAllCar(token,CAid) {
         let that = this;
         tip.loading();
-        let res = await api.getCartList({query: {token: token}})
+        let res = await api.getSelectProduct({method:'POST',query: {CAid:CAid}},token);
         this.all_order = res.data.data;
         let num = 0;
         try{
@@ -179,7 +187,13 @@
         }
         that.$apply()
         }
-
+      async getLogistics() {
+          let that = this;
+          tip.loading();
+          let res = await api.logistics();
+          this.logistics_data.array = res.data.data;
+          that.$apply()
+      }
     async getAllTicket(token) {
         let that = this;
         tip.loading();
@@ -199,9 +213,10 @@
       return _arr;
     }
     onLoad(option){
-        console.log(option)
+
         let that = this
-        let token =  wepy.getStorageSync('token')
+        let token =  wepy.getStorageSync('token');
+        let CAid = option.list.split(',');
         this.token = token;
         this.total_money = 0;
         if(option.from != '') {that.from = option.from }
@@ -214,7 +229,8 @@
         }else {
             this.getAddressInfo(token);
         }
-        this.getAllCar(token);
+        this.getLogistics();
+        this.getAllCar(token,CAid);
         this.getAllTicket(token);
     }
       async submitAll(token,params) {
@@ -519,11 +535,10 @@
       position: absolute;
       bottom: 0;
       width: 100%;
-      height: 60%;
-
+      height: 45%;
       background-color: #f8f8f8;
       .m-modal-head{
-        background-color: @common-color;
+        background-color: #e6e6e6;
         color: #fff;
         z-index: 1001;
         /*display: flex;*/
@@ -538,8 +553,8 @@
       .m-scroll{
         height: 100%;
         overflow-y: auto;
-
         background-color: #fff;
+        color: @grey-font;
         .m-modal-content{
           /*min-height: 80%;*/
           padding-bottom: 75rpx;

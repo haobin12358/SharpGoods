@@ -40,12 +40,14 @@ const getOpenID = (params) => wxRequest(params, pai2+'/goods/other/openid')
 const getPayParam = (params) => wxRequest(params, api2+'/goods/other/payconfig')
 
 //订单
+const getSelectProduct = (params,token) => wxRequest(params,api2 + '/goods/cart/get_select_product?token=' + token);//获取已选中商品
 const getOrderList = (params) => wxRequest(params, api2+'/goods/orders/get_order_list')
 const getOrderInfo = (params) => wxRequest(params, api2+'/goods/orders/get_order_abo?token='+params.token+'&OMid='+params.OMid)
 const updateOrderStatus = (params) => wxRequest(params, api2+ '/goods/orders/update_order_status?token=' + params.token)
 // const getGoodInfo = (params) => wxRequest(params, api2+'/orders/get_order_abo')
 const getComment = (params) => wxRequest(params, api2+'/goods/review/get_review')
-const makeComment = (params) => wxRequest(params, api2+'/goods/review/create_review?token=' + params.token + '&OMid=' + params.OMid)
+const makeComment = (params) => wxRequest(params, api2+'/goods/review/create_review?token=' + params.token + '&OMid=' + params.OMid);
+const logistics = (params) => wxRequest(params,api2 + '/goods/other/logistics');
 
 //购物车 4a72a9ac-4118-4358-8eeb-5ccd155674df
 const getCartList = (params) => wxRequest(params, api2+'/goods/cart/get_all')
@@ -61,6 +63,7 @@ module.exports = {
     getProductInfo,getAddress,editAddress,getText,getLeft,
     getOrderList, getOrderInfo, getCartList, operateCart,
     // getGoodInfo,
+    getSelectProduct,logistics,
     getProductAll,getTicketAll,makeOrder,saveAddress,getAllPrice,
     getPayParam,getOpenID,getComment,makeComment,deleteAddress,
     updateUserInfo, updatePass,updateOrderStatus

@@ -86,7 +86,7 @@
             let all_data = [];
             for(let i =0;i<this.list_data.length;i++){
                 if(this.list_data[i].radio){
-                    all_data.push(this.list_data[i].PBid);
+                    all_data.push(this.list_data[i].CAid);
                 }
             }
             if(all_data.length == 0){
