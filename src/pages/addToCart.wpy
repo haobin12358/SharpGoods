@@ -114,11 +114,10 @@
             }
         }
 
-        async getPBid(token, query) {
+        async getPBInfo(token, query) {
             let PRid = this.commodity.PRid;
             let res = await api.getPBid({token: token, PRid: PRid, query: query, method: 'POST'})
 
-            console.log('getPBid',res);
             return res.data.data
         }
 
@@ -198,11 +197,11 @@
                     }
                     else {//  选中
                         that.selected[id] = data.its;
-                        let key = that.pick[id].query;
-                        let query = {}
-                        query[key] = data.its
-                        that.selectSpec =await that.getPBid(token,query);
-                        console.log(that.selectSpec);
+                        let key2 = that.pick[id].query;
+                        let query2 = {}
+                        query2[key2] = data.its
+                        that.selectSpec =await that.getPBInfo(token,query2);
+
                         this.$apply();
                     }
                 }
@@ -274,7 +273,7 @@
                 } else {
                     //  添加购物车
                     let num = this.count
-                    let PBid = await this.getPBid(token, query)
+                    let PBid = this.selectSpec.PBid;
 
                     this.doPurchase(token, {PBid: PBid, CAnumber: num})
                 }
@@ -283,14 +282,6 @@
 
 
         events = {}
-
-        async getPBid(token, query) {
-            let PRid = this.commodity.PRid
-
-            let res = await api.getPBid({token: token, PRid: PRid, query: query, method: 'POST'})
-
-            return res.data.data;
-        }
 
         async onLoad(param) {
             let prId = param.prId;
