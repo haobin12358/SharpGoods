@@ -1,144 +1,83 @@
 <template>
   <view class="m-evaluation">
-    <view class="m-head">
-      <rate :len.sync="len" :info.sync="list_data"></rate>
-    </view>
+    <rate :len.sync="len" :info.sync="list_data"></rate>
   </view>
 </template>
-<script>
-  import wepy from 'wepy';
-  import Rate from '../components/common/rate'
-  import api from '../api/api'
-  import tip from '../utils/tip'
-  export default class CommondityEvaluation extends wepy.page{
 
-      config = {
-        navigationBarTitleText: '商品评价'
-      }
-      components = {
-          rate: Rate
-      }
-      data = {
-          list_data:{},
-          len: 0,
-          token: ''
-      }
-      async comment(keys, words){
-          let that = this
-          let params = []
-          for(let i = 0; i<that.len; i++){
-              params[i] = {}
-              params[i].PBid = that.list_data.order_abo[i].PBid
-              params[i].REscore = keys[i]
-              params[i].REcontent = words[i]
-          }
-          let res = await api.makeComment({
-              token: that.token,
-              OMid: that.list_data.OMid,
-              query: params,
-              method: 'POST'
-          })
-          if(res.data.status == '200') {
-              tip.success("添加评论成功")
-              setTimeout( () => {
-                  wepy.navigateBack()
-              }, 2000)
-          }
-          else{
-              tip.error("添加评论失败")
-          }
-      }
-      async onLoad(option){
-          let that = this;
-          let token = wepy.getStorageSync('token');
-          that.token = token
-          let res = await api.getOrderInfo({token: token, OMid: option.OMid})
-          if(res.data.status == '200'){
-              that.list_data = res.data.data
-              that.len = res.data.data.order_abo.length
-              this.$broadcast('getLen', that.len);
-              that.$apply()
-          }
-          else tip.error(res.data.message)
-      }
-    methods = {
-    }
-      events = {
-          dealAll(keys, words){
-              this.comment(keys, words)
-          }
-    }
-  }
-</script>
 <style scoped lang="less" rel="stylesheet/less">
   @import "../../src/styles/common";
-  .m-evaluation{
-    width: 100%;
-    background-color: #f8f8f8;
-    .m-head{
-      width: 95%;
-      display: flex;
-      flex-flow: row;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 30rpx;
-      padding: @margin-interval;
-      background-color: #fff;
 
-      .m-left{
-        display: flex;
-        align-items: center;
-      }
-    }
-    .m-content{
-      .m-content-one{
-        width: 95%;
-        padding: 0 @margin-interval;
-        background-color: #fff;
-        margin: 20rpx 0;
-        .m-product-title{
-          width: 100%;
-          padding: @margin-interval 0 ;
-          display: flex;
-          align-items: center;
-
-        }
-        .m-textarea{
-          min-height: 100rpx ;
-          width: 80%;
-          border: 1px solid @border-color;
-          padding: @margin-interval;
-          margin-left: 50rpx;
-          font-size: 30rpx;
-        }
-        .m-foot{
-          width: 100%;
-          display: flex;
-          flex-flow: row;
-          font-size: 30rpx;
-          align-items: center;
-          margin: 20rpx;
-        }
-
-      }
-    }
-    .m-foot-b{
-      width: 100%;
-      background-color: #fff;
-      display: flex;
-      justify-content: center;
-      .m-btn{
-        background-color: #fff;
-        width: 50%;
-        line-height: 100rpx;
-        font-size: 30rpx;
-        margin: @margin-interval;
-      }
-    }
-  }
-  .m-star-box{
-    display: flex;
-    flex-flow: row;
-    align-items: center;
-  }
 </style>
+
+<script>
+    import wepy from 'wepy';
+    import Rate from '../components/common/rate'
+    import api from '../api/api'
+    import tip from '../utils/tip'
+
+    export default class CommondityEvaluation extends wepy.page{
+        config = {
+            navigationBarTitleText: '商品评价'
+        }
+        components = {
+            rate: Rate
+        }
+        data = {
+            list_data:{},
+            len: 0,
+            token: ''
+        }
+        async comment(keys, words){
+            let that = this
+            let params = []
+
+            for(let i = 0; i<that.len; i++){
+                params[i] = {}
+                params[i].PBid = that.list_data.order_abo[i].PBid
+                params[i].REscore = keys[i]
+                params[i].REcontent = words[i]
+            }
+
+            let res = await api.makeComment({
+                token: that.token,
+                OMid: that.list_data.OMid,
+                query: params,
+                method: 'POST'
+            })
+
+            if(res.data.status == '200') {
+                tip.success("添加评论成功")
+                setTimeout( () => {
+                    wepy.navigateBack()
+                }, 2000)
+            } else{
+                tip.error("添加评论失败")
+            }
+        }
+        async onLoad(option){
+            let that = this;
+            let token = wepy.getStorageSync('token');
+            that.token = token
+            let res = await api.getOrderInfo({token: token, OMid: option.OMid})
+
+            if(res.data.status == '200'){
+                that.list_data = res.data.data
+                that.len = res.data.data.order_abo.length
+                this.$broadcast('getLen', that.len);
+                that.$apply()
+            } else{
+                tip.error(res.data.message);
+            }
+        }
+        methods = {
+
+        }
+        events = {
+
+            dealAll(keys, words){
+                this.comment(keys, words)
+            }
+        }
+    }
+</script>
+
