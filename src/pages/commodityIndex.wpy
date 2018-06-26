@@ -210,12 +210,7 @@
 
             video{
                 width: 100%;
-            }
-            view{
-                width: 698rpx;
-                height: 450rpx;
-                z-index: 10;
-                background-color: #5fc16c;
+                height: 356rpx;
             }
         }
 
