@@ -45,18 +45,14 @@
         let that = this;
         tip.loading();
         let res = await api.getCartList({query: {token: params}})
-        let total = 0
+
         if(res.data.status == '200'){
             that.list_data = res.data.data;
             for(let j = 0;j<that.list_data.length;j++){
                 that.list_data[j].radio = false;
             }
-            for(let i=0;i< that.list_data.length;i++){
-              total += Number(that.list_data[i].CAnumber * that.list_data[i].PBprice)
-            }
-            total = total.toFixed(2)
-            that.total_money = total
-
+            that.allR = false;
+            that.total_money = 0.00;
             that.$apply()
             tip.loaded()
         }
@@ -74,19 +70,19 @@
                 url: '/pages/login'
             })
         }
-        let all = 0;
-        for (let i =0;i<this.list_data.length;i++){
-            if(this.list_data[i].radio == false){
-                all = all + 1
-            }
-        }
-        if(all == this.list_data.length){
-            this.allR = false;
-        }else if(all == 0){
-            this.allR = true;
-        }else{
-            this.allR = false;
-        }
+        // let all = 0;
+        // for (let i =0;i<this.list_data.length;i++){
+        //     if(this.list_data[i].radio == false){
+        //         all = all + 1
+        //     }
+        // }
+        // if(all == this.list_data.length){
+        //     this.allR = false;
+        // }else if(all == 0){
+        //     this.allR = true;
+        // }else{
+        //     this.allR = false;
+        // }
     }
     methods = {
 //        productTap(v){
@@ -120,6 +116,7 @@
             this.getAllCart(that.token)
         },
         radioTap(v){
+            let that = this;
             this.list_data[v].radio = !this.list_data[v].radio;
             let all = 0;
             for (let i =0;i<this.list_data.length;i++){
@@ -134,12 +131,32 @@
             }else{
                 this.allR = false;
             }
-            this.$apply();
+            let total = 0
+
+              for(let i=0;i< that.list_data.length;i++){
+                if(that.list_data[i].radio == true){
+                    total += Number(that.list_data[i].CAnumber * that.list_data[i].PBprice);
+                }
+              }
+              total = total.toFixed(2);
+              this.total_money = total
+              this.$apply();
         },
         allRadio(){
+            let that = this;
             this.allR = !this.allR;
             for (let i =0;i<this.list_data.length;i++){
                 this.list_data[i].radio = this.allR;
+            }
+            let total = 0
+            if(this.allR){
+                for(let i=0;i< that.list_data.length;i++){
+                    total += Number(that.list_data[i].CAnumber * that.list_data[i].PBprice)
+                }
+                total = total.toFixed(2);
+                this.total_money = total
+            }else{
+                this.total_money = 0.00;
             }
             this.$apply();
         }

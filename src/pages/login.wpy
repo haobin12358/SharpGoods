@@ -17,20 +17,19 @@
       background: #fff;
       width: 678rpx;
       color: #515151;
-      text{
-        width: 150rpx;
-        text-align: right;
-      }
+
       .m-icon {
         width: 50rpx;
         height: 50rpx;
-        /*padding-right: 30rpx;*/
+        padding-right: 30rpx;
       }
       .m-phone {
         font-size: 30rpx;
+        width: 500rpx;
       }
       .m-code {
         font-size: 30rpx;
+        width: 500rpx;
       }
     }
     .m-forget{
