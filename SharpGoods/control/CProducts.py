@@ -143,6 +143,12 @@ class CProducts():
             print "=================product================="
             if not product:
                 return SYSTEM_ERROR
+            product_info = {}
+            product_info["PRid"] = PRid
+            product_info["PRimage"] = product.PRimage
+
+            product_infos.append(product_info)
+            '''
             product_price = [9999999, -1]
             product_volue = 0
             product_price_list = self.sproduct.get_pbprice_by_prid(PRid)
@@ -219,6 +225,7 @@ class CProducts():
                         product_info["PRquality"][BRkey]["choice"] = []
                         product_info["PRquality"][BRkey]["choice"].append(BRvalue)
             product_infos.append(product_info)
+        '''
         response_of_product = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         response_of_product["data"] = product_infos
         return response_of_product
