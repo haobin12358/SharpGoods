@@ -1,14 +1,16 @@
 <style scoped lang="less" rel="stylesheet/less">
   @import "../styles/common";
   .m-bar{
-    width: 100%;
+    width: 97%;
     font-size: 30rpx;
     border-bottom: 1rpx solid @border-color;
     padding: 40rpx 0;
+    padding-right: 20rpx;
     display: flex;
     flex-flow: row;
     justify-content: space-around;
     align-items: center;
+    color: #515151;
     &.m-top-border{
       border-top: 1rpx solid @border-color;
     }

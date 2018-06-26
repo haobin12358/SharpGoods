@@ -3,12 +3,13 @@
   .m-info-form {
     margin-top: 20 rpx;
     .m-bar{
-      width: 100%;
+      width: 95%;
       font-size: 30rpx;
       float: left;
       border-bottom: 1rpx solid @border-color;
-      padding: 30rpx 0;
-      margin: 20rpx 0;
+      padding: 40rpx 0;
+      padding-right: 45rpx;
+      /*margin: 20rpx 0;*/
       display: flex;
       flex-flow: row;
       align-items: center;
@@ -23,8 +24,8 @@
       .m-info-content{
         float: right;
         text-align: right;
-        margin: 0 40rpx;
-        color: @grey-font;
+        /*margin: 0 40rpx;*/
+        /*color: @grey-font;*/
       }
     }
   }
@@ -45,16 +46,15 @@
   }
   .m-sex-box{
     .m-sex{
-      width: 100rpx;
-      height: 70rpx;
+      width: 60rpx;
+      height: 40rpx;
     }
   }
-
 </style>
 <template>
 <view class="m-info-form">
   <form bindsubmit="formSubmit">
-    <view class="m-bar">
+    <view class="m-bar ">
       <view class="m-info-prefix">头像</view>
       <image wx:if="{{index == 0 }}" class="m-avatar" src="../images/test2.png"></image>
       <image wx:else class="m-avatar" src="../images/test.png"></image>

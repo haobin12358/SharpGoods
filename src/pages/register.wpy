@@ -3,6 +3,7 @@
   .m-info{
     width: 100%;
     margin-top: 130rpx;
+    color:#515151;
   }
   .m-section {
     margin: 40rpx 0;
@@ -73,6 +74,8 @@
     .m-button {
       width: 690rpx;
       border-radius: 20px;
+      height:80rpx;
+      line-height:80rpx;
       background-color: @common-color;
       color: #ffffff;
     }
