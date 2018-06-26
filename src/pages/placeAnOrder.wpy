@@ -61,7 +61,7 @@
       <view class="m-btn m-active" @tap="placeAnOrder">支付</view>
     </foot>
   </view>
-  <view class="m-cover" catchtouchmove="Touch" wx:if="{{show_modal}}">
+  <view class="m-cover" catchtouchmove="Touch" wx:if="{{show_modal}}" catchtap="cancelModal">
     <view class="m-modal" >
       <view class="m-modal-head">
         <image src="/image/back.png" style="width: 20rpx; height: 30rpx;" catchtap="modalBack"></image>
@@ -363,6 +363,9 @@
         let token ='';
         let that = this;
       },
+        cancelModal(){
+            this.show_modal = false;
+        },
       cardTap(v){
           let that = this
           this.show_modal = false;
