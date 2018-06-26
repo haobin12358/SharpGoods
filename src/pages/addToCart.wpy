@@ -193,7 +193,8 @@
                 if (able) {
                     //  取消选中
                     if (that.selected[id] == data.its) {
-                        that.selected[id] = ''
+                        that.selected[id] = '';
+                        that.selectSpec = {};
                     }
                     else {//  选中
                         that.selected[id] = data.its;
