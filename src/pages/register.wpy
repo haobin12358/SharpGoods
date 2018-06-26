@@ -10,10 +10,14 @@
     align-items: center;
     padding: 20rpx 30rpx;
     border-bottom: 1px solid #dbdbdb;
+    text{
+      width: 150rpx;
+      text-align: right;
+    }
     .m-icon {
       width: 50rpx;
       height: 50rpx;
-      padding-right: 30rpx;
+      /*padding-right: 30rpx;*/
     }
     .m-post {
       font-size: 30rpx;
@@ -32,6 +36,7 @@
       background-color: #FFF;
       height: 100rpx;
       z-index: 0;
+      width:202rpx;
     }
     .m-icon {
       width: 50rpx;
@@ -52,7 +57,7 @@
   }
 
   .m-form-selector {
-    background-color: #f8f8f8;
+    /*background-color: #f8f8f8;*/
     text-align: center;
     font-size: 30rpx;
     margin-top: 140rpx;
@@ -111,18 +116,22 @@
     <form bindsubmit="formSubmit" bindreset="formReset">
       <view class="m-section">
         <image class="m-icon" src='/image/phone.jpg'></image>
-        <input class="m-post" name="phone" type="number" bindinput="phoneInput" placeholder="手机号" maxlength="11" focus="true" />
+        <text>手机号：</text>
+        <input class="m-post" name="phone" type="number" bindinput="phoneInput" placeholder="请输入手机号" maxlength="11" focus="true" />
       </view>
       <view class="m-section">
         <image class="m-icon" src='/image/person_change_pwd.jpg'></image>
-        <input class="m-post" password name="pass" type="number" placeholder="密码" />
+        <text>密   码：</text>
+        <input class="m-post" password name="pass" type="number" placeholder="请输入密码" />
       </view>
       <view class="m-section">
         <image class="m-icon" src='/image/person_yqm.jpg'></image>
-        <input class="m-post" name="code" type="text" placeholder="邀请码(可不填)" />
+        <text>邀请码：</text>
+        <input class="m-post" name="code" type="text" placeholder="请输入邀请码(可不填)" />
       </view>
       <view class="m-validation">
         <image class="m-icon" src='/image/mobile_phone.jpg'></image>
+        <text>验证码：</text>
         <input class="m-vali" name="vali" type="text" placeholder="请输入验证码.." />
         <button wx:if="{{disable}}" class="m-btn m-btn-disab" >{{time}}秒</button>
         <button wx:else="{{disable}}" class="m-btn " @tap="sendCode">获取验证码</button>

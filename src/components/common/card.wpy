@@ -1,13 +1,27 @@
 <template>
-  <view class="m-one-card {{ caid.CAid == list.CAid? 'm-active' : '' }} {{list.Carstatus==2?'m-disable':''}} " catchtap="clickCard({{list}})" >
-    <view class="m-modal-left">
-      <view class="m-price">{{list.COcut}}</view>
-      <view class="instruction">{{list.COuse}}</view>
+  <!--<view class="m-one-card {{ caid.CAid == list.CAid? 'm-active' : '' }} {{list.Carstatus==2?'m-disable':''}} " catchtap="clickCard({{list}})" >-->
+    <!--<view class="m-modal-left">-->
+      <!--<view class="m-price">{{list.COcut}}</view>-->
+      <!--<view class="instruction">{{list.COuse}}</view>-->
+    <!--</view>-->
+    <!--<view class="m-modal-left">-->
+      <!--<view class="m-time">{{list.COstart}}</view>-->
+      <!--<view class="m-time">至{{list.COend}}</view>-->
+    <!--</view>-->
+
+    <!---->
+  <!--</view>-->
+  <view class="my-card" catchtap="clickCard({{list}})">
+    <image src="/image/yhq_active.png" wx:if="{{caid.CAid == list.CAid}}" class="my-img" style="width: 590rpx;height: 264rpx;"/>
+    <image src="/image/yhq.png"  wx:else class="my-img" style="width: 590rpx;height: 264rpx;"/>
+    <view class="my-card-content">
+      <p  class="my-title">{{list.COcut}}</p>
+      <view>
+        <view class="my-p">{{list.COuse}}</view>
+        <view class="my-p">使用期限：{{list.COstart}}-{{list.COend}}</view>
+      </view>
     </view>
-    <view class="m-modal-left">
-      <view class="m-time">{{list.COstart}}</view>
-      <view class="m-time">至{{list.COend}}</view>
-    </view>
+
   </view>
 </template>
 <script>
@@ -48,6 +62,36 @@
 </script>
 <style scoped lang="less" rel="stylesheet/less">
   @import "../../styles/common";
+  .my-card{
+    position: relative;
+    height: 264rpx;
+    padding: 0 87rpx;
+    margin-top: 20rpx;
+    .my-img{
+      position: absolute;
+      top:0;
+    }
+    .my-card-content{
+      position: absolute;
+      top:0;
+      display: flex;
+      flex-flow: column;
+      justify-content: space-between;
+      .my-p{
+        text-align: center;
+        color: #fff;
+        font-size: 24rpx;
+        width: 590rpx;
+      }
+      p.my-title{
+        width: 590rpx;
+        text-align: center;
+        color: #fff;
+        font-size: 72rpx;
+        margin: 30rpx 0;
+      }
+    }
+  }
   .m-one-card{
     border: 1px solid @border-color;
     border-radius: 5px;

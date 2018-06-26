@@ -64,7 +64,7 @@
   <view class="m-cover" catchtouchmove="Touch" wx:if="{{show_modal}}">
     <view class="m-modal" >
       <view class="m-modal-head">
-        <image src="/images/icon_back.png" style="width: 60rpx; height: 60rpx;" catchtap="modalBack"></image>
+        <image src="/image/back.png" style="width: 20rpx; height: 30rpx;" catchtap="modalBack"></image>
         <view class="m-sure"></view>
       </view>
       <view class="m-scroll">
@@ -144,7 +144,8 @@
           areaCode: '',
         from: '',
         test: 'a test',
-        token : ''
+        token : '',
+        select_list:[]
     }
       async getAddressInfo(token) {
           const res = await api.getAddress({ query: {token: token} });
@@ -204,7 +205,18 @@
         }
         tip.loaded();
     }
-
+      async getAllPrice(productlist,CAid,token) {
+          let that = this;
+          tip.loading();
+          let res = await api.getAllPrice({query: { productlist:productlist,CAid:CAid},token: token, method: 'POST'},);
+          console.log(res.data)
+          if(res.data.status == 200){
+              that.total_money = res.data.data.OMprice;
+              console.log(that.total_money,'adasdadas');
+              that.$apply();
+          }
+          tip.loaded();
+      }
     deal_arr(data,name){
       let _arr = [];
       for(let i = 0;i<data.length;i++){
@@ -216,7 +228,12 @@
 
         let that = this
         let token =  wepy.getStorageSync('token');
-        let CAid = option.list.split(',');
+        let CAid = null;
+        if(option.list){
+            CAid = option.list.split(',');
+            this.select_list = CAid;
+            wepy.setStorageSync('select_list',that.select_list);
+        }
         this.token = token;
         this.total_money = 0;
         if(option.from != '') {that.from = option.from }
@@ -230,7 +247,8 @@
             this.getAddressInfo(token);
         }
         this.getLogistics();
-        this.getAllCar(token,CAid);
+        let sel =  wepy.getStorageSync('select_list');
+        this.getAllCar(token,sel);
         this.getAllTicket(token);
     }
       async submitAll(token,params) {
@@ -265,7 +283,8 @@
               "OMmessage": this.Oabo,
               "OMcointype": "￥",
               "OMstatus": "未支付",
-              "OMprice": this.total_money
+              "OMprice": this.total_money,
+              "OMlogisticsName":this.logistics_data.array[this.logistics_data.index]
           }
           let len = this.all_order.length
           for(let i=0; i<len; i++){
@@ -356,6 +375,19 @@
             }else {
                 this.choose_ticket = v;
             }
+            let sel =  wepy.getStorageSync('select_list');
+            let token =  wepy.getStorageSync('token');
+          let len = this.all_order.length;
+          let param = {};
+          param = {
+              "productlist":[]
+          }
+          for(let i=0; i<len; i++){
+              param.productlist[i] = {};
+              param.productlist[i].PBid = this.all_order[i].PBid;
+              param.productlist[i].PRnumber = this.all_order[i].CAnumber;
+          }
+            that.getAllPrice(param.productlist,that.choose_ticket.CAid,token);
           that.$apply();
       },
       modalTouch(e){
@@ -442,6 +474,7 @@
       background-color: #fff;
       border: 1px solid #f8f8f8;
       border-top: 1px solid #dfdfdf;
+      margin-bottom: 120rpx;
       /*padding: 0 20rpx;*/
       .m-li{
         font-size: 30rpx;

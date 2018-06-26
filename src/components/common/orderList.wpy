@@ -7,7 +7,7 @@
 
   .list{
     .fz24();
-    color: @common-color;
+    color: #666666;
 
     .m-bar {
       height: 44rpx;
@@ -24,57 +24,81 @@
     }
     .m-content {
       display: flex;
-      flex-direction: row;
-      height: 185rpx;
+      height: 192rpx;
       border-bottom: 1px solid #cdcdcd ;
+      box-sizing: border-box;
       .commonPadding(44rpx, 28rpx);
+
 
       .m-business-img{
         width: 120rpx;
         height: 120rpx;
-        border-radius: 5rpx;
+
+        image{
+          border-radius: 5rpx;
+          width: 100%;
+          height: 100%;
+        }
       }
       .m-business-info{
-        .m-business-detail{
+        flex: 1;
+        margin-left: 35rpx;
+        .name{
+          color: #666666;
+          .fz28();
+        }
+        .specification{
+          color: rgb(179,179,179);
+          margin-top: 21rpx;
+        }
+      }
+      .m-business-info-right{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-end;
+
+        .price{
+          color: #666666;
+        }
+        .number{
+          color: rgb(179,179,179);
         }
       }
     }
     .m-address-container{
-      width: 100%;
       text-align: right;
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
-    .m-price-container{
-      width: 100%;
-      text-align: right;
-      color: red;
-      margin-top: 10px;
-      margin-bottom: 10px;
-      .m-business-price{
+      margin-top: 29rpx;
+      margin-bottom: 15rpx;
 
+      .commonPadding(0,0);
+    }
+
+    .m-price-container{
+      text-align: right;
+      margin-bottom: 73rpx;
+
+      .commonPadding(0,0);
+
+      .count{
+        color: @main-color;
       }
     }
-    .m-business-loc{
-      width: 100%;
-      font-size: 28rpx;
-      color: @grey-font;
-      display: flex;
-      flex-direction: row-reverse;
-    }
+
     .m-footer{
       display: flex;
       justify-content: flex-end;
-      width: 100%;
+      margin-bottom: 37rpx;
 
       .m-btn{
-        font-size: 28rpx;
-        border:1px solid @grey-font;
-        background-color: white;
-        padding: 2rpx 20rpx;
+        .fz24();
+        width: 202rpx;
+        height: 52rpx;
+        line-height: 52rpx;
+        border:1px solid @main-color;
+        color: @main-color;
+        background-color: #ffffff;
         border-radius: 20px;
-        width: 200rpx;
-        height: 80rpx;
       }
 
       .m-puchase-button {
@@ -95,20 +119,23 @@
       <view class="m-bar-status"> {{list.OMstatus}}</view>
     </view>
     <view class="m-content" wx:for="{{list.order_abo}}" wx:for-item="good">
-        <image class="m-business-img" src="{{good.PBimage}}"/>
-        <view class="m-business-info">
-          <view class="m-business-detail" >{{good.PRname}} x {{good.PRnumber}}</view>
-          <view class="m-business-detail" wx:for="{{good.PRquality}}" wx:for-item="option"> {{option.choice}}</view>
-          <view class="m-business-price">
-            <view class="m-price">￥{{good.PBprice}}</view>
-          </view>
-        </view>
+      <view class="m-business-img">
+        <image src="{{good.PBimage}}"/>
+      </view>
+      <view class="m-business-info">
+        <view class="name">{{good.PRname}}</view>
+        <view class="specification">颜色分类:{{good.BRcolor}}</view>
+      </view>
+      <view class="m-business-info-right">
+        <view class="price">￥{{good.PBprice}}</view>
+        <view class="number">x {{good.PRnumber}}</view>
+      </view>
     </view>
     <view class="m-address-container">
       <view class="m-address">收货地址：{{list.LOprovince }}{{list.LOcity}}{{list.LOarea}}{{list.LOdetail}}</view>
     </view>
     <view class="m-price-container">
-      <view class="m-business-price">合计：￥{{list.OMprice}}</view>
+      <view >共{{list.order_abo.length}}件商品 合计：<text class="count" >￥{{list.OMprice}}</text> </view>
     </view>
 
     <view class="m-footer" >
