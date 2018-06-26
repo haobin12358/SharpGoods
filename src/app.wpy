@@ -38,7 +38,7 @@
             'pages/baseInfo',
             'pages/setUp',
             'pages/address',
-            'pages/shopCart',
+            'pages/addToCart'
         ],
       window: {
         backgroundTextStyle: 'light',

@@ -102,7 +102,7 @@ export  default class commodityIndex extends wepy.page {
             this.videoIsPlay = false;
             this.videoContext.pause();
             if(token){
-                this.$navigate('/pages/shopCart',{prId: this.commodity.PRid});
+                this.$navigate('/pages/addToCart',{prId: this.commodity.PRid});
             }else{
                 this.$navigate('/pages/login');
             }
