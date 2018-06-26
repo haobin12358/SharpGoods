@@ -474,6 +474,7 @@
       background-color: #fff;
       border: 1px solid #f8f8f8;
       border-top: 1px solid #dfdfdf;
+      margin-bottom: 120rpx;
       /*padding: 0 20rpx;*/
       .m-li{
         font-size: 30rpx;
