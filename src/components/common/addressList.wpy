@@ -14,7 +14,7 @@
                             </view>
                         </view>
                         <view class="arrow"  @tap.stop="edit" data-address="{{item}}">
-                            <image class="m-image" src="../../images/edit.png"></image>
+                            <image class="m-image" src="../../image/edit.jpg"></image>
                         </view>
                     </view>
             </view>
@@ -59,8 +59,8 @@
             },
             refreshList(val){
                 if (val==undefined) return;
-                console.log("val.....",val);
                 this.addressList = val;
+                console.log("addressList:", this.addressList);
                 this.$apply();
             },
             setOrgType (type) {
@@ -94,10 +94,14 @@
     }
 
     .address {
+        height: 930rpx;
+        overflow: hidden;
+        overflow-y: auto;
         .list_box:last-child {
             border-bottom: 1px solid #efefef;
         }
         .address_list {
+            font-size: 24rpx;
             display: flex;
             justify-content: space-between;
             height: 150rpx;
@@ -109,11 +113,13 @@
                 .user_info {
                     color: #1a1a1a;
                     padding-right: 15rpx;
+                    .phone {
+                        padding-left: 20rpx;
+                    }
                 }
                 .active_address {
                     margin-top: 20rpx;
-                    color: @grey-font;
-                    font-size: 25rpx;
+                    // color: @grey-font;
                 }
             }
             .arrow {
@@ -147,6 +153,12 @@
         .button {
             background-color: @common-color;
             color: #fff;
+            border-radius: 50rpx;
+            width: 500rpx;
+            height: 80rpx;
+            line-height: 80rpx;
+            font-size: 38rpx;
+            margin-bottom: 144rpx;
         }
     }
 
