@@ -23,7 +23,8 @@ const getPBid = (params) => wxRequest(params, api2+'/goods/product/get_pbid_by_a
 //个人
 const getUserInfo = (params) => wxRequest(params, api2+'/goods/users/all_info')
 const updateUserInfo = (params) => wxRequest(params, api2+'/goods/users/update_info?token=' + params.token)
-const updatePass = (params) => wxRequest(params, api2+ '/goods/users/update_pwd')
+const updatePass = (params) => wxRequest(params, api2+ '/goods/users/update_pwd');
+const forgetPwd = (params) => wxRequest(params,api2 + '/goods/users/forget_pwd');
 
 //
 // http://120.79.182.43:7444/sharp/goods/product/get_all?
@@ -63,7 +64,7 @@ module.exports = {
     getProductInfo,getAddress,editAddress,getText,getLeft,
     getOrderList, getOrderInfo, getCartList, operateCart,
     // getGoodInfo,
-    getSelectProduct,logistics,
+    getSelectProduct,logistics,forgetPwd,
     getProductAll,getTicketAll,makeOrder,saveAddress,getAllPrice,
     getPayParam,getOpenID,getComment,makeComment,deleteAddress,
     updateUserInfo, updatePass,updateOrderStatus

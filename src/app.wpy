@@ -38,7 +38,8 @@
             'pages/baseInfo',
             'pages/setUp',
             'pages/address',
-            'pages/addToCart'
+            'pages/addToCart',
+            'pages/forgetPwd'
         ],
       window: {
         backgroundTextStyle: 'light',
