@@ -64,7 +64,7 @@
   <view class="m-cover" catchtouchmove="Touch" wx:if="{{show_modal}}">
     <view class="m-modal" >
       <view class="m-modal-head">
-        <image src="/images/icon_back.png" style="width: 60rpx; height: 60rpx;" catchtap="modalBack"></image>
+        <image src="/image/back.png" style="width: 60rpx; height: 60rpx;" catchtap="modalBack"></image>
         <view class="m-sure"></view>
       </view>
       <view class="m-scroll">
