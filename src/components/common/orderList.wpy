@@ -1,83 +1,42 @@
-<template>
-  <view class="list" >
-    <view class="m-bar">
-      <view class="m-bar-time">{{list.OMtime}}</view>
-      <view class="m-bar-status"> {{list.OMstatus}}</view>
-    </view>
-    <view class="m-content" wx:for="{{list.order_abo}}" wx:for-item="good">
-      <view class="m-content-row">
-        <image class="m-business-img" src="{{good.PBimage}}"  style="width: 100rpx;height: 100rpx; margin: 20rpx;"/>
-        <view class="m-business-info">
-          <view class="m-business-detail" >{{good.PRname}} x {{good.PRnumber}}</view>
-          <view class="m-business-detail" wx:for="{{good.PRquality}}" wx:for-item="option"> {{option.choice}}</view>
-          <view class="m-business-price">
-            <view class="m-price">￥{{good.PBprice}}</view>
-          </view>
-        </view>
-      </view>
-      <view class="m-content-line"></view>
-    </view>
-    <view class="m-address-container">
-      <view class="m-address">收货地址：{{list.LOprovince }}{{list.LOcity}}{{list.LOarea}}{{list.LOdetail}}</view>
-    </view>
-    <view class="m-price-container">
-      <view class="m-business-price">合计：￥{{list.OMprice}}</view>
-    </view>
-
-
-    <view class="m-footer" >
-      <button class="m-btn " wx:if="{{list.OMstatus == '已支付' || list.OMstatus == '配送中'}}" @tap="confirmGet({{list.OMid}})">确认收货</button>
-      <button class="m-btn " wx:if="{{list.OMstatus == '已完成'}}" @tap="evaluateTap({{list}})">评价</button>
-      <!--<button class="m-btn " wx:if="{{list.OMstatus == '已评价'}}" @tap="evaluateLookTap({{list}})">评价详情</button>-->
-      <button class="m-btn m-puchase-button" wx:if="{{list.OMstatus == '未支付'}}" @tap="pay({{list.OMid}})">支付</button>
-      <button class="m-btn" wx:if="{{list.OMstatus == '未支付'}}" @tap="cancelTap({{list.OMid}})">取消订单</button>
-    </view>
-  </view>
-</template>
 <style scoped lang="less" rel="stylesheet/less">
   @import "../../styles/common";
+
+  .commonPadding(@paddingTop,@paddingBottom){
+    padding: @paddingTop 39rpx @paddingBottom 41rpx;
+  }
+
   .list{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: @margin-interval ;
-    padding-left: 0;
-    padding-right: 40rpx;
-    border-bottom: 30rpx solid @border-color;
+    .fz24();
+    color: #666666;
+
     .m-bar {
-      height: 70rpx;
-      width: 100%;
-      justify-content: space-between;
-      border-bottom: 1rpx solid @border-color;
+      height: 44rpx;
       display: flex;
-      font-size: 25rpx;
+      justify-content: space-between;
       align-items: center;
+      background-color: #e7e7e7;
+      .commonPadding(15rpx, 12rpx);
+
+      .m-bar-status{
+        color: @main-color;
+        .fz18();
+      }
     }
     .m-content {
       display: flex;
-      width: 100%;
-      flex-direction: column;
-      .m-content-row{
-        display: flex;
-        width: 100%;
-        flex-direction: row;
-      }
+      flex-direction: row;
+      height: 185rpx;
+      border-bottom: 1px solid #cdcdcd ;
+      .commonPadding(44rpx, 28rpx);
+
       .m-business-img{
-        background-color: #bfbfbf;
-        margin-right: @margin-interval;
+        width: 120rpx;
+        height: 120rpx;
+        border-radius: 5rpx;
       }
       .m-business-info{
-        font-size: 25rpx;
-        line-height: 60rpx;
-        width: 100%;
-        padding-right: @margin-interval;
         .m-business-detail{
         }
-      }
-      .m-content-line{
-        background-color: @border-color;
-        height: 1rpx;
-        width: 100%;
       }
     }
     .m-address-container{
@@ -107,6 +66,7 @@
       display: flex;
       justify-content: flex-end;
       width: 100%;
+
       .m-btn{
         font-size: 28rpx;
         border:1px solid @grey-font;
@@ -116,6 +76,7 @@
         width: 200rpx;
         height: 80rpx;
       }
+
       .m-puchase-button {
         font-size: 28rpx;
         padding: 2rpx 20rpx;
@@ -126,6 +87,39 @@
     }
   }
 </style>
+
+<template>
+  <view class="list" >
+    <view class="m-bar">
+      <view class="m-bar-time">{{list.OMtime}}</view>
+      <view class="m-bar-status"> {{list.OMstatus}}</view>
+    </view>
+    <view class="m-content" wx:for="{{list.order_abo}}" wx:for-item="good">
+        <image class="m-business-img" src="{{good.PBimage}}"/>
+        <view class="m-business-info">
+          <view class="m-business-detail" >{{good.PRname}} x {{good.PRnumber}}</view>
+          <view class="m-business-detail" wx:for="{{good.PRquality}}" wx:for-item="option"> {{option.choice}}</view>
+          <view class="m-business-price">
+            <view class="m-price">￥{{good.PBprice}}</view>
+          </view>
+        </view>
+    </view>
+    <view class="m-address-container">
+      <view class="m-address">收货地址：{{list.LOprovince }}{{list.LOcity}}{{list.LOarea}}{{list.LOdetail}}</view>
+    </view>
+    <view class="m-price-container">
+      <view class="m-business-price">合计：￥{{list.OMprice}}</view>
+    </view>
+
+    <view class="m-footer" >
+      <button class="m-btn " wx:if="{{list.OMstatus == '已支付' || list.OMstatus == '配送中'}}" @tap="confirmGet({{list.OMid}})">确认收货</button>
+      <button class="m-btn " wx:if="{{list.OMstatus == '已完成'}}" @tap="evaluateTap({{list}})">评价</button>
+      <!--<button class="m-btn " wx:if="{{list.OMstatus == '已评价'}}" @tap="evaluateLookTap({{list}})">评价详情</button>-->
+      <button class="m-btn m-puchase-button" wx:if="{{list.OMstatus == '未支付'}}" @tap="pay({{list.OMid}})">支付</button>
+      <button class="m-btn" wx:if="{{list.OMstatus == '未支付'}}" @tap="cancelTap({{list.OMid}})">取消订单</button>
+    </view>
+  </view>
+</template>
 
 <script>
     import wepy from 'wepy';

@@ -13,11 +13,11 @@
     </view>
     <view class="page_bd">
         <scroll-view scroll-y="true" class="scroll-area" >
-            <view class="opt-box" wx:for="{{pick}}" wx:key="key" wx:for-index="ex" data-id="item.id">
+            <view class="opt-box" wx:for="{{pick}}" wx:key="id" wx:for-index="ex" data-id="item.id">
                 <view class="title">{{item.name}}</view>
                 <view class="items">
                     <view class="item {{ option.its == selected[ex] ? 'active' :'' }} {{ option.able ? '': 'disabled'}}"
-                          wx:for="{{item.choice}}" wx:key="key2" wx:for-item="option" @tap.stop="setProperty" data-data="{{option}}"
+                          wx:for="{{item.choice}}" wx:key="its" wx:for-item="option" @tap.stop="setProperty" data-data="{{option}}"
                           data-id="{{item.id}}" data-able="{{option.able}}" data-a="{{option.its}}"
                           data-b="{{selected[ex]}}">
                         {{option.its}}
