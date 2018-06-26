@@ -91,7 +91,10 @@
           <text>密   码：</text>
           <input class="m-code" password name="code"  placeholder="请输入密码" />
         </view>
-        <view class="m-forget">忘记密码？</view>
+        <navigator class="m-item" url="/pages/forgetPwd">
+          <view class="m-forget" >忘记密码？</view>
+        </navigator>
+
         <view class="m-btn_confirm">
           <button class="m-button" formType="submit">登录</button>
           <button class="m-button m-btn-reg" @tap="registerTap">注册</button>
@@ -118,7 +121,7 @@
     }
       async Login(phone, pass){
           let that = this
-          let res = await api.login({query: {UStelphone: phone, USpassword: pass}, method: 'POST'})
+          let res = await api.login({query: {UStelphone: phone, USpassword: pass}, method: 'POST'});
           if(res.data.status == 200){
               wepy.setStorageSync('token', res.data.data.token);
               wepy.navigateBack();
