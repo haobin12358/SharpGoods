@@ -115,6 +115,13 @@
             </view>
             <view class="m-item-info">{{ userInfo.USinvate }}</view>
         </view>
+        <view class="m-item">
+            <view class="m-item_content">
+                <image class="m-item_img" src="../image/phone.jpg"></image>
+                <view class="m-text">联系我们</view>
+            </view>
+            <view class="m-item-info" @tap="tapCallUs">{{phoneNumber}}</view>
+        </view>
     </view>
 </template>
 
@@ -131,7 +138,8 @@
         data = {
             userInfo: {USname: '', USsex: '', UScoin: 0, USinvate: ''},
             isToken: false,
-            token: ''
+            token: '',
+            phoneNumber: '18657166811'
         }
 
         async getPersonInfo(token) {
@@ -162,6 +170,24 @@
         }
 
         methods = {
+            //联系我们
+            tapCallUs(){
+                wepy.showModal({
+                    title: `联系我们`,
+                    content: `拨打${this.phoneNumber}(工作人员电话)?`,
+                }).then(
+                    p => {
+                        if (p.confirm) {
+                            wx.makePhoneCall({
+                                phoneNumber: this.phoneNumber
+                            })
+                        }
+                    }
+                )
+
+
+
+            }
         }
     }
 </script>
