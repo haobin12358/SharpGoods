@@ -30,13 +30,13 @@
     </view>
     <view class="commodity-intro">
         <view class="commodity-video" @tap="changVideoPlayState">
-            <video id="intro-video" src="{{ commodity.PRvideo }}" show-center-play-btn="true"
+            <video wx:if="{{putVideo}}" id="intro-video" src="{{ commodity.PRvideo }}" show-center-play-btn="true"
                    controls="true" show-fullscreen-btn="true" binderror="videoErrorCallback"
-                    poster="{{commodity.PRvideostart}}"></video>
+                   objectFit="fill" poster="{{ commodity.PRvideostart}}"></video>
         </view>
         <view class="imgs-box">
             <view wx:for="{{ commodity.PRaboimage }}" wx:key="item" class="img" @tap="previewImages({{item}})">
-                <image src="{{item}}" mode="widthFix"></image>
+                <image src="{{item}}" mode="widthFix" lazy-load="true"></image>
             </view>
         </view>
     </view>
@@ -58,7 +58,8 @@
                 PRname: '化妆镜',
                 PRid: ''
             },
-            videoIsPlay: false
+            videoIsPlay: false,
+            putVideo: false
         }
 
         async getProductInfo(pdId){
@@ -74,8 +75,33 @@
         }
 
         onLoad(param){
+            let that = this;
+
             this.videoContext = wx.createVideoContext('intro-video');
             this.getProductInfo(param.prId);
+
+            // setTimeout(()=>{
+            //     that.putVideo = true;
+            //     that.$apply();
+            // },3000);
+        }
+
+        onPageScroll(){
+            if(!this.putVideo){
+                let query = wx.createSelectorQuery(),
+                    sysInfo = wx.getSystemInfoSync(),
+                    that = this
+
+
+                query.select('.commodity-video').boundingClientRect()
+                query.selectViewport().scrollOffset()
+                query.exec(function(res){
+                    if(sysInfo.windowHeight+res[1].scrollTop-38 > res[0].top){
+                        that.putVideo = true;
+                        that.$apply();
+                    }
+                })
+            }
         }
 
         //  获取版本详情
@@ -112,6 +138,12 @@
                 }else{
                     this.$navigate('/pages/login');
                 }
+            },
+
+            //  将video放上    开始加载
+            putOnVideo(){
+                this.putVideo = true;
+
             },
 
             //  点击video任意一处 暂停播放
@@ -202,15 +234,18 @@
     }
     /*商品详情*/
     .commodity-intro {
-        padding-left: 61rpx;
-        padding-right: 58rpx;
 
         .commodity-video{
             margin-bottom: 50rpx;
 
             video{
                 width: 100%;
-                height: 356rpx;
+                /*height: 400rpx;*/
+            }
+
+            image{
+                width: 100%;
+                height: 450rpx;
             }
         }
 
@@ -231,8 +266,5 @@
             }
         }
 
-
     }
-
-
 </style>

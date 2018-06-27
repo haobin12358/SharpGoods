@@ -8,6 +8,7 @@
   .list{
     .fz24();
     color: #666666;
+    padding-bottom: 37rpx;
 
     .m-bar {
       height: 44rpx;
@@ -76,7 +77,6 @@
 
     .m-price-container{
       text-align: right;
-      margin-bottom: 73rpx;
 
       .commonPadding(0,0);
 
@@ -86,11 +86,10 @@
     }
 
     .m-footer{
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 37rpx;
+        display: flex;
+        justify-content: flex-end;
 
-      .m-btn{
+        .m-btn{
         .fz24();
         width: 202rpx;
         height: 52rpx;
@@ -98,7 +97,7 @@
         border:1px solid @main-color;
         color: @main-color;
         background-color: #ffffff;
-        border-radius: 20px;
+        border-radius: 20rpx;
       }
 
       .m-puchase-button {
@@ -107,6 +106,9 @@
         color: #fff;
       }
     }
+      .m-footer-contain-btn{
+          margin-top: 73rpx;
+      }
   }
 </style>
 
@@ -135,8 +137,7 @@
     <view class="m-price-container">
       <view >共{{list.order_abo.length}}件商品 合计：<text class="count" >￥{{list.OMprice}}</text> </view>
     </view>
-
-    <view class="m-footer" >
+      <view class="m-footer {{(list.OMstatus == '已评价' || list.OMstatus == '已取消') ?  '':'m-footer-contain-btn' }}">
       <button class="m-btn " wx:if="{{list.OMstatus == '已支付' || list.OMstatus == '配送中'}}" @tap="confirmGet({{list.OMid}})">确认收货</button>
       <button class="m-btn " wx:if="{{list.OMstatus == '已完成'}}" @tap="evaluateTap({{list}})">评价</button>
       <!--<button class="m-btn " wx:if="{{list.OMstatus == '已评价'}}" @tap="evaluateLookTap({{list}})">评价详情</button>-->
