@@ -64,10 +64,7 @@
             },
             version: '',
             color: '',
-            pick: [{name: '版本选择'}, {choice: [{its: 1.0, able: true}, {its: 2.0, able: true}]}, {
-                name: '颜色选择',
-                choice: [{its: '红', able: true}, {its: '蓝', able: true}, {its: '白', able: true}]
-            }],
+            pick: [],
             selected: ['', '', '', '', ''],  //  记录每个类别选中项
             selectable: [[], [], [], [], []],
             num: 0,
