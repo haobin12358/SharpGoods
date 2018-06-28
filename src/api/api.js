@@ -13,7 +13,7 @@ const login = (params) => wxRequest(params, api2+'/goods/users/login')
 const register = (params) => wxRequest(params, api2+'/goods/users/register')
 
 //首页
-const getProductAll = () => wxRequest('',api2+'/goods/product/get_all')
+const getProductAll = (params) => wxRequest(params,api2+'/goods/product/get_all?htv='+params)
 
 //商品详情
 const getProductInfo = (params) => wxRequest(params, api2+'/goods/product/get_info_by_id')

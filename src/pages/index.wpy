@@ -17,7 +17,7 @@
           indicator-color="#f2f2f2">
     <block wx:for="{{list}}" wx:key="key" key="item" item="item">
       <swiper-item>
-        <image class="swiper-img" src="{{ item.PRimage }}" @tap="tapToProductDetail({{item.PRid}})"></image>
+        <image class="swiper-img" mode="widthFix" src="{{ item.PRimage }}" @tap="tapToProductDetail('{{item.PRid}}')"></image>
       </swiper-item>
     </block>
   </swiper>
@@ -38,12 +38,23 @@
         }
 
         async getProductList() {
+            let htv;
+            wx.getSystemInfo({
+              success: res => {
+                  htv = res.windowHeight/res.windowWidth
+                  console.log("宽高比：", htv)
+              }
+            })
             let that = this;
-            let res = await api.getProductAll()
+            let res = await api.getProductAll({
+                query:{
+                    htv: htv
+                },
+                method: 'GET'
+            })
 
             if (res.data.status == '200') {
                 that.list = res.data.data;
-
                 that.$apply()
             } else {
                 tip.error(res.data.message)
