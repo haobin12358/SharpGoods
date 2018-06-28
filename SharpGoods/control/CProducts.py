@@ -110,6 +110,11 @@ class CProducts():
         print "=================PRid_list================="
         print PRid_list
         print "=================PRid_list================="
+        args = request.args.to_dict()
+        if "htv" not in args:
+            return PARAMS_MISS
+        htv = float(args.get("htv"))
+        hdp = "hhdp" if htv > 1.6 else "dhdp"
         product_infos = []
         for PRid in PRid_list:
             product = self.sproduct.get_product_by_prid(PRid)
@@ -120,7 +125,7 @@ class CProducts():
                 return SYSTEM_ERROR
             product_info = {}
             product_info["PRid"] = PRid
-            product_info["PRimage"] = product.PRimage
+            product_info["PRimage"] = product.PRimage.format(hdp)
 
             product_infos.append(product_info)
             '''

@@ -9,6 +9,7 @@ from common.timeformate import get_web_time_str, format_forweb_no_HMS
 from common.import_status import import_status
 import json
 
+
 class CCoupons():
     def __init__(self):
         from service.SCoupons import SCoupons
