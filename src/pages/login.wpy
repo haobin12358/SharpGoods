@@ -15,7 +15,6 @@
       padding: 40rpx 72rpx;
       border-bottom: 1px solid #dbdbdb;
       background: #fff;
-      width: 678rpx;
       color: #515151;
 
       .m-icon {
@@ -25,11 +24,11 @@
       }
       .m-phone {
         font-size: 30rpx;
-        width: 500rpx;
+        width: 400rpx;
       }
       .m-code {
         font-size: 30rpx;
-        width: 500rpx;
+        width: 400rpx;
       }
     }
     .m-forget{
