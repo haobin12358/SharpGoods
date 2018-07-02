@@ -1,12 +1,12 @@
 <template>
-    <shade :show.sync="imageIsLoading" :progress.sync="allImagesProgress"></shade>
+    <!--<view style="wid"></view>-->
     <view class="hd-swiper">
-        <swiper class="swiper" autoplay="!imageIsLoading" circular="true" interval="5000" duration="500"
-                indicator-dots="true" indicator-active-color="#ffc452" indicator-color="#efefef">
-            <block wx:for="{{commodity.PBimage}}" wx:key="key" key="item" item="item">
+        <swiper class="swiper" autoplay="{{swiperImgLoaded}}" circular="true" interval="5000" duration="500"
+                indicator-dots="true" autoplay="false" indicator-active-color="#ffc452" indicator-color="#efefef">
+            <block wx:for="{{commodity.PBimage}}" wx:key="item" key="item" item="item">
                 <swiper-item>
-                    <image class="swiper-img"
-                           bindload="swiperImgLoad" src="{{ item}}" data-src="{{item}}"></image>
+                    <image class="swiper-img" hidden="{{item.hidden}}" skip-hidden-item-layout="true"
+                           bindload="swiperImgLoad({{index}})" src="{{item.url}}"></image>
                 </swiper-item>
             </block>
             <view class="slogan"></view>
@@ -31,14 +31,16 @@
     </view>
     <view class="commodity-intro">
         <view class="commodity-video" @tap="changVideoPlayState">
-            <video wx:if="{{true}}" id="intro-video" src="{{ commodity.PRvideo }}" show-center-play-btn="true"
+            <video wx:if="{{putVideo}}" id="intro-video" src="{{ commodity.PRvideo }}" show-center-play-btn="true"
                    controls="true" show-fullscreen-btn="true" binderror="videoErrorCallback"
                    objectFit="fill" poster="{{ commodity.PRvideostart}}"></video>
         </view>
         <view class="imgs-box">
-            <view wx:for="{{ commodity.PRaboimage }}" wx:key="item" class="img" @tap="previewImages({{item}})">
-                <image src="{{item}}" bindload="aboImgLoad"  mode="widthFix"></image>
-            </view>
+            <block wx:if="{{swiperImgLoaded}}">
+                <view wx:for="{{ commodity.PRaboimage }}" wx:key="item" class="img" @tap="previewImages({{item}})">
+                    <image src="{{item}}" bindload="aboImaLoad({{index}})"  mode="widthFix" lazy-load="true"></image>
+                </view>
+            </block>
         </view>
     </view>
 </template>
@@ -46,47 +48,24 @@
     import wepy from 'wepy';
     import tip from '../utils/tip'
     import api from '../api/api';
-    import Shade from '../components/common/shade'
 
     export  default class commodityIndex extends wepy.page {
         config={
             navigationBarTitleText: '商品详情'
         }
-        components = {
-            shade: Shade
-        }
         data = {
             commodity: {
-                PRimage: [],
-                PBimage: [],
-                PRaboimage: [],
+                PRimage: '',
                 PRprice: 100,
                 PRsalevolume: 10,
                 PRname: '化妆镜',
                 PRid: ''
             },
-            loadedPBimageNum :0,
-            loadedPRaboimageNum :0,
+            // swiperImages :{},
             videoIsPlay: false,
             putVideo: false,
-            showShade: true
-        }
-
-        computed = {
-            imageIsLoading(){
-                let PBimageLoaded = (this.commodity.PBimage.length == this.loadedPBimageNum)
-                let PRaboimageLoaded = (this.commodity.PRaboimage.length == this.loadedPRaboimageNum)
-                let imageLoaded = PBimageLoaded && PRaboimageLoaded;
-
-
-                return !imageLoaded;
-            },
-            allImagesProgress(){
-                let progress = (this.loadedPBimageNum+ this.loadedPRaboimageNum)/
-                    (this.commodity.PBimage.length+this.commodity.PRaboimage.length);
-
-                return Math.floor(progress*100);
-            }
+            swiperImgLoaded: false,
+            swiperImgs: []
         }
 
         async getProductInfo(pdId){
@@ -94,8 +73,26 @@
 
             if(res.data.status == '200'){
                 this.commodity = res.data.data;
+                //
+                // let pbImage = this.commodity.PBimage;
 
+                this.swiperImgs = [].concat( this.commodity.PBimage);
+
+                for (let i = 0; i <this.commodity.PBimage.length; i++) {
+                    let url = this.commodity.PBimage[i];
+
+                    this.commodity.PBimage[i] = {};
+                    if( i == 0)
+                        this.commodity.PBimage[i].url = url;
+                    this.commodity.PBimage[i].hidden = true;
+                }
+
+                console.log(this.commodity.PBimage, this.swiperImgs );
+
+                // this.commodity.PBimage = new Array(this.swiperImgs.length);
+                // this.commodity.PBimage[0] = this.swiperImgs[0];
                 this.$apply();
+
             }else {
                 tip.error("服务器开小差啦")
             }
@@ -179,7 +176,6 @@
                 }
             },
 
-            //  长图预览
             previewImages(currentImg){
                 wepy.previewImage({
                     current: currentImg,
@@ -187,14 +183,20 @@
                 })
             },
 
-            //  轮播图加载累计
-            swiperImgLoad(){
-                this.loadedPBimageNum ++;
+            swiperImgLoad(index){
+                console.log('swiperImgLoad',index)
+                this.commodity.PBimage[index].hidden = false;
+                index++;
+                if(index < this.swiperImgs.length){
+                    this.commodity.PBimage[index].url = this.swiperImgs[index];
+                }else{
+                    this.swiperImgLoaded = true;
+                }
             },
 
-            //  长图加载累计
-            aboImgLoad(){
-                this.loadedPRaboimageNum ++;
+            aboImaLoad(index){
+                console.log('aboImaLoad',index)
+
             }
         }
     }
