@@ -1,9 +1,10 @@
 <template>
     <view wx:if="{{show}}" class="loadedArea">
-        <view>
+        <view class="bd">
             <text>多图加载中...</text>
             <progress  percent="{{progress}}" active-color="#e73250"></progress>
-            <!--<button @tap="">跳过等待</button>-->
+
+            <text>上滑显示更多信息</text>
         </view>
     </view>
 </template>
@@ -55,7 +56,7 @@
         text{
             .fz32();
             color: #666666;
-        ;
+
         }
         progress{
             margin: 50rpx auto;
