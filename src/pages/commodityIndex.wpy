@@ -1,12 +1,12 @@
 <template>
-    <!--<view style="wid"></view>-->
+    <shade :show.sync="imageIsLoading" :progress.sync="allImagesProgress"></shade>
     <view class="hd-swiper">
         <swiper class="swiper" autoplay="true" circular="true" interval="5000" duration="500"
                 indicator-dots="true" autoplay="false" indicator-active-color="#ffc452" indicator-color="#efefef">
             <block wx:for="{{commodity.PBimage}}" wx:key="key" key="item" item="item">
                 <swiper-item>
-                    <image class="swiper-img" hidden="{{ item.hidden }}" skip-hidden-item-layout="true"
-                           bindload="swiperImgLoad({{index}})" src="{{ item.url }}" data-src="{{item}}"></image>
+                    <image class="swiper-img"
+                           bindload="swiperImgLoad" src="{{ item}}" data-src="{{item}}"></image>
                 </swiper-item>
             </block>
             <view class="slogan"></view>
@@ -31,13 +31,13 @@
     </view>
     <view class="commodity-intro">
         <view class="commodity-video" @tap="changVideoPlayState">
-            <video wx:if="{{putVideo}}" id="intro-video" src="{{ commodity.PRvideo }}" show-center-play-btn="true"
+            <video wx:if="{{true}}" id="intro-video" src="{{ commodity.PRvideo }}" show-center-play-btn="true"
                    controls="true" show-fullscreen-btn="true" binderror="videoErrorCallback"
                    objectFit="fill" poster="{{ commodity.PRvideostart}}"></video>
         </view>
         <view class="imgs-box">
             <view wx:for="{{ commodity.PRaboimage }}" wx:key="item" class="img" @tap="previewImages({{item}})">
-                <image src="{{item}}"  mode="widthFix" lazy-load="true"></image>
+                <image src="{{item}}" bindload="aboImgLoad"  mode="widthFix"></image>
             </view>
         </view>
     </view>
@@ -46,22 +46,47 @@
     import wepy from 'wepy';
     import tip from '../utils/tip'
     import api from '../api/api';
+    import Shade from '../components/common/shade'
 
     export  default class commodityIndex extends wepy.page {
         config={
             navigationBarTitleText: '商品详情'
         }
+        components = {
+            shade: Shade
+        }
         data = {
             commodity: {
-                PRimage: '',
+                PRimage: [],
+                PBimage: [],
+                PRaboimage: [],
                 PRprice: 100,
                 PRsalevolume: 10,
                 PRname: '化妆镜',
                 PRid: ''
             },
-            // swiperImages :{},
+            loadedPBimageNum :0,
+            loadedPRaboimageNum :0,
             videoIsPlay: false,
-            putVideo: false
+            putVideo: false,
+            showShade: true
+        }
+
+        computed = {
+            imageIsLoading(){
+                let PBimageLoaded = (this.commodity.PBimage.length == this.loadedPBimageNum)
+                let PRaboimageLoaded = (this.commodity.PRaboimage.length == this.loadedPRaboimageNum)
+                let imageLoaded = PBimageLoaded && PRaboimageLoaded;
+
+
+                return !imageLoaded;
+            },
+            allImagesProgress(){
+                let progress = (this.loadedPBimageNum+ this.loadedPRaboimageNum)/
+                    (this.commodity.PBimage.length+this.commodity.PRaboimage.length);
+
+                return Math.floor(progress*100);
+            }
         }
 
         async getProductInfo(pdId){
@@ -70,20 +95,7 @@
             if(res.data.status == '200'){
                 this.commodity = res.data.data;
 
-                let pbImage = this.commodity.PBimage;
-                let prAboimage = this.commodity.PRaboimage;
-
-                for (let i = 0; i <pbImage.length; i++) {
-                    let url = pbImage[i];
-
-                    pbImage[i] = {};
-                    pbImage[i].url = url;
-                    pbImage[i].hidden = true;
-                }
-
-                this.commodity .PBimage = pbImage;
                 this.$apply();
-
             }else {
                 tip.error("服务器开小差啦")
             }
@@ -167,6 +179,7 @@
                 }
             },
 
+            //  长图预览
             previewImages(currentImg){
                 wepy.previewImage({
                     current: currentImg,
@@ -174,9 +187,14 @@
                 })
             },
 
-            swiperImgLoad(index){
-                console.log('swiperImgLoad',index)
-                this.commodity.PBimage[index].hidden = false;
+            //  轮播图加载累计
+            swiperImgLoad(){
+                this.loadedPBimageNum ++;
+            },
+
+            //  长图加载累计
+            aboImgLoad(){
+                this.loadedPRaboimageNum ++;
             }
         }
     }
