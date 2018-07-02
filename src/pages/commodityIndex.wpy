@@ -5,7 +5,8 @@
                 indicator-dots="true" autoplay="false" indicator-active-color="#ffc452" indicator-color="#efefef">
             <block wx:for="{{commodity.PBimage}}" wx:key="key" key="item" item="item">
                 <swiper-item>
-                    <image class="swiper-img" src="{{ item }}" data-src="{{item}}"></image>
+                    <image class="swiper-img" hidden="{{ item.hidden }}" skip-hidden-item-layout="true"
+                           bindload="swiperImgLoad({{index}})" src="{{ item.url }}" data-src="{{item}}"></image>
                 </swiper-item>
             </block>
             <view class="slogan"></view>
@@ -36,7 +37,7 @@
         </view>
         <view class="imgs-box">
             <view wx:for="{{ commodity.PRaboimage }}" wx:key="item" class="img" @tap="previewImages({{item}})">
-                <image src="{{item}}" mode="widthFix" lazy-load="true"></image>
+                <image src="{{item}}"  mode="widthFix" lazy-load="true"></image>
             </view>
         </view>
     </view>
@@ -58,6 +59,7 @@
                 PRname: '化妆镜',
                 PRid: ''
             },
+            // swiperImages :{},
             videoIsPlay: false,
             putVideo: false
         }
@@ -67,6 +69,19 @@
 
             if(res.data.status == '200'){
                 this.commodity = res.data.data;
+
+                let pbImage = this.commodity.PBimage;
+                let prAboimage = this.commodity.PRaboimage;
+
+                for (let i = 0; i <pbImage.length; i++) {
+                    let url = pbImage[i];
+
+                    pbImage[i] = {};
+                    pbImage[i].url = url;
+                    pbImage[i].hidden = true;
+                }
+
+                this.commodity .PBimage = pbImage;
                 this.$apply();
 
             }else {
@@ -79,11 +94,6 @@
 
             this.videoContext = wx.createVideoContext('intro-video');
             this.getProductInfo(param.prId);
-
-            // setTimeout(()=>{
-            //     that.putVideo = true;
-            //     that.$apply();
-            // },3000);
         }
 
         onPageScroll(){
@@ -162,6 +172,11 @@
                     current: currentImg,
                     urls: this.commodity.PRaboimage
                 })
+            },
+
+            swiperImgLoad(index){
+                console.log('swiperImgLoad',index)
+                this.commodity.PBimage[index].hidden = false;
             }
         }
     }
