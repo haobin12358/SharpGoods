@@ -1,8 +1,8 @@
 <template>
     <shade :show.sync="imageIsLoading" :progress.sync="allImagesProgress"></shade>
     <view class="hd-swiper">
-        <swiper class="swiper" autoplay="true" circular="true" interval="5000" duration="500"
-                indicator-dots="true" autoplay="false" indicator-active-color="#ffc452" indicator-color="#efefef">
+        <swiper class="swiper" autoplay="!imageIsLoading" circular="true" interval="5000" duration="500"
+                indicator-dots="true" indicator-active-color="#ffc452" indicator-color="#efefef">
             <block wx:for="{{commodity.PBimage}}" wx:key="key" key="item" item="item">
                 <swiper-item>
                     <image class="swiper-img"
