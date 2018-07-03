@@ -3,9 +3,9 @@
     <view class="hd-swiper">
         <swiper class="swiper" autoplay="{{swiperImgLoaded}}" circular="true" interval="5000" duration="500"
                 indicator-dots="true" autoplay="false" indicator-active-color="#ffc452" indicator-color="#efefef">
-            <block wx:for="{{commodity.PBimage}}" wx:key="item" key="item" item="item">
+            <block wx:for="{{commodity.PBimage}}" wx:key="url" key="item" item="item">
                 <swiper-item>
-                    <image class="swiper-img" hidden="{{item.hidden}}" skip-hidden-item-layout="true"
+                    <image class="swiper-img" hidden="{{item.hidden}}"
                            bindload="swiperImgLoad({{index}})" src="{{item.url}}"></image>
                 </swiper-item>
             </block>
@@ -68,32 +68,30 @@
             swiperImgs: []
         }
 
-        async getProductInfo(pdId){
+        //  获取商品详情并处理图片加载逻辑
+        async getProductInfo(pdId) {
             let res = await api.getProductInfo({query: {PRid: pdId}});
 
-            if(res.data.status == '200'){
+            if (res.data.status == '200') {
                 this.commodity = res.data.data;
-                //
-                // let pbImage = this.commodity.PBimage;
 
-                this.swiperImgs = [].concat( this.commodity.PBimage);
+                if (this.commodity.PBimage.length == 0) {
+                    this.swiperImgLoaded = true;
+                } else {
+                    this.swiperImgs = [].concat(this.commodity.PBimage);
 
-                for (let i = 0; i <this.commodity.PBimage.length; i++) {
-                    let url = this.commodity.PBimage[i];
+                    for (let i = 0; i < this.commodity.PBimage.length; i++) {
+                        let url = this.commodity.PBimage[i];
 
-                    this.commodity.PBimage[i] = {};
-                    if( i == 0)
-                        this.commodity.PBimage[i].url = url;
-                    this.commodity.PBimage[i].hidden = true;
+                        this.commodity.PBimage[i] = {};
+                        if (i == 0)
+                            this.commodity.PBimage[i].url = url;
+                        this.commodity.PBimage[i].hidden = true;
+                    }
                 }
 
-                console.log(this.commodity.PBimage, this.swiperImgs );
-
-                // this.commodity.PBimage = new Array(this.swiperImgs.length);
-                // this.commodity.PBimage[0] = this.swiperImgs[0];
                 this.$apply();
-
-            }else {
+            } else {
                 tip.error("服务器开小差啦")
             }
         }
@@ -159,13 +157,12 @@
                 }
             },
 
-            //  将video放上    开始加载
+            //  将video放上    开始加载封面  video是点击播放才开始缓冲
             putOnVideo(){
                 this.putVideo = true;
-
             },
 
-            //  点击video任意一处 暂停播放
+            //  点击video任意一处 暂停/播放
             changVideoPlayState(){
                 if (this.videoIsPlay){
                     this.videoIsPlay = false;
@@ -176,6 +173,7 @@
                 }
             },
 
+            //  预览长图
             previewImages(currentImg){
                 wepy.previewImage({
                     current: currentImg,
@@ -183,6 +181,7 @@
                 })
             },
 
+            //  轮播图加载
             swiperImgLoad(index){
                 console.log('swiperImgLoad',index)
                 this.commodity.PBimage[index].hidden = false;
@@ -194,9 +193,9 @@
                 }
             },
 
+            //  长图加载
             aboImaLoad(index){
-                console.log('aboImaLoad',index)
-
+                console.log('aboImgLoad',index)
             }
         }
     }
