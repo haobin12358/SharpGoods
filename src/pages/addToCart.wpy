@@ -33,7 +33,9 @@
                 <view class="m-plus" catchtap="plusTap" data-index="{{index}}">+</view>
             </view>
         </view>
-        <view class="confirm_btn" @tap.stop="confirmPurchase">确定</view>
+        <view class="btn-block">
+            <view class="confirm_btn"  @tap.stop="confirmPurchase">确定</view>
+        </view>
     </view>
 </template>
 
@@ -292,6 +294,11 @@
 
 <style lang="less">
     @import "../styles/common.less";
+    page{
+        display: flex;
+        flex-direction: column;
+    }
+
     .page_hd{
         height: 177rpx;
         border-top:  1px solid @border-color;
@@ -328,6 +335,11 @@
     }
 
     .page_bd{
+        /*height: 100%;*/
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
         .scroll-area{
             width: 100%;
             height: 542rpx;
@@ -426,19 +438,25 @@
             }
         }
 
+        .btn-block{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
 
-        /*确定按钮*/
-        .confirm_btn {
-            margin: 236rpx auto auto;
-            width: 450rpx;
-            height: 80rpx;
-            line-height: 80rpx;
-            background: @main-color;
-            text-align: center;
-            color: #fff;
-            border-radius: 40rpx;
-
+            /*确定按钮*/
+            .confirm_btn {
+                width: 450rpx;
+                height: 80rpx;
+                line-height: 80rpx;
+                background: @main-color;
+                text-align: center;
+                color: #fff;
+                border-radius: 40rpx;
+            }
         }
+
     }
 
 
