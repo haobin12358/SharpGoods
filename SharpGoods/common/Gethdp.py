@@ -12,6 +12,6 @@ hdp_list = ["hhdp", "dhdp", "ddhdp"]
 
 
 def get_hdp(htv):
-    for index, htv_item in htv_list:
+    for index, htv_item in enumerate(htv_list):
         if htv > htv_item:
             return hdp_list[index]

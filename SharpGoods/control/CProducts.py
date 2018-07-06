@@ -13,6 +13,7 @@ class CProducts():
     def __init__(self):
         from service.SProduct import SProduct
         self.sproduct = SProduct()
+        self.title = "=============={0}==============="
 
     def get_info_by_id(self):
         args = request.args.to_dict()
@@ -209,6 +210,9 @@ class CProducts():
         '''
         response_of_product = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
         response_of_product["data"] = product_infos
+        print(self.title.format("response"))
+        print(response_of_product)
+        print(self.title.format("response"))
         return response_of_product
 
     def get_control_brand_by_prid(self):
