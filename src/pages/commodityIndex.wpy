@@ -146,15 +146,10 @@
 
             //  跳转至购物车页
             tapToShopCart(){
-                let token =  wepy.getStorageSync('token')
-
                 this.videoIsPlay = false;
                 this.videoContext.pause();
-                if(token){
-                    this.$switch('/pages/car');
-                }else{
-                    this.$navigate('/pages/login');
-                }
+
+                this.$switch('/pages/car');
             },
 
             //  将video放上    开始加载封面  video是点击播放才开始缓冲

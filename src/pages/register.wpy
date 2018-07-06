@@ -126,7 +126,7 @@
       <view class="m-section">
         <image class="m-icon" src='/image/person_change_pwd.jpg'></image>
         <view class="m-text">密   码：</view>
-        <input class="m-post" password name="pass" type="number" placeholder="请输入密码" />
+        <input class="m-post" password name="pass" type="text" placeholder="请输入密码" />
       </view>
       <view class="m-section">
         <image class="m-icon" src='/image/person_yqm.jpg'></image>

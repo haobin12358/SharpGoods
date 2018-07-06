@@ -113,39 +113,41 @@
   import wepy from 'wepy';
   import api from '../api/api'
   import tip from '../utils/tip'
-  export default class Login extends wepy.page{
-    config = {
-      navigationBarTitleText: '登录'
-    }
-    data = {
-    }
-      async Login(phone, pass){
+
+  export default class Login extends wepy.page {
+      config = {
+          navigationBarTitleText: '登录'
+      }
+      data = {}
+
+      async Login(phone, pass) {
           let that = this
           let res = await api.login({query: {UStelphone: phone, USpassword: pass}, method: 'POST'});
-          if(res.data.status == 200){
+          if (res.data.status == 200) {
               wepy.setStorageSync('token', res.data.data.token);
               wepy.navigateBack();
               that.$apply();
-          }else{
+          } else {
               tip.error(res.data.message)
           }
+      }
+
+      methods = {
+          formSubmit(e) {
+              let that = this;
+              let phone = e.detail.value.phone;
+              let pass = e.detail.value.code;
+              if (phone == '') tip.alert("请输入手机号")
+              if (pass == '') tip.alert("请输入密码")
+              that.Login(phone, pass)
+          },
+          registerTap() {
+              wx.navigateTo({
+                  url: '/pages/register'
+              })
+          },
+          authorizeTap() {
           }
-    methods = {
-        formSubmit(e){
-            let that = this;
-            let phone = e.detail.value.phone;
-            let pass = e.detail.value.code;
-            if(phone == '') tip.alert("请输入手机号")
-            if(pass == '') tip.alert("请输入密码")
-            that.Login(phone, pass)
-        },
-        registerTap(){
-          wx.navigateTo({
-            url: '/pages/register'
-          })
-        },
-        authorizeTap(){
-        }
       }
   }
 </script>

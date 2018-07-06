@@ -1,5 +1,5 @@
 <template>
-  <view class="m-business-content">
+  <view wx:if="{{hasLogin}}" class="m-business-content">
     <view class="m-all-products">
       <repeat for="{{list_data}}" key="index" index="index" item="item">
         <List :list.sync="item" :i.sync="index" page="car" @refresh.user="refresh" @radioTap.user="radioTap"></List>
@@ -14,21 +14,29 @@
         <view>合计：<text class="m-price">￥{{total_money}}</text></view>
         <view class="m-btn m-active" @tap="placeAnOrder">下单</view>
       </view>
-
     </foot>
   </view>
+    <NotLogin :show.sync="showNotLogin"></NotLogin>
 </template>
 <script >
   import wepy from 'wepy';
+  import NotLogin from '../components/common/notLogin'
   import List from '../components/common/shoppingcart'
   import tip from '../utils/tip'
   import api from '../api/api'
+
   export default class Business extends wepy.page{
     config = {
       navigationBarTitleText: '购物车'
     }
     components = {
-      List:List
+      List:List,
+      NotLogin
+    }
+    computed={
+        showNotLogin(){
+            return !this.hasLogin;
+        }
     }
     data = {
         total_money:0,
@@ -38,7 +46,8 @@
         count: 0,
         num: 0,
         token: '',
-        allR:false
+        allR:false,
+        hasLogin: false
 
     }
     async getAllCart(params) {
@@ -58,18 +67,16 @@
         }
     }
     onShow(){
-        let that = this;
         let token =  wepy.getStorageSync('token')
-        this.token = token
+
+        this.token = token;
+        this.hasLogin = !!this.token;
+
         if(token){
-            that.getAllCart(token)
-            that.$parent.globalData.token = token;
-            that.$apply();
-        }else{
-            wx.navigateTo({
-                url: '/pages/login'
-            })
+            this.getAllCart(token)
+            this.$parent.globalData.token = token;
         }
+
         // let all = 0;
         // for (let i =0;i<this.list_data.length;i++){
         //     if(this.list_data[i].radio == false){

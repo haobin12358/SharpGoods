@@ -1,7 +1,7 @@
 <template>
     <view class="page_hd">
         <view class="goods-img">
-            <image src="{{selectSpec.PBimage ? selectSpec.PBimage : commodity.PRimage}}  "></image>
+            <image src="{{selectSpec.PBimage ? selectSpec.PBimage : commodity.PBimage[0]}}  "></image>
         </view>
         <view class="goods-detail">
             <view class="name">{{commodity.PRname}}</view>
@@ -52,7 +52,8 @@
                 PRimage: '',
                 PRprice: 100,
                 PRname: '化妆镜',
-                PRid: ''
+                PRid: '',
+                PRimage: ''
             },
             selectSpec:{
                 PBid: '',
