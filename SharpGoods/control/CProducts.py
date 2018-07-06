@@ -114,7 +114,8 @@ class CProducts():
         if "htv" not in args:
             return PARAMS_MISS
         htv = float(args.get("htv"))
-        hdp = "hhdp" if htv > 1.6 else "dhdp"
+        from common.Gethdp import get_hdp
+        hdp = get_hdp(htv)
         product_infos = []
         for PRid in PRid_list:
             product = self.sproduct.get_product_by_prid(PRid)

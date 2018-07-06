@@ -49,7 +49,7 @@ PRABOIMAGE = {
         "https://h878.cn/imgs/high/img_abo_25.png",
         "https://h878.cn/imgs/high/img_abo_26.png",
     ),
-    "040a78f0-2c50-402e-969c-d26072659ae4": {
+    "040a78f0-2c50-402e-969c-d26072659ae4": (
         "https://h878.cn/imgs/low/img_abo_01.png",
         "https://h878.cn/imgs/low/img_abo_02.png",
         "https://h878.cn/imgs/low/img_abo_03.png",
@@ -71,5 +71,5 @@ PRABOIMAGE = {
         "https://h878.cn/imgs/low/img_abo_19.png",
         "https://h878.cn/imgs/low/img_abo_20.png",
         "https://h878.cn/imgs/low/img_abo_21.png",
-    }
+    )
 }
