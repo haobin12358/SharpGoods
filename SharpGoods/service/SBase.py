@@ -2,9 +2,9 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
-import DBSession
-from common.lovebreakfast_error import dberror
-import models.model as models
+from SharpGoods.service.DBSession import db_session
+from SharpGoods.common.lovebreakfast_error import dberror
+import SharpGoods.models.model as models
 
 
 def close_session(fn):
@@ -26,7 +26,7 @@ def close_session(fn):
 class SBase(object):
     def __init__(self):
         try:
-            self.session = DBSession.db_session()
+            self.session = db_session()
         except Exception as e:
             print(e.message)
 

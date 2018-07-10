@@ -4,19 +4,19 @@ import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask import request
 import json
-from common.import_status import import_status
-from config.response import SYSTEM_ERROR, PARAMS_MISS, TOKEN_ERROR
-from service.SOrders import SOrders
-from service.SProduct import SProduct
-from service.SLocations import SLocations
-from service.SCoupons import SCoupons
-from service.SCarts import SCarts
-from service.SUsers import SUsers
-from config import conversion as cvs
+from SharpGoods.common.import_status import import_status
+from SharpGoods.config.response import SYSTEM_ERROR, PARAMS_MISS, TOKEN_ERROR
+from SharpGoods.service.SOrders import SOrders
+from SharpGoods.service.SProduct import SProduct
+from SharpGoods.service.SLocations import SLocations
+from SharpGoods.service.SCoupons import SCoupons
+from SharpGoods.service.SCarts import SCarts
+from SharpGoods.service.SUsers import SUsers
+from SharpGoods.config import conversion as cvs
 
-from common.get_str import get_str
-from common.get_model_return_list import get_model_return_list, get_model_return_dict
-from common.timeformate import get_db_time_str, get_web_time_str
+from SharpGoods.common.get_str import get_str
+from SharpGoods.common.get_model_return_list import get_model_return_list, get_model_return_dict
+from SharpGoods.common.timeformate import get_db_time_str, get_web_time_str
 
 
 class COrders():
@@ -105,7 +105,7 @@ class COrders():
             import uuid
             omid = str(uuid.uuid4())
             OMlogisticsName = get_str(data, "OMlogisticsName")
-            from config.logistics import LIST_LOGISTICS
+            from SharpGoods.config.logistics import LIST_LOGISTICS
             if OMlogisticsName not in LIST_LOGISTICS:
                 OMlogisticsName = LIST_LOGISTICS[0]
             order_main = {

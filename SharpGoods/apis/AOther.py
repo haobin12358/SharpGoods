@@ -4,14 +4,13 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask_restful import Resource, request
-from config.response import PARAMS_MISS
-from common.import_status import import_status
-from config.response import SYSTEM_ERROR
+from SharpGoods.config.response import PARAMS_MISS
+from SharpGoods.common.import_status import import_status
 
 
-class AOther(Resource):
+class SGOther(Resource):
     def __init__(self):
-        from service.SOrders import SOrders
+        from SharpGoods.service.SOrders import SOrders
         self.sorders = SOrders()
         self.title = '============{0}============'
 
@@ -342,7 +341,7 @@ class AOther(Resource):
             return response
 
         if other == "logistics":
-            from config.logistics import LIST_LOGISTICS
+            from SharpGoods.config.logistics import LIST_LOGISTICS
             data = import_status("SUCCESS_MESSAGE_GET_INFO", "OK")
             data["data"] = LIST_LOGISTICS
             return data

@@ -4,12 +4,12 @@ import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask import request
 import json
-from config.response import SYSTEM_ERROR, PARAMS_MISS
-from common.import_status import import_status
+from SharpGoods.config.response import SYSTEM_ERROR, PARAMS_MISS
+from SharpGoods.common.import_status import import_status
 
 class CUsers():
     def __init__(self):
-        from service.SUsers import SUsers
+        from SharpGoods.service.SUsers import SUsers
         self.susers = SUsers()
 
     def register(self):
@@ -265,8 +265,8 @@ class CUsers():
         print("=====================new_inforcode=================")
         if not new_inforcode:
             return SYSTEM_ERROR
-        from config.Inforcode import SignName, TemplateCode
-        from common.Inforsend import send_sms
+        from SharpGoods.config.Inforcode import SignName, TemplateCode
+        from SharpGoods.common.Inforsend import send_sms
         params = '{\"code\":\"' + code + '\",\"product\":\"etech\"}'
 
         # params = u'{"name":"wqb","code":"12345678","address":"bz","phone":"13000000000"}'

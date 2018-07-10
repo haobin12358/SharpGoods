@@ -5,10 +5,9 @@ import os
 
 sys.path.append(os.path.dirname(os.getcwd()))  # 增加系统路径
 # 引用项目类
-from models import model
-import DBSession
-from common.TransformToList import trans_params
-
+from SharpGoods.models import model
+from SharpGoods.common.TransformToList import trans_params
+from SharpGoods.service.DBSession import get_session
 
 # 操作user表的相关方法
 class SProduct():
@@ -17,7 +16,7 @@ class SProduct():
         self.session 数据库连接会话
         self.status 判断数据库是否连接无异常
         """
-        self.session, self.status = DBSession.get_session()
+        self.session, self.status = get_session()
 
     def get_product_by_pbid(self, pbid):
         product = None

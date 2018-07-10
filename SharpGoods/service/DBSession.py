@@ -6,7 +6,7 @@ sys.path.append(os.path.dirname(os.getcwd())) # 增加系统路径
 # 引用python类
 from sqlalchemy.orm import sessionmaker
 # 引用项目类
-from models import model
+from SharpGoods.models import model
 
 # db_session = sessionmaker(bind=model.mysql_engine)
 # 实例化session

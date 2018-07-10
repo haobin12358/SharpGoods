@@ -3,16 +3,16 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask import request
-from config.response import SYSTEM_ERROR, PARAMS_MISS
-from common.get_model_return_list import get_model_return_list
-from common.timeformate import get_web_time_str, format_forweb_no_HMS
-from common.import_status import import_status
+from SharpGoods.config.response import SYSTEM_ERROR, PARAMS_MISS
+from SharpGoods.common.get_model_return_list import get_model_return_list
+from SharpGoods.common.timeformate import get_web_time_str, format_forweb_no_HMS
+from SharpGoods.common.import_status import import_status
 import json
 
 
 class CCoupons():
     def __init__(self):
-        from service.SCoupons import SCoupons
+        from SharpGoods.service.SCoupons import SCoupons
         self.scoupons = SCoupons()
 
     def get_cart_pkg(self):

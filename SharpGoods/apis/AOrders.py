@@ -3,10 +3,10 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask_restful import Resource
+from SharpGoods.control.COrders import COrders
+from SharpGoods.config.response import APIS_WRONG
 
-from control.COrders import COrders
-
-class AOrders(Resource):
+class SGOrders(Resource):
     def __init__(self):
         self.corders = COrders()
 
@@ -21,7 +21,6 @@ class AOrders(Resource):
         }
 
         if orders not in apis:
-            from config.response import APIS_WRONG
             return APIS_WRONG
 
         return eval(apis[orders])
@@ -38,7 +37,6 @@ class AOrders(Resource):
         }
 
         if orders not in apis:
-            from config.response import APIS_WRONG
             return APIS_WRONG
 
         return eval(apis[orders])

@@ -3,10 +3,10 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask_restful import Resource
-from config.response import APIS_WRONG
-from control.CReview import CReview
+from SharpGoods.config.response import APIS_WRONG
+from SharpGoods.control.CReview import CReview
 
-class AReviews(Resource):
+class SGReviews(Resource):
     def __init__(self):
         self.control_review = CReview()
 
@@ -20,7 +20,6 @@ class AReviews(Resource):
         }
 
         if review not in apis:
-            from config.response import APIS_WRONG
             return APIS_WRONG
         return eval(apis[review])
 
@@ -32,6 +31,5 @@ class AReviews(Resource):
             "get_review": "self.control_review.get_review()"
         }
         if review not in apis:
-            from config.response import APIS_WRONG
             return APIS_WRONG
         return eval(apis[review])

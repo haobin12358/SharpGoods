@@ -5,11 +5,11 @@ sys.path.append(os.path.dirname(os.getcwd()))
 
 from flask import request
 import json
-from config.response import SYSTEM_ERROR, PARAMS_MISS
-from common.import_status import import_status
-from service.SLocations import SLocations
-from common.get_model_return_list import get_model_return_list, get_model_return_dict
-from common.get_str import get_str
+from SharpGoods.config.response import SYSTEM_ERROR, PARAMS_MISS
+from SharpGoods.common.import_status import import_status
+from SharpGoods.service.SLocations import SLocations
+from SharpGoods.common.get_model_return_list import get_model_return_list, get_model_return_dict
+from SharpGoods.common.get_str import get_str
 
 class CLocations():
     def __init__(self):

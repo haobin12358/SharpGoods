@@ -3,10 +3,11 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask_restful import Resource
-from config.response import APIS_WRONG
-from control.CCoupons import CCoupons
+from SharpGoods.config.response import APIS_WRONG
+from SharpGoods.control.CCoupons import CCoupons
 
-class ACoupons(Resource):
+
+class SGCoupons(Resource):
     def __init__(self):
         self.ccoupons = CCoupons()
 
@@ -20,7 +21,6 @@ class ACoupons(Resource):
         }
 
         if card not in apis:
-            from config.response import APIS_WRONG
             return APIS_WRONG
         return eval(apis[card])
 
@@ -34,6 +34,5 @@ class ACoupons(Resource):
         }
 
         if card not in apis:
-            from config.response import APIS_WRONG
             return APIS_WRONG
         return eval(apis[card])

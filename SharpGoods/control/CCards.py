@@ -5,11 +5,8 @@ sys.path.append(os.path.dirname(os.getcwd()))
 from flask import request
 import json
 import uuid
-from common.lovebreakfast_error import dberror
-from common.TransformToList import add_model, update_model, get_all
-from common.import_status import import_status
-from common.get_str import get_str
-from config.response import SYSTEM_ERROR, PARAMS_MISS
+from SharpGoods.common.TransformToList import add_model, update_model, get_all
+from SharpGoods.config.response import SYSTEM_ERROR, PARAMS_MISS
 
 
 class CCards():

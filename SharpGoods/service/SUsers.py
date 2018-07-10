@@ -3,9 +3,9 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
 import uuid
-import DBSession
-from models import model
-from common.TransformToList import trans_params
+from SharpGoods.service import DBSession
+from SharpGoods.models import model
+from SharpGoods.common.TransformToList import trans_params
 
 class SUsers():
     def __init__(self):

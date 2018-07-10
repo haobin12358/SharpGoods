@@ -3,9 +3,11 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask_restful import Resource
-from control.CProducts import CProducts
+from SharpGoods.control.CProducts import CProducts
+from SharpGoods.config.response import APIS_WRONG
 
-class AProducts(Resource):
+
+class SGProducts(Resource):
     def __init__(self):
         self.control_product = CProducts()
 
@@ -20,7 +22,7 @@ class AProducts(Resource):
         }
 
         if product not in apis:
-            from config.response import APIS_WRONG
+
             return APIS_WRONG
         return eval(apis[product])
 
@@ -34,6 +36,5 @@ class AProducts(Resource):
             "get_all": "self.control_product.get_all()"
         }
         if product not in apis:
-            from config.response import APIS_WRONG
             return APIS_WRONG
         return eval(apis[product])

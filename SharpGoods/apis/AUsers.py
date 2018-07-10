@@ -3,10 +3,10 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask_restful import Resource
-from config.response import APIS_WRONG
-from control.CUsers import CUsers
+from SharpGoods.config.response import APIS_WRONG
+from SharpGoods.control.CUsers import CUsers
 
-class AUsers(Resource):
+class SGUsers(Resource):
     def __init__(self):
         self.control_user = CUsers()
 
@@ -25,7 +25,6 @@ class AUsers(Resource):
         }
 
         if users not in apis:
-            from config.response import APIS_WRONG
             return APIS_WRONG
         return eval(apis[users])
 
@@ -39,6 +38,5 @@ class AUsers(Resource):
         }
 
         if users not in apis:
-            from config.response import APIS_WRONG
             return APIS_WRONG
         return eval(apis[users])

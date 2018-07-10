@@ -1,6 +1,6 @@
 # *- coding:utf8 *-
-from SBase import SBase, close_session
-from models.model import Locations
+from SharpGoods.service.SBase import SBase, close_session
+from SharpGoods.models.model import Locations
 
 
 class SLocations(SBase):

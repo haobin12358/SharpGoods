@@ -3,10 +3,10 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask_restful import Resource
-from control.CCarts import CCarts
+from SharpGoods.control.CCarts import CCarts
 
 
-class ACarts(Resource):
+class SGCarts(Resource):
     def __init__(self):
         self.ccarts = CCarts()
 

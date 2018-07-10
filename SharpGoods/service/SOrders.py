@@ -2,10 +2,8 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
-from SBase import SBase, close_session
-from models.model import OrderMain, Orderpart
-from models import model
-
+from SharpGoods.service.SBase import SBase, close_session
+from SharpGoods.models.model import OrderMain, Orderpart
 
 
 class SOrders(SBase):
@@ -15,7 +13,7 @@ class SOrders(SBase):
     def get_uid_by_omid(self, omid):
         uid = None
         try:
-            uid = self.session.query(model.OrderMain.USid).filter_by(OMid=omid).scalar()
+            uid = self.session.query(OrderMain.USid).filter_by(OMid=omid).scalar()
         except Exception as e:
             print e.message
             self.session.rollback()
@@ -26,7 +24,7 @@ class SOrders(SBase):
     def get_omstatus_by_omid(self, omid):
         uid = None
         try:
-            uid = self.session.query(model.OrderMain.OMstatus).filter_by(OMid=omid).scalar()
+            uid = self.session.query(OrderMain.OMstatus).filter_by(OMid=omid).scalar()
         except Exception as e:
             print e.message
             self.session.rollback()
@@ -36,7 +34,7 @@ class SOrders(SBase):
 
     def update_omstatus_by_omid(self, omid, order_main):
         try:
-            self.session.query(model.OrderMain).filter_by(OMid=omid).update(order_main)
+            self.session.query(OrderMain).filter_by(OMid=omid).update(order_main)
             self.session.commit()
             self.session.close()
             return True

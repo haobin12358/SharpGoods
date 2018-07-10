@@ -5,20 +5,20 @@ sys.path.append(os.path.dirname(os.getcwd()))
 from flask import request
 import json
 import uuid
-from common.lovebreakfast_error import dberror
-from common.TransformToList import add_model
-from common.import_status import import_status
-from common.get_str import get_str
-from config.response import SYSTEM_ERROR, PARAMS_MISS, TOKEN_ERROR
+from SharpGoods.common.lovebreakfast_error import dberror
+from SharpGoods.common.TransformToList import add_model
+from SharpGoods.common.import_status import import_status
+from SharpGoods.common.get_str import get_str
+from SharpGoods.config.response import SYSTEM_ERROR, PARAMS_MISS, TOKEN_ERROR
 
 
 class CCarts():
     def __init__(self):
-        from service.SCarts import SCarts
+        from SharpGoods.service.SCarts import SCarts
         self.scarts = SCarts()
-        from service.SProduct import SProduct
+        from SharpGoods.service.SProduct import SProduct
         self.sproduct = SProduct()
-        from service.SUsers import SUsers
+        from SharpGoods.service.SUsers import SUsers
         self.suser = SUsers()
 
     def del_cart(self):
@@ -83,7 +83,7 @@ class CCarts():
                 pnum = int(CAnumber) + int(PBnumber)
                 self.scarts.update_num_cart(pnum, cart.CAid)
             else:
-                add_model("Cart",
+                self.scarts.add_model("Cart",
                           **{
                               "CAid": str(uuid.uuid4()),
                               "CAnumber": CAnumber,

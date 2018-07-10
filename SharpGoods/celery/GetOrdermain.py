@@ -2,21 +2,22 @@
 import sys
 import os
 import datetime
-import time
 import xlwt
-sys.path.append("/opt/SharpGoods")
-from common.get_model_return_list import get_model_return_list, get_model_return_dict
-from common.timeformate import fomat_for_db
+
+sys.path.append("/opt")
+from SharpGoods.common.timeformate import fomat_for_db
+from SharpGoods.common.get_model_return_list import get_model_return_list, get_model_return_dict
+
 import platform
 
 
 class GetOrdermain():
     def __init__(self):
-        from service.SOrders import SOrders
+        from SharpGoods.service.SOrders import SOrders
         self.sorder = SOrders()
-        from service.SUsers import SUsers
+        from SharpGoods.service.SUsers import SUsers
         self.suser = SUsers()
-        from service.SLocations import SLocations
+        from SharpGoods.service.SLocations import SLocations
         self.sloc = SLocations()
         self.title = "==========={0}==========="
         self.exceltitle = ["LOname", "LOtelphone", "LOno", "LOprovince", "LOcity",

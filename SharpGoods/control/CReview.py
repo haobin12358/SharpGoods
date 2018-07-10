@@ -6,23 +6,23 @@ import os
 sys.path.append(os.path.dirname(os.getcwd())) # 增加系统路径
 #引用python类
 from flask import request
-import uuid
 import json
 #引用项目类
-from common.get_str import get_str
-from common.import_status import import_status
-from service.SReview import SReview
-from common.timeformate import get_web_time_str
-from config.response import SYSTEM_ERROR, PARAMS_MISS
+
+from SharpGoods.common.get_str import get_str
+from SharpGoods.common.import_status import import_status
+from SharpGoods.service.SReview import SReview
+from SharpGoods.common.timeformate import get_web_time_str
+from SharpGoods.config.response import SYSTEM_ERROR, PARAMS_MISS
 
 class CReview():
     def __init__(self):
         self.service_review = SReview()
-        from service.SOrders import SOrders
+        from SharpGoods.service.SOrders import SOrders
         self.sorder = SOrders()
-        from service.SProduct import SProduct
+        from SharpGoods.service.SProduct import SProduct
         self.sproduct = SProduct()
-        from service.SUsers import SUsers
+        from SharpGoods.service.SUsers import SUsers
         self.suser = SUsers()
 
     #  创建评论

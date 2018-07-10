@@ -4,14 +4,14 @@ import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask import request
 import json
-from config.response import SYSTEM_ERROR, PARAMS_MISS
-from common.import_status import import_status
-from config.imageconfig import PRSWINGIMAGE, PRABOIMAGE
+from SharpGoods.config.response import SYSTEM_ERROR, PARAMS_MISS
+from SharpGoods.common.import_status import import_status
+from SharpGoods.config.imageconfig import PRSWINGIMAGE, PRABOIMAGE
 
 
 class CProducts():
     def __init__(self):
-        from service.SProduct import SProduct
+        from SharpGoods.service.SProduct import SProduct
         self.sproduct = SProduct()
         self.title = "=============={0}==============="
 
@@ -115,7 +115,7 @@ class CProducts():
         if "htv" not in args:
             return PARAMS_MISS
         htv = float(args.get("htv"))
-        from common.Gethdp import get_hdp
+        from SharpGoods.common.Gethdp import get_hdp
         hdp = get_hdp(htv)
         product_infos = []
         for PRid in PRid_list:

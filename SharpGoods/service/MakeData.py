@@ -2,12 +2,12 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))  # 增加系统路径
-from common.TransformToList import add_model
+from SharpGoods.common.TransformToList import add_model
 import uuid
 
 class MakeData():
     def __init__(self):
-        from service.SUsers import SUsers
+        from SharpGoods.service.SUsers import SUsers
         self.users = SUsers()
 
     def setUid(self):

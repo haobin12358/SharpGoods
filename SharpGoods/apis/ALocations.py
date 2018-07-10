@@ -3,10 +3,10 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.getcwd()))
 from flask_restful import Resource
-from config.response import APIS_WRONG
-from control.CLocations import CLocations
+from SharpGoods.config.response import APIS_WRONG
+from SharpGoods.control.CLocations import CLocations
 
-class ALocations(Resource):
+class SGLocations(Resource):
     def __init__(self):
         self.clocations = CLocations()
 
@@ -21,7 +21,6 @@ class ALocations(Resource):
         }
 
         if locations not in apis:
-            from config.response import APIS_WRONG
             return APIS_WRONG
         return eval(apis[locations])
 
@@ -36,6 +35,5 @@ class ALocations(Resource):
         }
 
         if locations not in apis:
-            from config.response import APIS_WRONG
             return APIS_WRONG
         return eval(apis[locations])
