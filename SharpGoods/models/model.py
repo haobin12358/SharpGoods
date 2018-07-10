@@ -6,7 +6,6 @@ sys.path.append(os.path.dirname(os.getcwd()))
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, create_engine, Integer, String, Text, Float
 from config import dbconfig as cfg
-import pymysql
 
 
 DB_PARAMS = "{0}://{1}:{2}@{3}/{4}?charset={5}".format(
@@ -50,7 +49,8 @@ class Products(Base):
     PRinfo = Column(Text)                        # 商品介绍
     PRtype = Column(Integer, nullable=False)     # 营销类型 {501自营， 502非自营}
     PRbrand = Column(Integer, nullable=False)    # 类目 {601美妆类， 602 3C类}
-    PRvideostart = Column(String(64))            # 商品视频未启动图片
+    PRvideostart = Column(Text)                  # 商品视频未启动图片
+    MAid = Column(String(64))                    # 商家id
     # PRprice = Column(Float, nullable=False)  # 商品价格
     # PRunit = Column(Integer, nullable=False) # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
     # PRstatus = Column(Integer, default=1)  # 商品状态 {201:在售状态 202:下架状态}
@@ -99,7 +99,13 @@ class Shops(Base):
     SHname = Column(String(64), nullable=False)  # 供应商名称
     SHtype = Column(Integer, nullable=True)      # 供应商类型
     SHdetail = Column(Text, nullable=True)       # 供应商详细信息
-    Stel = Column(String(14))                    # 供应商联系方式
+    SHtelphone = Column(String(14))              # 供应商联系方式
+    SHemain = Column(Text)
+    SHidnumber = Column(String(18), nullable=False)
+    SHidImgFront = Column(Text)
+    SHidImgReverse = Column(Text)
+    SHbusinessLicense = Column(Text, nullable=False)
+    SHcredit = Column(String(18), nullable=False)
 
 
 class OrderMain(Base):
@@ -111,7 +117,7 @@ class OrderMain(Base):
     OMprice = Column(Float)                             # 订单总额
     USid = Column(String(64))                           # 用户id
     LOid = Column(String(64))                           # 配送地址id
-    OMlogisticsName = Column(Text, default="顺丰速运")           # 物流公司
+    OMlogisticsName = Column(Text, default="顺丰速运")    # 物流公司
     OMabo = Column(Text)                                # 订单备注
     OMcointype = Column(Integer, nullable=False)        # 货币单位 {401美元， 402人民币， 403欧元， 404英镑}
     COid = Column(String(64))                           # 优惠券id
@@ -181,6 +187,13 @@ class Cards(Base):
     Cposition = Column(Text)
     Clocation = Column(Text)
     openid = Column(String(64))
+
+class Stocks(Base):
+    __tablename__ = "Stocks"
+    STid = Column(String(64), primary_key=True)
+    STamount = Column(Integer, default=0)
+    PBid = Column(String(64))
+
 
 if __name__ == "__main__":
     '''
