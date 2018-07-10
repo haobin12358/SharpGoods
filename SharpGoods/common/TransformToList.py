@@ -55,3 +55,33 @@ def add_model(model_name, **kwargs):
         session.close()
         return
     raise Exception("session connect error")
+
+def update_model(model_name, openid, **kwargs):
+    print(model_name)
+    if not getattr(models, model_name):
+        print("model name = {0} error".format(model_name))
+        return
+    from models import model
+    from service.DBSession import get_session
+    session, status = get_session()
+    if status:
+        print(kwargs)
+        session.query(model.Cards).filter_by(openid=openid).update(**kwargs)
+        session.commit()
+        session.close()
+        return
+    raise Exception("session connect error")
+
+def get_all(model_name, openid):
+    print(model_name)
+    if not getattr(models, model_name):
+        print("model name = {0} error".format(model_name))
+        return
+    from models import model
+    from service.DBSession import get_session
+    session, status = get_session()
+    if status:
+        get_all = session.query(model.Cards).filter_by(openid=openid).all()
+        session.close()
+        return get_all
+    raise Exception("session connect error")

@@ -169,6 +169,18 @@ class BlackUsers(Base):
     BUtelphone = Column(String(14), nullable=False)   # 黑名单电话
     BUreason = Column(Text)   # 加入黑名单的原因
 
+'''
+以下内容用于名片
+'''
+class Cards(Base):
+    __tablename__ = 'Cards'
+    Cid = Column(String(64), primary_key=True)
+    Cname = Column(String(64))
+    Ctelphone = Column(String(14))
+    Ccompany = Column(Text)
+    Cposition = Column(Text)
+    Clocation = Column(Text)
+    openid = Column(String(64))
 
 if __name__ == "__main__":
     '''
