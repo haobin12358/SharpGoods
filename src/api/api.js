@@ -4,7 +4,7 @@ import {
 
 // const api2api = 'https://h878.cn/love/breakfast'
 // const api2 = 'http://120.79.182.43:7444/sharp'
-const api2 = 'https://h878.cn/sharp'
+const api2 = 'https://daaiti.cn/sharp'
 
 //登录 注册
 const getValidate = (params) => wxRequest(params, api2+'/goods/users/get_inforcode')
